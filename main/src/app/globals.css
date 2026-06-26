@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:where(.dark, .dark *)); 
 
 :root {
   --background: #ffffff;
@@ -15,6 +15,7 @@
 
 @theme {
   --font-billabong: var(--font-billabong);
+  --font-mont: var(--font-montserrat)
 }
 
 @media (prefers-color-scheme: dark) {
