@@ -36,7 +36,7 @@ body {
 .fade-in {
   opacity: 0;
   transform: translateY(10px);
-  animation: fadeIn 0.6s ease 0.2s forwards; 
+  animation: fadeIn 0.8s ease 0.4s forwards; 
 }
 
 @keyframes fadeIn {
@@ -45,3 +45,4 @@ body {
     transform: translateY(0);
   }
 }
+

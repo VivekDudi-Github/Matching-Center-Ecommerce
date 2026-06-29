@@ -17,6 +17,7 @@ const discoversItems = [
 function DiscoverTab() {
   const duplicateItems = [...discoversItems, ...discoversItems];
   const containerRef = useRef();
+  const controlRef = useRef();
   const xTranslation = useMotionValue(0);
 
 
@@ -31,12 +32,12 @@ function DiscoverTab() {
       // 3. Drive the animation smoothly using raw pixels instead of guessing percentages
       controls = animate(xTranslation, [0, -singleListWidth], {
         ease: 'linear',
-        duration: 10,
+        duration: 30,
         repeat: Infinity,
         repeatType: 'loop',
-        repeatDelay: 0,
+        repeatDelay: 1,
       });
-
+      controlRef.current = controls;  
     }
     if(containerRef.current) {
       animateFn();
@@ -49,25 +50,30 @@ function DiscoverTab() {
     }
   }, [xTranslation]);
 
+  const handleHoverPause = () => controlRef.current ? controlRef.current.pause() : null;
+  const handleHoverPlay = () => controlRef.current ? controlRef.current.play() : null;
+
 
   return (
-    <div className='dark:bg-black dark:text-white text-black w-full mb-3'>
-      <h3 className='md:text-4xl text-3xl font-mont text-white  p-4 w-full text-center duration-200'> 
+    <div className='dark:bg-black dark:text-white text-black w-full mb-3 '>
+      <h3 className='md:text-4xl text-3xl font-mont text-transparent sm:text-3xl bg-gradient-to-b from-zinc-900 via-zinc-800 dark:from-zinc-100 dark:via-zinc-300 to-amber-800/50 bg-clip-text p-4 w-full text-center -top-5 relative duration-200'> 
         Discover Our Catagories
       </h3>
 
       <div className='w-full gap-4 p-4  overflow-hidden'>  
         <motion.div
-          className='flex gap-4 w-max'
+          className='flex gap-4 w-max '
           style={{x : xTranslation}}
           ref={containerRef}
+          onMouseEnter={handleHoverPause}
+          onMouseLeave={handleHoverPlay}
         >
           {duplicateItems.map( (d ,i) => (
-            <div key={i} className='relative w-56 md:w-80 shrink-0 '> 
+            <div key={i} className='relative w-56 md:w-80 shrink-0 rounded-xs overflow-hidden'> 
               <img width={100} height={384} className=' w-full h-96 brightness-75 object-cover'  
               src={d.img} alt={d.alt} 
               />
-              <span className='absolute  left-1/2 top-1/2 -translate-x-1/2 -translate-y-8 font-bold font-mont text-3xl text-nowrap ' >Fabrics </span>        
+              <span className='absolute  left-1/2 top-1/2 -translate-x-1/2 -translate-y-8 font-bold font-mont text-3xl text-nowrap text-white' >Fabrics </span>        
               <div className='absolute inset-0 inset-y-1/2 '><ShopNowBtn /></div>
             </div>
           ))}

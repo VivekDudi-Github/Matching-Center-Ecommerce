@@ -40,7 +40,7 @@ function Header() {
     style={{ backgroundColor: backgroundColor }} 
     className="w-full px-6 flex items-center fixed top-0 left-0 justify-between h-14 bg-gradient-to-b from-black/70 via-black/50 to-transparent duration-200 z-50 " 
     >
-      <div className="flex items-center md:pt-4 p-2  truncate gap-2 text-white font-billabong md:text-5xl text-4xl tracking-wider font-extralight duration-200 transition-all">
+      <div className="flex items-center md:pt-4 p-2  truncate gap-2 text-white bg-clip-text  font-billabong md:text-5xl text-4xl tracking-wider font-extralight duration-200 transition-all"> 
         Matching Center 
       </div>
 
@@ -67,9 +67,9 @@ function Header() {
 
         <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
           {theme === 'dark' ? 
-            <MoonStarIcon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={0} /> 
+            <MoonStarIcon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={1} /> 
             : 
-            <SunIcon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={0} />
+            <SunIcon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={1} />
           }
         </button>
 
