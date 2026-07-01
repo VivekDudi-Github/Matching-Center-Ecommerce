@@ -4,6 +4,7 @@ import '../globals.css';
 import {AnimatePresence, motion, useScroll, useTransform} from 'framer-motion';
 import { useEffect, useState } from 'react';
 import {useTheme} from 'next-themes';
+import Link from 'next/link';
 
 function Header() {
   const {theme, setTheme} = useTheme();
@@ -40,9 +41,9 @@ function Header() {
     style={{ backgroundColor: backgroundColor }} 
     className="w-full px-6 flex items-center fixed top-0 left-0 justify-between h-14 bg-gradient-to-b from-black/70 via-black/50 to-transparent duration-200 z-50 " 
     >
-      <div className="flex items-center md:pt-4 p-2  truncate gap-2 text-white bg-clip-text  font-billabong md:text-5xl text-4xl tracking-wider font-extralight duration-200 transition-all"> 
+      <Link href={'/'} className="flex items-center md:pt-4 p-2  truncate gap-2 text-white bg-clip-text  font-billabong md:text-5xl text-4xl tracking-wider font-extralight duration-200 transition-all"> 
         Matching Center 
-      </div>
+      </Link>
 
       <div className="flex items-center  ">
       <div className='mr-4'>

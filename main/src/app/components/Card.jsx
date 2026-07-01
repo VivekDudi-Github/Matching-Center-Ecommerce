@@ -70,7 +70,7 @@ export default function FabricProductCard({fabricDetails}) {
         {/* Content Area */}
         <div className="md:mt-4 mt-1 px-1 pb-1">
           {/* Title */}
-          <h3 className="md:text-xl text-[12px] font-semibold min-h-[36px] text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-amber-400 transition-colors">
+          <h3 className="md:text-xl text-[12px] font-semibold min-h-[36px] text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors">
             {fabricData.title}
           </h3>
 
@@ -103,7 +103,7 @@ export default function FabricProductCard({fabricDetails}) {
               className={`relative flex md:h-12 h-8  items-center justify-center overflow-hidden rounded-xl px-5  font-medium transition-all shadow-sm ${
                 isAdded 
                   ? "bg-emerald-600 text-white md:w-36  max-w-2/5" 
-                  : "bg-stone-900 text-white hover:bg-amber-900 md:w-32 w-6"
+                  : "bg-stone-900 text-white hover:bg-red-900 md:w-32 w-6"
               }`}
             >
               <AnimatePresence mode="wait" initial={false}>

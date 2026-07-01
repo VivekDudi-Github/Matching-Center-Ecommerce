@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Card from './Card';
 
 // Mock list array of fabrics to populate our slider
-const productsList = [
+export const products = [
   { id: "fab-1", title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, unit: "yard" , saleTag: "28% OFF", imageUrl: "/dis_1.webp" },
   { id: "fab-2", title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "/dis_2.webp" },
   { id: "fab-3", title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5",unit: "yard" , imageUrl: "/fabrics_3.webp" },
@@ -31,37 +31,49 @@ export default function CardSlider() {
   const sliderRef = useRef(null);
   const [positionX, setPositionX] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
-  // const [hasMounted, setHasMounted] = useState(false);
+  const [productsList, setProductsList] = useState(products);
 
-  // useEffect(() => {setHasMounted(true)}, []);
 
   useEffect(() => {
-    let resetWidth = () => {
-      if (sliderRef.current ) {
-        const remainingDistance = sliderRef.current.scrollWidth - sliderRef.current.offsetWidth;
-        setMaxScroll(remainingDistance > 0 ? remainingDistance : 0);
-      }
-    }
-    resetWidth();
-  }, []); 
-  
-  //  useEffect(() => {
-  //   if (hasMounted && sliderRef.current) {
-  //     const remainingDistance = sliderRef.current.scrollWidth - sliderRef.current.offsetWidth;
-  //     setMaxScroll(remainingDistance > 0 ? remainingDistance : 0);
-  //   }
-  // }, [hasMounted]);
+    const resetWidth = async(resizedWindow = true) => {
+    if (sliderRef.current ) {
+      console.log(sliderRef.current.scrollWidth, sliderRef.current.offsetWidth);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
+      const remainingDistance = sliderRef.current.scrollWidth - sliderRef.current.offsetWidth;
+      setMaxScroll(remainingDistance);
+
+      if(resizedWindow) setPositionX((prev) => prev <= -remainingDistance ? -remainingDistance : prev/2);
+    }}
+    
+    const observer = new ResizeObserver(() => {
+       requestAnimationFrame(resetWidth);
+    });
+    observer.observe(sliderRef.current);
+
+    return () => {
+      observer.disconnect();
+    } 
+  }, []); 
+
+  
   const slideLeft = () => {
     setPositionX((prev) => Math.min(prev + 360, 0)); // Slides view window back left
   };
 
   const slideRight = () => {
     setPositionX((prev) => Math.max(prev - 360, -maxScroll)); // Slides view window forward right
+    if(positionX <= -maxScroll) {
+      console.log('added new list');
+      setProductsList([...productsList, ...products]);
+    }
   };
 
+  console.log("maxScroll", maxScroll, "positionX", positionX, 'scrollOffset',  sliderRef.current?.offsetWidth);
+  
+
   return (
-    <div className="w-full touch-pan-y bg-zinc-950 px-6 py-12 md:px-16">
+    <div className="w-full touch-pan-y bg-black px-6 py-12 md:px-16">
       {/* Top Header Row with Navigation Controls */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -98,7 +110,7 @@ export default function CardSlider() {
         <motion.div
           animate={{ x: positionX }}
           transition={{ type: "spring", stiffness: 180, damping: 24 }}
-          className="flex gap-6 pb-4 cursor-grab active:cursor-grabbing"
+          className="flex gap-6 pb-4 hover:cursor-pointer"
         >
           {productsList.map((product) => (
             <div key={product.id} className="w-80  shrink-1">
