@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Heart, Scissors, Check } from "lucide-react";
 import SafeImage from "./SafeImage";
+import Link from "next/link";
 
 // const fabricData = {
 //   id: "fab-01",
@@ -61,21 +62,21 @@ export default function FabricProductCard({fabricDetails}) {
           />
         </button>
 
-        <div className="relative md:h-64 h-36 w-full overflow-hidden rounded-md bg-stone-100">
+        <Link href={`shop/${fabricData.id}`} className="relative md:h-64 h-36 w-full overflow-hidden rounded-md inline-block bg-stone-100">
             <SafeImage src={fabricData.imageUrl} alt={fabricData.title} />
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-stone-900/10 via-transparent to-transparent pointer-events-none" />
-        </div>
+        </Link>
 
         {/* Content Area */}
         <div className="md:mt-4 mt-1 px-1 pb-1">
           {/* Title */}
-          <h3 className="md:text-xl text-[12px] font-semibold min-h-[36px] text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors">
+          <h3 className="md:text-xl text-[12px] font-semibold min-h-[36px] text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors truncate">
             {fabricData.title}
           </h3>
 
           {/* Description */}
-          <p className="mt-1 line-clamp-2 md:text-sm text-[12px] md:block hidden  text-stone-500 leading-relaxed">
+          <p className="mt-1 line-clamp-2 md:h-12 h-0 md:text-sm text-[12px] text-stone-500 leading-relaxed  ">
             {fabricData.description}
           </p>
 

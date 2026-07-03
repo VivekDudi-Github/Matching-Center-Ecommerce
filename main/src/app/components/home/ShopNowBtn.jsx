@@ -4,7 +4,7 @@ import BigButton from '../BigButton';
 
 function ShopNowBtn({id}) {
   return (
-    <Link href={id ? '/shop/id' : 'shop'} className='w-36 h-24 mt-4 mx-auto text-lg font-light'> 
+    <Link href={id ? '/shop/id' : 'shop'} className='w-36 h-24 mt-4 mx-auto text-lg font-light block'> 
       <BigButton name={'Shop Now'} />
     </Link>
   )

@@ -7,23 +7,23 @@ import Card from './Card';
 
 // Mock list array of fabrics to populate our slider
 export const products = [
-  { id: "fab-1", title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, unit: "yard" , saleTag: "28% OFF", imageUrl: "/dis_1.webp" },
-  { id: "fab-2", title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "/dis_2.webp" },
-  { id: "fab-3", title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5",unit: "yard" , imageUrl: "/fabrics_3.webp" },
-  { id: "fab-4", title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal",unit: "yard" ,imageUrl: "/fabrics_2.jpg" },
-  { id: "fab-5", title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "fabrics_1.webp" },
+  { id: "fab-1", title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, unit: "yard" , saleTag: "28% OFF", imageUrl: "/dis_1.webp", description: "Luxurious silk fabric with a smooth texture, perfect for elegant garments and accessories.Luxurious silk fabric with a smooth texture, perfect for elegant garments and accessories." },
+  { id: "fab-2", title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "/dis_2.webp", description: "Soft and breathable linen fabric, ideal for summer clothing and home decor projects." },
+  { id: "fab-3", title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5",unit: "yard" , imageUrl: "/fabrics_3.webp", description: "High-quality cotton fabric with a smooth texture, perfect for casual wear and everyday clothing." },
+  { id: "fab-4", title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal",unit: "yard" ,imageUrl: "/fabrics_2.jpg", description: "Soft and warm wool fabric, ideal for winter clothing and accessories." },
+  { id: "fab-5", title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "fabrics_1.webp", description: "Traditional floral chiffon fabric, perfect for special occasions and weddings." },
 
-  { id: "fab-31", title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, saleTag: "28% OFF",unit: "yard" , imageUrl: "/dis_1.webp" },
-  { id: "fab-32", title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "/dis_2.webp" },
-  { id: "fab-33", title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5",unit: "yard" , imageUrl: "/fabrics_3.webp" },
-  { id: "fab-34", title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal",unit: "yard" , imageUrl: "/fabrics_2.jpg" },
-  { id: "fab-35", title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "fabrics_1.webp" },
+  { id: "fab-31", title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, saleTag: "28% OFF",unit: "yard" , imageUrl: "/dis_1.webp", description: "Luxurious silk fabric with a smooth texture, perfect for elegant garments and accessories." },
+  { id: "fab-32", title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "/dis_2.webp", description: "Soft and breathable linen fabric, ideal for summer clothing and home decor projects." },
+  { id: "fab-33", title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5",unit: "yard" , imageUrl: "/fabrics_3.webp", description: "High-quality cotton fabric with a smooth texture, perfect for casual wear and everyday clothing." },
+  { id: "fab-34", title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal",unit: "yard" , imageUrl: "/fabrics_2.jpg", description: "Soft and warm wool fabric, ideal for winter clothing and accessories." },
+  { id: "fab-35", title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "fabrics_1.webp", description: "Traditional floral chiffon fabric, perfect for special occasions and weddings." },
 
-  { id: "fab-21", title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, saleTag: "28% OFF",unit: "yard" , imageUrl: "/dis_1.webp" },
-  { id: "fab-22", title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null, imageUrl: "/dis_2.webp" },
-  { id: "fab-23", title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5",unit: "yard" , imageUrl: "/fabrics_3.webp" },
-  { id: "fab-24", title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal",unit: "yard" , imageUrl: "/fabrics_2.jpg" },
-  { id: "fab-25", title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "fabrics_1.webp" },
+  { id: "fab-21", title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, saleTag: "28% OFF",unit: "yard" , imageUrl: "/dis_1.webp", description: "Luxurious silk fabric with a smooth texture, perfect for elegant garments and accessories." },
+  { id: "fab-22", title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null, imageUrl: "/dis_2.webp", description: "Soft and breathable linen fabric, ideal for summer clothing and home decor projects." },
+  { id: "fab-23", title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5",unit: "yard" , imageUrl: "/fabrics_3.webp", description: "High-quality cotton fabric with a smooth texture, perfect for casual wear and everyday clothing." },
+  { id: "fab-24", title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal",unit: "yard" , imageUrl: "/fabrics_2.jpg", description: "Soft and warm wool fabric, ideal for winter clothing and accessories." },
+  { id: "fab-25", title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null,unit: "yard" , imageUrl: "fabrics_1.webp", description: "Traditional floral chiffon fabric, perfect for special occasions and weddings." }
 
 ];
 
@@ -58,15 +58,14 @@ export default function CardSlider() {
 
   
   const slideLeft = () => {
+    console.log('slideLeft');
     setPositionX((prev) => Math.min(prev + 360, 0)); // Slides view window back left
   };
 
   const slideRight = () => {
+    console.log('slideRight');
+    
     setPositionX((prev) => Math.max(prev - 360, -maxScroll)); // Slides view window forward right
-    if(positionX <= -maxScroll) {
-      console.log('added new list');
-      setProductsList([...productsList, ...products]);
-    }
   };
 
   console.log("maxScroll", maxScroll, "positionX", positionX, 'scrollOffset',  sliderRef.current?.offsetWidth);
@@ -108,6 +107,19 @@ export default function CardSlider() {
       <div ref={sliderRef} className="w-full min-h-72 overflow-hidden rounded-3xl">
         {/* Animated Slide Track */}
         <motion.div
+          drag='x'
+          dragElastic={0.2} 
+          dragConstraints={{ left: -maxScroll, right: 0 }}
+           onDragEnd={(event, info) => {
+            const swipeThreshold = 50; // Minimum pixel distance to trigger a slide
+            const { offset } = info;
+
+            if (offset.x < -swipeThreshold && positionX > -maxScroll) {
+              slideRight();
+            } else if (offset.x > swipeThreshold && positionX < 0) {
+              slideLeft();
+            }
+          }}
           animate={{ x: positionX }}
           transition={{ type: "spring", stiffness: 180, damping: 24 }}
           className="flex gap-6 pb-4 hover:cursor-pointer"

@@ -53,7 +53,7 @@ export default function ShopLayout() {
         />
       </MobileDrawer>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-12">
+      <div className="  px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-12">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-64 flex-shrink-0">
           <div className="mb-8 text-sm text-zinc-500 dark:text-zinc-400">
@@ -67,14 +67,14 @@ export default function ShopLayout() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1">
+        <main className="flex-1 w-full">
           <div className="hidden lg:flex justify-between items-end mb-8">
             <h1 className="text-4xl font-extrabold tracking-tight dark:text-white">Shop</h1>
           </div>
 
-          {/* Product Grid */}
+          {/* Product Flex */}
           <motion.div 
-            className="grid grid-cols-3 sm:grid-cols-3 xl:grid-cols-3 gap-6" 
+            className="flex flex-wrap justify-evenly items-center gap-3 md:gap-6" 
             initial="hidden"
             animate="visible"
             variants={{

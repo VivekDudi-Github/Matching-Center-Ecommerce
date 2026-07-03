@@ -70,8 +70,8 @@ export default function Sidebar({ openSections, toggleSection, collapseAll }) {
               className="flex flex-col gap-4 overflow-hidden"
             >
               <div className="flex justify-between text-xs font-medium">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
+                <input type="text" value={priceRange[0]} onChange={(e) => setPriceRange([e.target.value, priceRange[1]])} className="w-16 text-center border" />
+                <input type="text" value={priceRange[1]} onChange={(e) => setPriceRange([priceRange[0], e.target.value])} className="w-16 text-center border" />
               </div>
               <PriceSlider
                 min={0}
@@ -79,6 +79,10 @@ export default function Sidebar({ openSections, toggleSection, collapseAll }) {
                 value={priceRange}
                 onValueChange={setPriceRange}
               />
+              <div className="flex justify-between text-xs font-medium">
+                <span>₹0</span>
+                <span>₹1500</span>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

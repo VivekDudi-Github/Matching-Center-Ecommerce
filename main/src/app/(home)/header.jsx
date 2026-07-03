@@ -1,5 +1,5 @@
 'use client';
-import {ShoppingCartIcon,ShoppingBagIcon, User2Icon, MenuIcon, XIcon, MoonStarIcon, SunIcon,} from 'lucide-react';
+import {ShoppingBagIcon, User2Icon, MenuIcon, XIcon, MoonStarIcon, SunIcon,} from 'lucide-react';
 import '../globals.css';
 import {AnimatePresence, motion, useScroll, useTransform} from 'framer-motion';
 import { useEffect, useState } from 'react';
@@ -76,7 +76,7 @@ function Header() {
 
         <User2Icon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={0} />
         
-        <ShoppingCartIcon className="size-6 md:size-6 fill-white text-white mr-4 md:mr-0 duration-500" 
+        <ShoppingBagIcon className="size-6 md:size-6  text-white mr-4 md:mr-0 duration-500" 
         onClick={() => setIsCartOpen(prev => !prev)}
         />
         
