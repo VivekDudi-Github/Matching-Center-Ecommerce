@@ -56,7 +56,7 @@ function DiscoverTab() {
 
   return (
     <div className='dark:bg-black dark:text-white text-black w-full mb-3 '>
-      <h3 className='md:text-4xl text-3xl font-mont text-transparent sm:text-3xl bg-gradient-to-b from-zinc-900 via-zinc-800 dark:from-zinc-100 dark:via-zinc-300 to-amber-800/50 bg-clip-text p-4 w-full text-center -top-5 relative duration-200'> 
+      <h3 className='md:text-4xl text-3xl font-mont text-transparent sm:text-3xl bg-gradient-to-br from-zinc-900 via-zinc-800 dark:from-zinc-100 dark:via-zinc-300 to-amber-800/50 bg-clip-text p-4 w-full text-center -top-5 relative duration-200'> 
         Discover Our Catagories
       </h3>
 

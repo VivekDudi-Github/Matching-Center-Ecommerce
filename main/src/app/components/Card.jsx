@@ -71,9 +71,11 @@ export default function FabricProductCard({fabricDetails}) {
         {/* Content Area */}
         <div className="md:mt-4 mt-1 px-1 pb-1">
           {/* Title */}
-          <h3 className="md:text-xl text-[12px] font-semibold min-h-[36px] text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors truncate">
-            {fabricData.title}
-          </h3>
+          <Link href={'/shop/' + fabricData.id} className="">
+            <h3 className="md:text-xl text-[12px] font-semibold min-h-[36px] text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors  truncate"> 
+              {fabricData.title} 
+            </h3>
+          </Link>
 
           {/* Description */}
           <p className="mt-1 line-clamp-2 md:h-12 h-0 md:text-sm text-[12px] text-stone-500 leading-relaxed  ">
@@ -87,7 +89,7 @@ export default function FabricProductCard({fabricDetails}) {
                 Price
               </span>
               <div className="flex items-baseline gap-2">
-                <span className=" md:text-xl text-[12px] font-bold dark:text-zinc-100 -ml-1">₹{fabricData.price}</span>
+                <span className=" md:text-xl text-[12px] font-bold dark:text-zinc-100 text-black -ml-1">₹{fabricData.price}</span>
                 {fabricData.originalPrice && (
                   <span className="text-[10px] md:text-sm text-zinc-500 line-through -ml-1 ">
                     ₹{fabricData.originalPrice}

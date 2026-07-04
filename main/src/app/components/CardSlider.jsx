@@ -72,11 +72,11 @@ export default function CardSlider() {
   
 
   return (
-    <div className="w-full touch-pan-y bg-black px-6 py-12 md:px-16">
+    <div className="w-full touch-pan-y dark:bg-black px-6 py-12 md:px-16">
       {/* Top Header Row with Navigation Controls */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-transparent sm:text-3xl bg-gradient-to-r from-zinc-100 via-zinc-500 to-amber-800 bg-clip-text"> 
+          <h2 className="text-2xl font-bold tracking-tight text-transparent sm:text-3xl bg-gradient-to-r dark:from-zinc-100 from-zinc-900 dark:zinc-500 via-zinc-600 to-amber-800 bg-clip-text"> 
             Featured Fabrics
           </h2>
           <p className="mt-1 text-sm text-zinc-400">Explore premium textiles and luxury weave materials.</p>

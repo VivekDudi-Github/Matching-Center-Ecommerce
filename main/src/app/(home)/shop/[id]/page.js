@@ -1,8 +1,9 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ShoppingCart, Zap, Star } from 'lucide-react';
 import ProductGallery from '@/app/components/product/ProductGallery';
+import ColorSelector from '@/app/components/product/ColorSelector';
 
 const PRODUCT_DATA = {
   title: 'Premium Handwoven Silk Blend Fabric - 1 Yard',
@@ -18,9 +19,20 @@ const PRODUCT_DATA = {
     '/fabrics_2.jpg',
     '/fabrics_3.webp',
   ],
+  color: [
+    { name: 'Sunset Orange', hex: '#f05f19' },
+    { name: 'Crimson Red', hex: '#e20000' },
+    { name: 'Midnight Black', hex: '#000000' },
+  ],
 };
 
 export default function ProductPage() {
+  const [selectedColor, setSelectedColor] = useState(null); 
+
+  const handleColorSelect = (color) => {
+    setSelectedColor(color.hex);
+  }
+
   return (
     <div className="min-h-screen bg-zinc-100 dark:bg-zinc-950 pb-20 lg:pb-0 font-sans">
       
@@ -58,6 +70,15 @@ export default function ProductPage() {
               <span className="text-sm text-zinc-500 font-medium">
                 {PRODUCT_DATA.reviews} Ratings & Reviews
               </span>
+            </div>
+            
+            {/* Color Selector */}
+            <div className='p-2 z-0'>
+              <ColorSelector 
+                colors={PRODUCT_DATA?.color } 
+                selectedColor={selectedColor } 
+                onSelectColor={handleColorSelect}
+              />
             </div>
 
             {/* Pricing */}
@@ -97,7 +118,7 @@ export default function ProductPage() {
             </div>
             {/* Action Buttons */}
             <div className="flex gap-4 mt-6 px-4 lg:px-0">
-              <button className="flex-1 h-14 bg-[#ffffff] text-black font-bold text-lg rounded shadow flex items-center justify-center gap-2 hover:bg-[#f39800] transition-colors">
+              <button className="flex-1 h-14 bg-[#ffffff] text-black font-bold text-lg rounded flex items-center justify-center gap-2 hover:bg-[#f39800] transition-colors dark:border-0 border-2 border-[#f05f19]">
                 <ShoppingCart size={22} />
                 ADD TO CART
               </button>
