@@ -1,9 +1,14 @@
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *)); 
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -15,15 +20,9 @@
 
 @theme {
   --font-billabong: var(--font-billabong);
-  --font-mont: var(--font-montserrat)
+  --font-mont: var(--font-montserrat);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 @layer utilities {
   .hide-scrollbar {

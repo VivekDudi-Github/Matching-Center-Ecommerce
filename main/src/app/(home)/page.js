@@ -35,5 +35,18 @@ export default function Home() {
         <CardSlider/>
       </HyderationWrapper>
     </div>
+    // <div className="space-y-6 p-10">
+    //   <div className="h-20 bg-red-500" />
+
+    //   <div className="grid grid-cols-3 gap-4">
+    //     <div className="bg-green-900 p-5">1</div>
+    //     <div className="bg-blue-400 p-5">2</div>
+    //     <div className="bg-yellow-400 p-5">3</div>
+    //   </div>
+
+    //   <p className="text-green-400 text-3xl">Green 400</p>
+    //   <p className="text-green-500 text-3xl">Green 500</p>
+    //   <p className="text-green-600 text-3xl">Green 600</p>
+    // </div>
   );
 }

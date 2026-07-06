@@ -42,7 +42,7 @@ function Header() {
     className="w-full px-6 flex items-center fixed top-0 left-0 justify-between h-14 bg-gradient-to-b from-black/70 via-black/50 to-transparent duration-200 z-50 " 
     >
       <Link href={'/'} className="inline-block font-billabong md:text-4xl text-4xl ">  
-        <span className=' '>     
+        <span className=' text-white'>     
           Matching Center 
         </span>
       </Link>
@@ -70,13 +70,13 @@ function Header() {
 
         <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
           {theme === 'dark' ? 
-            <MoonStarIcon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={1} /> 
+            <MoonStarIcon className="size-6 md:size-6 fill-white mr-4 text-white"  strokeWidth={1} /> 
             : 
-            <SunIcon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={1} />
+            <SunIcon className="size-6 md:size-6 fill-white mr-4 text-white"  strokeWidth={1} />
           }
         </button>
 
-        <Link href={'/dashboard/user'} className="inline-block">
+        <Link href={'/dashboard'} className="inline-block">
           <User2Icon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={0} />
         </Link>
         

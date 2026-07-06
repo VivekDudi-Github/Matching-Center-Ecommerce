@@ -57,7 +57,7 @@ export default function FabricProductCard({fabricDetails}) {
         >
           <Heart
             className={`h-5 w-5 transition-colors ${
-              isLiked ? "fill-red-500 text-red-500" : "text-stone-600 group-hover:text-red-400"
+              isLiked ? "fill-red-500 text-red-500" : "text-stone-600 group-hover:text-red-500"
             }`}
           />
         </button>
