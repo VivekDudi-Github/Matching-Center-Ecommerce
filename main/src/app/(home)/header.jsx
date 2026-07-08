@@ -76,7 +76,7 @@ function Header() {
           }
         </button>
 
-        <Link href={'/dashboard'} className="inline-block">
+        <Link href={'/admin'} className="inline-block">
           <User2Icon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={0} />
         </Link>
         

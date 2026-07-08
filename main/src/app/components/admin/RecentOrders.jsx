@@ -108,7 +108,7 @@ export default function RecentOrders() {
 
       {/* Desktop Table */}
 
-      <div className="hidden overflow-x-auto lg:block">
+      <div className=" overflow-x-auto block">
         <table className="w-full">
           <thead>
             <tr className="border-b border-zinc-200 dark:border-zinc-800">
@@ -184,7 +184,7 @@ export default function RecentOrders() {
 
       {/* Mobile Cards */}
 
-      <div className="space-y-4 p-4 lg:hidden">
+      <div className="space-y-4 p-4 hidden">
         {orders.map((order) => {
           const StatusIcon = statusConfig[order.status].icon;
 

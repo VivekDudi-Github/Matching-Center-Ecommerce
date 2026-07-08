@@ -53,10 +53,10 @@ export default function Sidebar() {
   console.log(pathname);
   
   return (
-    <aside className="hidden w- shadow shadow-black bg-white lg:flex lg:flex-col  dark:bg-zinc-900">
+    <aside className="hidden shadow shadow-black bg-white lg:flex lg:flex-col  dark:bg-zinc-900">
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-2 p-5 overflow-hidden">
+      <nav className="flex sticky top-13 flex-col gap-2 p-5 overflow-hidden">
         {links.map((item, i) => {
           const active = pathname === item.href;
 

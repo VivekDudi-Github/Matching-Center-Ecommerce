@@ -42,11 +42,6 @@ const links = [
     icon: Users,
   },
   {
-    label: "Banners",
-    href: "/admin/banners",
-    icon: Images,
-  },
-  {
     label: "Settings",
     href: "/admin/settings",
     icon: Settings,
@@ -108,13 +103,14 @@ export default function MobileSidebar() {
                   return (
                     <Link
                       key={item.href}
-                      // href={item.href}
+                      href={item.href}
                       onClick={() => setOpen(false)}
                     >
                       <div
-                        className={`flex items-center justify-start gap-4  `}
+                        className={`flex items-center justify-start gap-4 duration-200 rounded-md
+                          ${active ? 'bg-black dark:bg-white text-white dark:text-black' : 'hover:bg-zinc-400  text-black dark:text-white hover:text-black  dark:hover:bg-zinc-500 dark:hover:text-black'}`}
                       >
-                        <div className="p-2 hover:bg-white rounded-md text-white hover:text-black  dark:hover:bg-zinc-500 dark:hover:text-black duration-200">   
+                        <div className="p-2  ">   
                           <item.icon size={25}/>
                         </div>
 
