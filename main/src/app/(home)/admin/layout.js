@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function AdminLayout({ children }) {
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950">
+    <div className="min-h-screen bg-white dark:bg-black">
       <div className="flex">
         {/* Desktop Sidebar */}
         <Sidebar />

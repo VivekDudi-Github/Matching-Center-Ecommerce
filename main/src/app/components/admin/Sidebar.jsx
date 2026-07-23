@@ -53,7 +53,7 @@ export default function Sidebar() {
   console.log(pathname);
   
   return (
-    <aside className="hidden shadow shadow-black bg-white lg:flex lg:flex-col  dark:bg-zinc-900">
+    <aside className="hidden shadow shadow-black bg-white lg:flex lg:flex-col  dark:bg-black dark:border-r-[1px] border-gray-800">
 
       {/* Navigation */}
       <nav className="flex sticky top-13 flex-col gap-2 p-5 overflow-hidden">

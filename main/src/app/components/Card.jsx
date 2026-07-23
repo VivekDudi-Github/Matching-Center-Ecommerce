@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Heart, Scissors, Check } from "lucide-react";
 import SafeImage from "./SafeImage";
 import Link from "next/link";
+import useCartStore from "../store/CartStore";
 
 // const fabricData = {
 //   id: "fab-01",
@@ -13,6 +14,7 @@ import Link from "next/link";
 //   originalPrice: 340,
 //   unit: "yard",
 //   saleTag: "28% OFF",
+//   color: "pink",
 //   imageUrl: "/dis_1.webp",
 //   description: "Pure 19mm mulberry silk with a luminous satin finish. Perfect for bridal, evening wear, and luxury linings.",
 //};
@@ -22,10 +24,12 @@ export default function FabricProductCard({fabricDetails}) {
   const [isAdded, setIsAdded] = useState(false);
 
   const fabricData = fabricDetails;
+  const addItem = useCartStore(s => s.addItem); 
 
   const handleAddToCart = () => {
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
+    addItem(fabricData);
   };
 
   return (

@@ -1,5 +1,6 @@
 import CustomerDetailsCard from "@/app/components/checkout/CustomerDetails";
 import OrderSummary from "@/app/components/checkout/OrderSummary";
+import CheckoutSteps from "@/app/components/checkout/CheckoutSteps";
 
 const CART = [
   {
@@ -58,6 +59,8 @@ export default function CheckoutPage() {
             Fill in your details and review your order before placing it.
           </p>
         </div>
+
+        <CheckoutSteps currentStep={2}/>
 
         {/* Layout */}
 

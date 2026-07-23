@@ -34,6 +34,7 @@ function TopBanner() {
           }}
         className='absolute top-0 left-0 w-full h-full object-cover brightness-75 z-0'
         src={images[index].src}
+        alt='fabrics'
       >
 
       </motion.img>
