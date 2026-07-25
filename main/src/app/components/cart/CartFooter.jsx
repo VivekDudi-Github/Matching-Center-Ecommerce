@@ -7,26 +7,27 @@ import useCartStore, {
   selectTotal,
 } from "@/app/store/CartStore";
 import {useHydratedStore} from '@/app/hooks/useHyderatedStore';
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 export default function CartFooter() {
   const isHyderated = useHydratedStore();
 
+  const [collapsed, setCollapsed] = useState(true);
+  
   const subtotal = useCartStore(selectSubtotal);
   const shipping = useCartStore(selectShipping);
   const total = useCartStore(selectTotal);
 
   const totalDiscount = 0;
-  // const subtotal = 100;
-  // const shipping = 0;
-  // const total = 100;
   
   if(!isHyderated) return null;
 
   return (
-    <div className="border-t border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
-      <div className="space-y-3 text-sm">
+    <div className={`border-t sticky bottom-0 left-0 w-full border-zinc-200  p-5 pb-0 dark:border-zinc-800 duration-200 ${collapsed ? 'p-0 bg-transparent' : 'bg-gray-400 dark:bg-zinc-900 '}`}>
+      <div className={`space-y-3 text-sm duration-200 overflow-hidden ${collapsed ? 'opacity-0 scale-y-0 h-0' : '  opacity-100 '}`}> 
         <div className="flex justify-between">
-          <span>Subtotal</span>
+          <span>Subtotal</span> 
 
           <span>₹{subtotal.toLocaleString()}</span>
         </div>
@@ -54,12 +55,21 @@ export default function CartFooter() {
         </div>
       </div>
 
-      <Link
-        href="/checkout"
-        className="mt-5 flex h-12 w-full items-center justify-center rounded-xl bg-black text-white transition hover:opacity-90 dark:bg-white dark:text-black"
-      >
-        Checkout
-      </Link>
+      
+      <div className="flex ">
+        <Link
+          href="/checkout"
+          className="mt-3 flex h-12 w-full items-center justify-center rounded-l-xl bg-black text-white transition hover:opacity-90 dark:bg-white dark:text-black"
+        >
+          Checkout
+        </Link>
+        <button 
+          onClick={() => setCollapsed(prev => !prev)}
+          className="mt-3 ml-auto h-12 text-white bg-black rounded-r-xl border-l-[1px] border-white dark:border-black px-4 font-semibold transition hover:opacity-90 dark:bg-white dark:text-black">
+          <ChevronDown className={collapsed ? 'rotate-180 duration-200' : ''} size={18} />
+        </button>
+      </div>
+      
     </div>
   );
 }

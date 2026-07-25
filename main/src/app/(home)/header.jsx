@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import {useTheme} from 'next-themes';
 import Link from 'next/link';
 import CartSideBar from '@/app/components/cart/CartSidebar';
+import HyderationWrapper from '../components/HyderationWrapper';
 
 function Header() {
   const {theme, setTheme} = useTheme();
@@ -127,7 +128,9 @@ function Header() {
       </AnimatePresence>
       
       {/* Cart Sidebar */}
-      <CartSideBar openChange={isCartOpen} />
+      <HyderationWrapper >
+        <CartSideBar openChange={isCartOpen} />
+      </HyderationWrapper>
     </motion.header>
   )
 }

@@ -42,7 +42,7 @@ export default function FabricProductCard({fabricDetails}) {
         className="group relative w-full max-w-sm overflow-hidden rounded-md bg-white dark:bg-zinc-950 md:p-1 p-1 shadow-sm shadow-amber-800/20 border border-stone-300 dark:border-zinc-800/80 dark:hover:border-zinc-700/50  transition-shadow duration-300 hover:shadow-xl "
       >
         {/* Top Badges Overlay */}
-        <div className="absolute md:top-6 top-4 md:left-6 left-4 z-10 flex items-center gap-2 duration-200">
+        <div className="absolute md:top-6 top-3 md:left-6 left-3 z-10 flex items-center gap-2 duration-200">
           {fabricData.saleTag && (
             <span className="rounded-full bg-red-500 px-3 py-1 md:text-xs text-[7px] font-bold tracking-wide text-white shadow-sm"> 
               {fabricData.saleTag}
@@ -56,7 +56,7 @@ export default function FabricProductCard({fabricDetails}) {
 
         <button
           onClick={() => setIsLiked(!isLiked)}
-          className="absolute md:top-6 top-4 right-6 z-10 flex md:size-9 size-5 p-0.5 items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-stone-600 shadow-sm border border-stone-100 transition-all hover:bg-white hover:scale-105 active:scale-95"
+          className="absolute md:top-6 top-3 right-3 z-10 flex md:size-9 size-5 p-0.5 items-center justify-center rounded-full bg-white/90 backdrop-blur-md text-stone-600 shadow-sm border border-stone-100 transition-all hover:bg-white hover:scale-105 active:scale-95" 
           aria-label="Add to wishlist"
         >
           <Heart

@@ -5,7 +5,8 @@ import {persist} from "zustand/middleware";
 const SHIPPING = 80;
 const FREE_SHIPPING_ABOVE = 2000;
 
-const useCartStore = create(persist (
+const useCartStore = create(
+  persist (
     (set) => ({
     items: [],
 
@@ -42,6 +43,7 @@ const useCartStore = create(persist (
             : item
         ),
       })),
+
 
     removeItem: (id) =>
       set((state) => ({

@@ -7,28 +7,29 @@ import useCartStore from "@/app/store/CartStore";
 export default function CartItem({ item }) {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
-
+  console.log(item);
+  
   return (
-    <div key={item.id} className="flex gap-4 border-b border-zinc-200 p-4 dark:border-zinc-800">
+    <div key={item.id} className="flex gap-4 border-b border-zinc-200 shadow shadow-black flex-wrap p-4 dark:border-zinc-800 duration-200">
       <div className="relative h-24 w-24 overflow-hidden rounded-xl bg-zinc-100">
-        {item.imageUrl && (
+        {item?.imageUrl && (
           <Image
-            src={item.imageUrl}
-            alt={item.name || 'fabrics-img'}
+            src={item?.imageUrl || '/fabrics_1.webp'}
+            alt={item?.name || 'fabrics-img'}
             fill
             className="object-cover"
           />
         )}
       </div>
-
+        
       <div className="flex flex-1 flex-col">
-        <h3 className="font-semibold dark:text-white">
-          {item.name}
+        <h3 className="font-semibold truncate dark:text-white">
+          {item?.title}
         </h3>
 
         {item.color && (
-          <p className="mt-1 text-sm text-zinc-500">
-            {item.color}
+          <p className="mt-1 text-sm truncate text-zinc-500">
+            {Array.isArray(item.color) ? item.color.map(i => i.name.toUpperCase() + ', ') : item.color.toUpperCase()}
           </p>
         )}
 

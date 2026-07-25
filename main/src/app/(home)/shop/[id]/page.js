@@ -1,17 +1,25 @@
 "use client";
 
-import React, { useState } from 'react';
-import { ShoppingCart, Zap, Star } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ShoppingCart, Zap, Star, Check } from 'lucide-react';
 import ProductGallery from '@/app/components/product/ProductGallery';
 import ColorSelector from '@/app/components/product/ColorSelector';
+import useCartStore from '@/app/store/CartStore';
+import CardSlider from '@/app/components/CardSlider';
+import { AnimatePresence , motion} from 'framer-motion';
+import { useHydratedStore } from '@/app/hooks/useHyderatedStore';
+import Skeleton from '@/app/components/product/ProductPageSkeleton';
+
 
 const PRODUCT_DATA = {
   title: 'Premium Handwoven Silk Blend Fabric - 1 Yard',
+  id: 'fab-91',
   price: '₹35.00',
   originalPrice: '₹50.00',
   rating: 4.8,
   reviews: 124,
   description: 'Elevate your tailoring with our premium silk blend. Woven for durability while maintaining a luxurious sheen, this fabric is ideal for festive wear, evening gowns, and high-end upholstery.',
+  quantity: 1,
   images: [
     '/dis_1.webp',
     '/dis_2.webp',
@@ -27,20 +35,32 @@ const PRODUCT_DATA = {
 };
 
 export default function ProductPage() {
+  const isHyderated = useHydratedStore();
+  
   const [selectedColor, setSelectedColor] = useState(null); 
+  const addItem = useCartStore(s => s.addItem);
+  const items = useCartStore(s => s.items);
+
+  const [isAdded, setIsAdded] = useState(false);
 
   const handleColorSelect = (color) => {
     setSelectedColor(color.hex);
   }
 
+  const handleAddToCart = () => {
+    setIsAdded(true) ;
+    addItem(PRODUCT_DATA);
+  }
+
+  useEffect(() => {
+    items.length > 0 ? setIsAdded(true) : setIsAdded(false);
+  }, [])
+
+  if(!isHyderated) return  <Skeleton /> ;
+  
   return (
     <div className="min-h-screen bg-zinc-100 dark:bg-zinc-950 pb-20 lg:pb-0 font-sans">
       
-      {/* 
-        Grid setup:
-        Mobile: Single column, white background blocks separated by grey gaps.
-        Desktop: 12-column grid, Images take 5 cols, Details take 7 cols.
-      */}
       <main className="max-w-[1400px] mx-auto lg:p-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4">
           
@@ -118,11 +138,51 @@ export default function ProductPage() {
             </div>
             {/* Action Buttons */}
             <div className="flex gap-4 mt-6 px-4 lg:px-0">
-              <button className="flex-1 h-14 bg-[#ffffff] text-black font-bold text-lg rounded flex items-center justify-center gap-2 hover:bg-[#f39800] transition-colors dark:border-0 border-2 border-[#f05f19]">
+              <button className="flex-1 h-14 bg-[#ffffff] text-black font-bold text-lg rounded flex items-center justify-center gap-2 hover:bg-[#ffffffa3]  transition-colors dark:border-0 border-2 border-[#f05f19]" 
+                onClick={handleAddToCart}
+              >
                 <ShoppingCart size={22} />
                 ADD TO CART
               </button>
-              <button className="flex-1 h-14 bg-[#e20000] text-white font-bold text-lg rounded shadow flex items-center justify-center gap-2 hover:bg-[#f05f19] transition-colors">
+              <motion.button
+                onClick={handleAddToCart}
+                disabled={isAdded}
+                whileTap={{ scale: 0.95 }}
+                className={`relative flex md:h-12 h-8  items-center justify-center overflow-hidden rounded-xl px-5  font-medium transition-all shadow-sm ${
+                  isAdded 
+                    ? "bg-emerald-600 text-white md:w-36  max-w-2/5" 
+                    : "bg-stone-900 text-white hover:bg-red-900 md:w-32 w-6"
+                }`}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {!isAdded ? (
+                    <motion.span
+                      key="add"
+                      initial={{ y: 15, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -15, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center text-[12px] gap-1 font-semibold tracking-wide"
+                    >
+                      <ShoppingCart className="size-4 stroke-[2]" />
+                      <span className="hidden md:inline ">Add to Cart</span>
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="added"
+                      initial={{ y: 15, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -15, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center gap-1.5 text-xs font-semibold tracking-wide"
+                    >
+                      <Check className="md:h-4 md:w-4 h-1 w-1 stroke-[3]" />
+                      Added!
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+              <button className="flex-1 h-14 bg-[#e20000] text-white font-bold text-lg rounded shadow flex items-center justify-center gap-2 hover:bg-[#e20000c9] hover:text-white transition-colors">
                 <Zap size={22} fill="currentColor" />
                 BUY NOW
               </button>
@@ -132,6 +192,7 @@ export default function ProductPage() {
 
         
       </main>
+      <CardSlider />
       
     </div>
   );
