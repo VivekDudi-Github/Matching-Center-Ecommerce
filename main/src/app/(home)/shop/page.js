@@ -55,7 +55,7 @@ export default function ShopLayout() {
 
       <div className="  px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-12">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block w-64 flex-shrink-0">
+        <aside className="hidden lg:block w-64 shrink-0">
           <div className="mb-8 text-sm text-zinc-500 dark:text-zinc-400">
             Shop All
           </div>

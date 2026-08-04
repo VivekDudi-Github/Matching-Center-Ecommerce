@@ -1,0 +1,191 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Customer  {
+  id          Int      @id @default(autoincrement())
+  
+  name        String
+  email       String?  @unique
+  number      String
+  
+  createdAt   DateTime @default(now())
+}
+
+model Admin{
+  id           Int        @id @default(autoincrement())
+
+  password     String     @unique
+  name         String
+  loginAttempt Int        @default(0)
+  loginTime    DateTime   @default(now())
+
+  createdAt    DateTime   @default(now())
+}
+
+model Banner{
+  id        Int      @id @default(autoincrement())
+  
+  title     String
+  subtitle  String
+  image     String
+  link      String
+  
+  createdAt DateTime @default(now())
+}
+
+model Settings{
+  id        Int      @id @default(autoincrement())
+  number    String
+  name      String
+  email     String
+  
+  gstNumber String
+  whatsapp  String
+  address   String
+
+  upiId        String
+  upiName      String
+  merchantName String
+
+  shippingCharge   Decimal @db.Decimal(10, 2)
+
+  createdAt        DateTime @default(now())
+}
+
+model Product {
+  id              Int      @id @default(autoincrement())
+  title           String
+  slug            String   @unique
+  price           Decimal  @db.Decimal(10, 2)
+  originalPrice   Int
+  description     String
+  availableMeters Decimal  @db.Decimal(10, 2)
+  
+  colorId       ProductColor[]
+  images        ProductImages[]
+  category      Category[]
+  
+  featured      Boolean  @default(false)
+  dimensions    String   @default("[]")
+  rating        Float    @default(0)
+  reviews       Int      @default(0)
+
+  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime  @default(now())
+}
+
+model ProductColor {
+  id          Int      @id @default(autoincrement())  
+
+  name        String
+  hex         String?
+  productId   Int
+
+  product     Product  @relation(fields : [productId] , references: [id]) 
+}
+
+model ProductImages {
+  id          Int      @id @default(autoincrement())
+  publicId    String
+  url         String
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+enum Status {
+  Pending
+  Confirmed
+  Packed
+  Shipped
+  Delivered
+  Cancelled
+}
+
+model Order {
+  id            Int      @id @default(autoincrement())
+  customerId    Int
+  customer      Customer     @relation(fields: [customerId], references: [id])
+  products      OrderItem[]
+  subtotal      Int
+  total         Int
+  status        Status   @default("Pending")
+  paymentId     String?
+  payment       Payment? @relation(fields: [paymentId], references: [id])
+  shipping      String
+
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  orderId       Int
+  order         Order    @relation(fields: [orderId], references: [id])
+  amount        Int
+  status        String   @default("pending")
+  method        String
+  reference     String   @unique
+  customerId    Int
+  customer      Customer     @relation(fields: [customerId], references: [id])
+  number        String?
+  
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+}
+
+model Address {
+  id         Int        @id @default(autoincrement())
+  customerId Int
+  customer   Customer   @relation(fields: [customerId], references: [id])
+  address    String
+  city       String
+  state      String
+  zip        String
+  area       String
+  landmark   String
+
+  updatedAt  DateTime   @updatedAt
+  createdAt  DateTime   @default(now())
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  
+  title         String
+  price         Int
+  originalPrice Int
+  description   String
+  quantity      Decimal  @db.Decimal(10, 2)
+  color         String   @default("[]")
+  images        String   @default("[]")
+  customerId        Int
+  customer          Customer     @relation(fields: [customerId], references: [id])
+
+  dimensions    String   @default("[]")
+  categoryId    Int      @default("[]")
+}
+
+model Category {
+    id       Int     @id @default(autoincrement())
+    name     String
+
+    slug     String   @unique
+    products Product[]
+}

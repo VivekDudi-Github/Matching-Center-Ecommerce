@@ -61,7 +61,7 @@ export default function ProductPage() {
   return (
     <div className="min-h-screen bg-zinc-100 dark:bg-zinc-950 pb-20 lg:pb-0 font-sans">
       
-      <main className="max-w-[1400px] mx-auto lg:p-4">
+      <main className="max-w-350 mx-auto lg:p-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4">
           
           {/* LEFT SIDE: Image Gallery & Desktop Actions */}
@@ -164,7 +164,7 @@ export default function ProductPage() {
                       transition={{ duration: 0.2 }}
                       className="flex items-center text-[12px] gap-1 font-semibold tracking-wide"
                     >
-                      <ShoppingCart className="size-4 stroke-[2]" />
+                      <ShoppingCart className="size-4 stroke-2" />
                       <span className="hidden md:inline ">Add to Cart</span>
                     </motion.span>
                   ) : (
@@ -176,7 +176,7 @@ export default function ProductPage() {
                       transition={{ duration: 0.2 }}
                       className="flex items-center gap-1.5 text-xs font-semibold tracking-wide"
                     >
-                      <Check className="md:h-4 md:w-4 h-1 w-1 stroke-[3]" />
+                      <Check className="md:h-4 md:w-4 h-1 w-1 stroke-3" />
                       Added!
                     </motion.span>
                   )}
