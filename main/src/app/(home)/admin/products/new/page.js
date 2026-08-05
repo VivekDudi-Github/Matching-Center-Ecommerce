@@ -11,9 +11,10 @@ import SEOCard from "@/app/components/admin/products/new/SeoCard";
 import PublishCard from "@/app/components/admin/products/new/PublishCard";
 
 export default function NewProductPage() {
+  
   return (
-    <div className="min-h-screen bg-zinc-100 pb-10 dark:bg-zinc-950">
-      <main className="mx-auto max-w-[1400px] p-4">
+    <div className="min-h-screen bg-zinc-100 pb-10 dark:bg-black">
+      <main className="mx-auto max-w-350 p-4">
         {/* Header */}
 
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

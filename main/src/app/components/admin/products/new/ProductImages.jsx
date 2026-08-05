@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ImagePlus, Trash2, Star, UploadCloud } from "lucide-react";
+import { useRef, useState } from "react";
 
 const images = [
   "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800",
@@ -11,6 +12,36 @@ const images = [
 ];
 
 export default function ProductImages() {
+  const inputRef = useRef(null);
+
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  console.log(selectedImage);
+
+
+  const [allImages, setAllImages] = useState([]);
+
+  const handleImageChange = (e) => {
+    setSelectedImage(e);
+    // const file = e.target.files[0];
+    // const reader = new FileReader();
+
+    // reader.onload = (e) => {
+    //   setSelectedImage(e.target.result);
+    // };
+
+    // reader.readAsDataURL(file);
+  };
+
+  const addImage = (e) => {
+    const files = e.target.files;
+
+    if (files.length > 0) {
+      setAllImages([...allImages, ...files]);
+    }
+  }
+
+
   return (
     <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
@@ -35,30 +66,35 @@ export default function ProductImages() {
         {/* Main Preview */}
 
         <div className="relative aspect-square overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-950">
-          <Image
-            src={images[0]}
+          {selectedImage ? (
+            <Image
+            src={URL.createObjectURL(selectedImage)}
             alt="Product"
             fill
             className="object-cover"
           />
+          ) : (
+            <div className=" w-full p-4 h-full text-center">No Image Selected</div> 
+          )}
 
-          <div className="absolute left-4 top-4 rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+          {selectedImage && <div className="absolute right-4 top-4 rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white backdrop-blur">
             Main Image
-          </div>
+          </div>}
         </div>
 
         {/* Thumbnails */}
 
         <div className="grid grid-cols-4 gap-3">
-          {images.map((image, index) => (
+          {allImages.map((image, index) => (
             <div
               key={index}
               className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700"
             >
               <Image
-                src={image}
+                src={URL.createObjectURL(image)}
                 alt=""
                 fill
+                onClick={() => setSelectedImage(image)}
                 className="object-cover transition duration-300 group-hover:scale-105"
               />
 
@@ -79,7 +115,10 @@ export default function ProductImages() {
 
         {/* Upload */}
 
-        <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 p-10 transition hover:border-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:border-white dark:hover:bg-zinc-950">
+        <label 
+          onClick={inputRef?.current?.click}
+          className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 p-10 transition hover:border-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:border-white dark:hover:bg-zinc-950"
+          >
           <UploadCloud
             size={42}
             className="mb-4 text-zinc-400"
@@ -94,9 +133,12 @@ export default function ProductImages() {
           </p>
 
           <input
+            ref={inputRef}
+            onChange={addImage}
             type="file"
             multiple
             hidden
+
           />
         </label>
 

@@ -20,13 +20,17 @@ model Customer  {
   email       String?  @unique
   number      String
   
+  orders      Order[]
+  payments    Payment[]
+  addresses   Address[]
+
   createdAt   DateTime @default(now())
 }
 
 model Admin{
   id           Int        @id @default(autoincrement())
 
-  password     String     @unique
+  password     String     
   name         String
   loginAttempt Int        @default(0)
   loginTime    DateTime   @default(now())
@@ -69,39 +73,64 @@ model Product {
   title           String
   slug            String   @unique
   price           Decimal  @db.Decimal(10, 2)
-  originalPrice   Int
+  originalPrice   Decimal  @db.Decimal(10, 2)
   description     String
-  availableMeters Decimal  @db.Decimal(10, 2)
-  
-  colorId       ProductColor[]
-  images        ProductImages[]
-  category      Category[]
-  
-  featured      Boolean  @default(false)
-  dimensions    String   @default("[]")
-  rating        Float    @default(0)
-  reviews       Int      @default(0)
 
-  updatedAt    DateTime  @updatedAt
-  createdAt    DateTime  @default(now())
+  isPublished     Boolean  @default(false)
+  
+  color           ProductVariant[]
+  images          ProductImages[]
+  category        Category[]
+  tags            Tag[]
+  orders          OrderItem[]
+
+  featured        Boolean  @default(false)
+  dimensions      String   @default("[]")
+  rating          Float    @default(0)
+  reviews         Int      @default(0)
+
+  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime  @default(now())
 }
 
-model ProductColor {
-  id          Int      @id @default(autoincrement())  
+model ProductVariant {
+  id              Int      @id @default(autoincrement())    
+  availableMeters Decimal  @db.Decimal(10, 2)
 
-  name        String
-  hex         String?
-  productId   Int
+  name            String
+  hex             String?
+  productId       Int
 
-  product     Product  @relation(fields : [productId] , references: [id]) 
+  product         Product  @relation(fields : [productId] , references: [id]) 
+  
+  @@index([productId])
 }
 
 model ProductImages {
-  id          Int      @id @default(autoincrement())
-  publicId    String
-  url         String
-  productId   Int
-  product     Product  @relation(fields: [productId], references: [id])
+  id            Int              @id @default(autoincrement())
+  publicId      String
+  url           String
+  productId     Int
+  displayOrder  Int              @default(0)
+  product       Product          @relation(fields: [productId], references: [id])
+}
+
+
+model Category {
+    id       Int     @id @default(autoincrement())
+    name     String
+
+    slug     String   @unique
+    products Product[]
+}
+
+model Tag {
+  id       Int @id @default(autoincrement())
+
+  name     String
+  slug     String @unique
+
+  products Product[]
 }
 
 enum Status {
@@ -114,35 +143,52 @@ enum Status {
 }
 
 model Order {
-  id            Int      @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   customerId    Int
-  customer      Customer     @relation(fields: [customerId], references: [id])
-  products      OrderItem[]
-  subtotal      Int
-  total         Int
-  status        Status   @default("Pending")
-  paymentId     String?
-  payment       Payment? @relation(fields: [paymentId], references: [id])
-  shipping      String
+  customer      Customer    @relation(fields: [customerId], references: [id])
+  payment       Payment?
 
-  updatedAt     DateTime @updatedAt
-  createdAt     DateTime @default(now())
+  subtotal      Decimal     @db.Decimal(10, 2)
+  total         Decimal     @db.Decimal(10, 2)
+  status        Status      @default(Pending)
+
+  shipping      Decimal     @db.Decimal(10, 2)
+
+  products      OrderItem[]
+  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime    @default(now())
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum PaymentStatus {
+  Pending
+  Paid
+  Failed
+  Refunded
+}
+
+enum Method{
+  COD
+  UPI
 }
 
 model Payment {
-  id            Int      @id @default(autoincrement())
-  orderId       Int
-  order         Order    @relation(fields: [orderId], references: [id])
-  amount        Int
-  status        String   @default("pending")
-  method        String
-  reference     String   @unique
+  id            Int           @id @default(autoincrement())
+  orderId       Int           @unique
+  order         Order         @relation(fields: [orderId], references: [id])
+  amount        Decimal       @db.Decimal(10, 2)
+  status        PaymentStatus @default(Pending) 
+  method        Method
+  reference     String        @unique
   customerId    Int
-  customer      Customer     @relation(fields: [customerId], references: [id])
+  customer      Customer      @relation(fields: [customerId], references: [id])
   number        String?
   
-  updatedAt  DateTime @updatedAt
-  createdAt  DateTime @default(now())
+  updatedAt  DateTime         @updatedAt
+  createdAt  DateTime         @default(now())
 }
 
 model Address {
@@ -152,7 +198,7 @@ model Address {
   address    String
   city       String
   state      String
-  zip        String
+  pincode    String  
   area       String
   landmark   String
 
@@ -161,31 +207,23 @@ model Address {
 }
 
 model OrderItem {
-  id        Int      @id @default(autoincrement())
-  orderId   Int
-  order     Order    @relation(fields: [orderId], references: [id])
+  id          Int      @id @default(autoincrement())
+  orderId     Int
+  order       Order    @relation(fields: [orderId], references: [id])
   
-  productId Int
-  product   Product  @relation(fields: [productId], references: [id])
+
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
   
-  title         String
-  price         Int
-  originalPrice Int
-  description   String
-  quantity      Decimal  @db.Decimal(10, 2)
-  color         String   @default("[]")
-  images        String   @default("[]")
-  customerId        Int
-  customer          Customer     @relation(fields: [customerId], references: [id])
+  title           String
+  price           Decimal  @db.Decimal(10, 2)
+  originalPrice   Decimal  @db.Decimal(10, 2)
+  
+  availableMeters Decimal  @db.Decimal(10, 2)
+  displayOrder    Int      @default(0)
+  color           String   
+  images          String    
 
-  dimensions    String   @default("[]")
-  categoryId    Int      @default("[]")
-}
-
-model Category {
-    id       Int     @id @default(autoincrement())
-    name     String
-
-    slug     String   @unique
-    products Product[]
-}
+  dimensions    String   
+  categoryId    String
+} 
