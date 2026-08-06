@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { ImagePlus, Trash2, Star, UploadCloud } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useFormContext } from "react-hook-form";
 
 const images = [
   "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800",
@@ -11,27 +12,22 @@ const images = [
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=800",
 ];
 
-export default function ProductImages() {
+export default function ProductImages( {allImages, setAllImages}) {
   const inputRef = useRef(null);
-
 
   const [selectedImage, setSelectedImage] = useState(null);
   console.log(selectedImage);
 
 
-  const [allImages, setAllImages] = useState([]);
+  // const [allImages, setAllImages] = useState([]);
 
   const handleImageChange = (e) => {
     setSelectedImage(e);
-    // const file = e.target.files[0];
-    // const reader = new FileReader();
-
-    // reader.onload = (e) => {
-    //   setSelectedImage(e.target.result);
-    // };
-
-    // reader.readAsDataURL(file);
   };
+
+  const removeImage = (image) => {
+    setAllImages( prev => prev.filter((img) => img !== image));
+  }
 
   const addImage = (e) => {
     const files = e.target.files;
@@ -41,6 +37,13 @@ export default function ProductImages() {
     }
   }
 
+  useEffect(() => {
+    if(allImages.length > 0 ) {
+      allImages.some((img) => img === selectedImage) || setSelectedImage(allImages[0]);
+    } else {
+      setSelectedImage(null);
+    }
+  }, [allImages]);
 
   return (
     <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -100,15 +103,16 @@ export default function ProductImages() {
 
               {/* Overlay */}
 
-              <div className="absolute inset-0 flex items-end justify-between bg-black/0 p-2 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
-                <button className="rounded-lg bg-white p-1.5 shadow">
+              <button className="rounded-lg bg-white text-white p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700">
                   <Star size={14} />
                 </button>
 
-                <button className="rounded-lg bg-red-500 p-1.5 text-white shadow">
-                  <Trash2 size={14} />
-                </button>
-              </div>
+              <button 
+              onClick={() => removeImage(image)}
+              className="rounded-lg bg-red-500 p-1.5 text-white shadow absolute bottom-2 left-2 transition hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700">
+                <Trash2 size={14} />
+              </button>
+              
             </div>
           ))}
         </div>
@@ -116,7 +120,7 @@ export default function ProductImages() {
         {/* Upload */}
 
         <label 
-          onClick={inputRef?.current?.click}
+          onClick={() => inputRef?.current?.click()}
           className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-300 p-10 transition hover:border-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:border-white dark:hover:bg-zinc-950"
           >
           <UploadCloud

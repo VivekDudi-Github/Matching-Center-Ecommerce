@@ -5,12 +5,13 @@ import { useState } from "react";
 import {AnimatePresence, motion} from 'framer-motion';
 
 export default function PublishCard() {
+  
   const [collapsed, setCollapsed] = useState(false);
 
   const toggleCollapse = () => setCollapsed( prev => !prev);
   
   return (
-    <section className="sticky block bottom-4 rounded-2xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900">
+    <section className="sticky block bottom-4 rounded-2xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-stone-950">
       <div className="flex flex-col gap-6 p-6">
         {/* Summary */}
 
