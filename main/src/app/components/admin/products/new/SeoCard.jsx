@@ -1,8 +1,34 @@
 "use client";
 
 import { Globe, Link2, FileSearch } from "lucide-react";
+import { useFormContext, useWatch } from "react-hook-form";
 
 export default function SEOCard() {
+  const {register, control} = useFormContext();
+
+  const slug = useWatch({
+    name: "slug",
+    control,
+    defaultValue: ""
+  });
+  const description = useWatch({
+    name: "description",
+    control,
+    defaultValue: ""
+  });
+
+  const seo_title = useWatch({
+    name: "seoTitle",
+    control,
+    defaultValue: ""
+  });
+
+  const seo_description = useWatch({
+    name: "seoDescription",
+    control,
+    defaultValue: ""
+  });
+
   return (
     <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
@@ -39,7 +65,7 @@ export default function SEOCard() {
             </span>
           </div>
 
-          <input
+          <input {...register("seoTitle")}
             type="text"
             placeholder="Premium Cotton Fabric | Your Store"
             className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
@@ -59,7 +85,8 @@ export default function SEOCard() {
             </span>
           </div>
 
-          <textarea
+          <textarea 
+            {...register("seoDescription")}
             rows={4}
             placeholder="Premium quality cotton fabric available by the meter. Soft, durable, and ideal for shirts, dresses, and ethnic wear."
             className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
@@ -79,7 +106,9 @@ export default function SEOCard() {
             </div>
 
             <input
+              value={slug}
               type="text"
+              disabled 
               placeholder="premium-cotton-fabric"
               className="flex-1 bg-white px-4 py-3 outline-none dark:bg-zinc-950 dark:text-white"
             />
@@ -102,17 +131,18 @@ export default function SEOCard() {
 
           <div className="space-y-1">
             <p className="text-lg text-blue-700 dark:text-blue-400">
-              Premium Cotton Fabric | Your Store
+              {seo_title || "Your Product"} | Matching Center
             </p>
 
             <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-500">
               <Link2 size={14} />
-              https://yourstore.com/products/premium-cotton-fabric
+              https://matching-center.com/products/{slug}
             </div>
 
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Premium quality cotton fabric available by the meter. Soft,
-              breathable and suitable for shirts, kurtas, dresses and more.
+              {(seo_description.length && seo_description)  || 
+                (description.length && description) || 
+              "Premium quality cotton fabric available by the meter. Soft, breathable and suitable for shirts, kurtas, dresses and more."}
             </p>
           </div>
         </div>

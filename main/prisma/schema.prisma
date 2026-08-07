@@ -72,6 +72,7 @@ model Product {
   id              Int      @id @default(autoincrement())
   title           String
   slug            String   @unique
+  sku             String   @unique
   price           Decimal  @db.Decimal(10, 2)
   originalPrice   Decimal  @db.Decimal(10, 2)
   description     String
@@ -83,9 +84,10 @@ model Product {
   category        Category[]
   tags            Tag[]
   orders          OrderItem[]
+  wasahCare       String   @default("")
 
   featured        Boolean  @default(false)
-  dimensions      String   @default("[]")
+  width      String   @default("[]")
   rating          Float    @default(0)
   reviews         Int      @default(0)
 
@@ -96,6 +98,7 @@ model Product {
 model ProductVariant {
   id              Int      @id @default(autoincrement())    
   availableMeters Decimal  @db.Decimal(10, 2)
+  lowStockAlert   Decimal  @db.Decimal(10, 2)
 
   name            String
   hex             String?
@@ -120,7 +123,6 @@ model Category {
     id       Int     @id @default(autoincrement())
     name     String
 
-    slug     String   @unique
     products Product[]
 }
 

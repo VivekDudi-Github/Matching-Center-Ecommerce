@@ -28,29 +28,57 @@ export default function NewProductPage() {
 
         originalPrice: "",
 
-        description: "",
-
-        availableMeters: "",
-
         featured: false,
 
         isPublished: false,
+
+        description: "",
+
+        width : "",
+        
+        pattern: "",
 
         category: [],
 
         tags: [],
 
-        colors: [],
+        colors: [
+          {name: '', hex: '', hexText: '', availableMeters: '', lowStockAlert: '' }
+        ],
 
         images: [],
 
         seoTitle: "",
 
+        wasahCare: "",
+
         seoDescription: ""
     }
 });
-  const {setValue} = methods;
+  const {setValue, formState: { errors } } = methods;
   
+  const onSubmit = (data) => {
+    console.log("onSubmit", data);
+  }
+
+  const onErrors = (errors) => {
+    const keys = Object.keys(errors) ;
+    if(keys.length > 0) {
+      console.log(keys[0]);
+      return;
+    }
+  }
+
+  useEffect(() => {
+    const keys = Object.keys(errors) ;
+    console.log(keys, errors);
+    
+    console.log( keys > 0 ? 
+         keys[0]
+      : "No errors" 
+    ); 
+  } , [errors]);
+
   useEffect(() => {
     setValue("images", allImages);
   }, [allImages, setValue]);
@@ -58,7 +86,7 @@ export default function NewProductPage() {
   return (
     <div className="min-h-screen bg-zinc-100 pb-10 dark:bg-black">
       <FormProvider {...methods}>
-        <main className="mx-auto max-w-350 p-4">
+        <form onSubmit={methods.handleSubmit(onSubmit, onErrors)} className="mx-auto max-w-350 p-4">
         {/* Header */}
 
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -108,7 +136,7 @@ export default function NewProductPage() {
               <PublishCard />
             </div>
           </div>
-      </main> 
+        </form> 
       
       </FormProvider>
     </div>
