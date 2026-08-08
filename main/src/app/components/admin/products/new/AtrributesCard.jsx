@@ -69,29 +69,12 @@ export default function AttributesCard() {
               Width (Inches)
             </label>
 
-            <input {...register("width")}
+            <input {...register("width", {valueAsNumber : true})}
               type="number"
               placeholder="44"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
           </div>
-
-          {/* GSM */}
-
-          {/* 
-          <div>
-            <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              GSM
-            </label>
-
-            <input
-              type="number"
-              placeholder="180"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
-            />
-          </div> */}
-
-
 
           {/* Wash Care */}
 
@@ -101,6 +84,7 @@ export default function AttributesCard() {
             </label>
 
             <input
+              {...register("washCare")}
               type="text"
               placeholder="Machine Wash"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"

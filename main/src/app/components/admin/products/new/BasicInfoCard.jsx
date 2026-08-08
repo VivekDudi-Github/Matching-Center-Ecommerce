@@ -54,7 +54,7 @@ export default function BasicInfoCard() {
           </label>
 
           <input 
-            {...register("title", { required: "Product name is required" })}
+            {...register("title")}
             type="text"
             placeholder="Premium Cotton Fabric"
             className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
@@ -68,8 +68,8 @@ export default function BasicInfoCard() {
             Category
           </label>
 
-          <select required
-            {...register("category", { required: "Category is required" })}
+          <select 
+            {...register("category")}
           className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white">
             <option>Cotton</option>
             <option>Silk</option>
@@ -99,8 +99,8 @@ export default function BasicInfoCard() {
               Slug
             </label>
 
-            <input required
-              {...register("slug", { required: "slug is required" })} 
+            <input 
+              {...register("slug")} 
               placeholder="premium-cotton-fabric"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -154,11 +154,11 @@ export default function BasicInfoCard() {
 
             <div>
               <p className="font-medium text-zinc-900 dark:text-white">
-                Publishing Status
+                Publishing Now
               </p>
 
               <p className="text-sm text-zinc-500">
-                Select this option to make the product visible to customers on the website.
+                Save as draft or publish the product to make it live.
               </p>
             </div>
           </div>

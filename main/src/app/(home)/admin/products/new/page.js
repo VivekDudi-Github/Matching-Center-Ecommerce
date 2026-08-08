@@ -14,12 +14,14 @@ import PublishCard from "@/app/components/admin/products/new/PublishCard";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {toast} from "react-toastify";
+import { newProductFormSchema } from "@/app/lib/validation/product.schema";
 
 export default function NewProductPage() {
   const [allImages, setAllImages] = useState([]);
   const methods = useForm({
-    // resolver: zodResolver(productSchema),
-
+    resolver: zodResolver(newProductFormSchema),
+    shouldFocusError: true,
     defaultValues: {
         title: "",
         slug: "",
@@ -50,7 +52,7 @@ export default function NewProductPage() {
 
         seoTitle: "",
 
-        wasahCare: "",
+        washCare: "",
 
         seoDescription: ""
     }
@@ -64,20 +66,18 @@ export default function NewProductPage() {
   const onErrors = (errors) => {
     const keys = Object.keys(errors) ;
     if(keys.length > 0) {
-      console.log(keys[0]);
+      console.log(errors[keys[0]]);
+      const isArray = Array.isArray(errors[keys[0]]);
+      if(isArray) {
+        toast.error(errors[keys[0]][0].message || "Please fill all required color fields");  
+      } else if(errors[keys[0]].root) {
+        toast.error(errors[keys[0]].root.message || "Please fill all required fields");  
+      } else {
+        toast.error(errors[keys[0]].message || "Please fill all required fields");
+      }
       return;
     }
   }
-
-  useEffect(() => {
-    const keys = Object.keys(errors) ;
-    console.log(keys, errors);
-    
-    console.log( keys > 0 ? 
-         keys[0]
-      : "No errors" 
-    ); 
-  } , [errors]);
 
   useEffect(() => {
     setValue("images", allImages);

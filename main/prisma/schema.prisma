@@ -87,9 +87,13 @@ model Product {
   wasahCare       String   @default("")
 
   featured        Boolean  @default(false)
-  width      String   @default("[]")
+  width           String   @default("[]")
+  washCare        String   @default("")
   rating          Float    @default(0)
   reviews         Int      @default(0)
+
+  seoTitle        String   @default("")
+  seoDescription  String   @default("")
 
   updatedAt       DateTime  @updatedAt
   createdAt       DateTime  @default(now())

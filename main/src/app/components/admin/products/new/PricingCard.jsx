@@ -123,7 +123,7 @@ export default function PricingCard() {
               Unit
             </label>
 
-            <input
+            <input disabled
               value="Per Meter"
               readOnly
               className="w-full rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-3 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"

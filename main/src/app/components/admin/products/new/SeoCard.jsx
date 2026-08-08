@@ -6,6 +6,12 @@ import { useFormContext, useWatch } from "react-hook-form";
 export default function SEOCard() {
   const {register, control} = useFormContext();
 
+  const product_Title = useWatch({
+    name: "title",
+    control,
+    defaultValue: ""
+  });
+
   const slug = useWatch({
     name: "slug",
     control,
@@ -131,7 +137,7 @@ export default function SEOCard() {
 
           <div className="space-y-1">
             <p className="text-lg text-blue-700 dark:text-blue-400">
-              {seo_title || "Your Product"} | Matching Center
+              {seo_title || product_Title || "Your Product"} | Matching Center
             </p>
 
             <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-500">

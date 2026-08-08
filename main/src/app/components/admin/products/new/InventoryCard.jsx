@@ -68,39 +68,17 @@ export default function InventoryCard({isNewProduct = true}) {
           </div>
             
           <div className="grid gap-5 md:grid-cols-2">
-            {/* <div>
+            <div>
               <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                 Color Name
               </label>
 
               <input 
-                {...register(`colors.${index}.name` , {required: "Color name is required"})}
+                {...register(`colors.${index}.name` )}
                 placeholder="Navy Blue"
                 className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
               />
             </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                Hex Color
-              </label>
-
-              <div className="flex gap-3">
-                <input 
-                  {...register(`colors.${index}.hex` , {required: "Hex color is required"})}
-                  type="color"
-                  className="h-12 w-14 rounded-lg border"
-                />
-
-                <input
-                  {...register(`colors.${index}.hexText` , {required: "Available stock is required"})}
-                  type="text"
-                  required
-                  placeholder="#1E3A8A"
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
-                />
-              </div>
-            </div> */}
 
             <ColorPickerRow index={index} />
 
@@ -110,9 +88,8 @@ export default function InventoryCard({isNewProduct = true}) {
               </label>
 
               <input
-                {...register(`colors.${index}.availableMeters` , {required: "Available stock is required"})}
+                {...register(`colors.${index}.availableMeters`, {valueAsNumber : true})}
                 type="number"
-                required
                 step="0.1"
                 placeholder="125.50"
                 className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
@@ -127,7 +104,7 @@ export default function InventoryCard({isNewProduct = true}) {
               </label>
 
               <input
-                {...register(`colors.${index}.lowStockAlert` , {required: "Low stock alert is required"})}
+                {...register(`colors.${index}.lowStockAlert`, {valueAsNumber: true} )}
                 type="Number"
                 step="0.1"
                 placeholder="20"

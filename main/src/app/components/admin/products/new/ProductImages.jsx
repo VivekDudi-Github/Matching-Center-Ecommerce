@@ -61,7 +61,7 @@ export default function ProductImages( {allImages, setAllImages}) {
         </div>
 
         <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium dark:bg-zinc-800 dark:text-zinc-300">
-          {images.length} Images
+          {allImages.length} Images
         </span>
       </div>
 
@@ -140,6 +140,7 @@ export default function ProductImages( {allImages, setAllImages}) {
             ref={inputRef}
             onChange={addImage}
             type="file"
+            accept="image/*"
             multiple
             hidden
 

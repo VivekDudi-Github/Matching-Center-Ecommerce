@@ -60,7 +60,7 @@ export default function PublishCard() {
               className="overflow-hidden"
             >
               <div className="flex flex-col gap-6">
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-3 grid-cols-2">
                 <div className="rounded-xl border border-zinc-400/60 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950">
                   <p className="text-sm text-zinc-500">
                     Status
@@ -111,15 +111,16 @@ export default function PublishCard() {
                     Delete
                   </button>
 
-                  <button type="button"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300 px-5 py-3 font-medium transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+                  <button type="button" disabled
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border text-gray-700 cursor-not-allowed border-zinc-300 px-5 py-3 font-medium transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800 "
                   >
                     <Eye size={18} />
                     Preview
                   </button>
 
                   <button 
-                    type="submit"
+                    type="submit" 
+                    onClick={() => setCollapsed(true)}
                     className="inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-900 px-6 py-3 font-medium text-white transition hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-400"
                   >
                     <Save size={18} />
@@ -131,10 +132,6 @@ export default function PublishCard() {
           )}
         </AnimatePresence>
           
-
-        {/* Buttons */}
-
-
       </div>
     </section>
   );
