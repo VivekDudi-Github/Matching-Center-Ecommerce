@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { ImagePlus, Trash2, Star, UploadCloud } from "lucide-react";
+import { ImagePlus, Trash2, Star, UploadCloud, CircleQuestionMarkIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { toast } from "react-toastify";
 
 const images = [
   "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800",
@@ -12,11 +13,11 @@ const images = [
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=800",
 ];
 
-export default function ProductImages( {allImages, setAllImages}) {
+export default function ProductImages( {allImages = [], setAllImages}) {
   const inputRef = useRef(null);
 
   const [selectedImage, setSelectedImage] = useState(null);
-  console.log(selectedImage);
+  const [displayOrder, setDisplayOrder] = useState(1);
 
 
   // const [allImages, setAllImages] = useState([]);
@@ -29,17 +30,37 @@ export default function ProductImages( {allImages, setAllImages}) {
     setAllImages( prev => prev.filter((img) => img !== image));
   }
 
+  const changeOrder = (newOrder) => {
+    if(allImages.length < 2) return;
+
+    const image = allImages[selectedImage];
+    setAllImages(prev => {
+      const newImages = [...prev];
+      const index = newImages.findIndex(img => img.displayOrder === image.displayOrder);
+      newImages.splice(index, 1);
+      newImages.splice(newOrder - 1, 0, image);
+      return newImages;
+    });
+  }
+
   const addImage = (e) => {
     const files = e.target.files;
 
     if (files.length > 0) {
-      setAllImages([...allImages, ...files]);
+      setAllImages(prev => {
+        const newImages = [...prev, ...files];
+        return newImages.map((image, index) => ({
+          file: image,
+          displayOrder: index + 1,
+          index: index,
+        }));
+      });
     }
-  }
+  };
 
   useEffect(() => {
     if(allImages.length > 0 ) {
-      allImages.some((img) => img === selectedImage) || setSelectedImage(allImages[0]);
+      allImages.some((img) => img?.displayOrder === selectedImage) || setSelectedImage(1);
     } else {
       setSelectedImage(null);
     }
@@ -65,13 +86,13 @@ export default function ProductImages( {allImages, setAllImages}) {
         </span>
       </div>
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 sm:p-6 p-2">
         {/* Main Preview */}
 
         <div className="relative aspect-square overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-950">
           {selectedImage ? (
             <Image
-            src={URL.createObjectURL(selectedImage)}
+            src={URL.createObjectURL(allImages.filter(img => img.displayOrder === selectedImage)[0].file)}
             alt="Product"
             fill
             className="object-cover"
@@ -81,31 +102,31 @@ export default function ProductImages( {allImages, setAllImages}) {
           )}
 
           {selectedImage && <div className="absolute right-4 top-4 rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-            Main Image
+            Current Image
           </div>}
         </div>
 
         {/* Thumbnails */}
 
-        <div className="grid grid-cols-4 gap-3">
-          {allImages.map((image, index) => (
+        <div className="grid md:grid-cols-3 grid-cols-3 sm:grid-cols-3 gap-3">
+          {allImages.sort((a, b) => a.displayOrder - b.displayOrder).map((image, index) => (
             <div
               key={index}
-              className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700"
+              className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 dark:border-zinc-500"
             >
               <Image
-                src={URL.createObjectURL(image)}
+                src={URL.createObjectURL(image.file)}
                 alt=""
                 fill
-                onClick={() => setSelectedImage(image)}
+                onClick={() => setSelectedImage(image.displayOrder)}
                 className="object-cover transition duration-300 group-hover:scale-105"
               />
 
               {/* Overlay */}
 
-              <button className="rounded-lg bg-white text-white p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700">
+              {/* <button className="rounded-lg bg-white text-white p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700">
                   <Star size={14} />
-                </button>
+              </button> */}
 
               <button 
               onClick={() => removeImage(image)}
@@ -116,6 +137,32 @@ export default function ProductImages( {allImages, setAllImages}) {
             </div>
           ))}
         </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <label className="mb-2 col-span-2 text-lg font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+            Select position
+            <CircleQuestionMarkIcon size={14} className="text-zinc-500 dark:text-zinc-400" 
+              onClick={() => toast.info("Selected Image will replace the image with entered position")}
+            />
+          </label>
+
+          <input 
+            onClick={(e) => setDisplayOrder(e.target.value)}
+            type="number"
+            min={1}
+            max={allImages.length}
+            placeholder="1"
+            className="w-full rounded-xl border border-zinc-500 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
+          />
+          <button type="button"
+            disabled={allImages.length < 2}
+            onClick={() => changeOrder(displayOrder)}
+            className="rounded-lg bg-zinc-900 px-6 py-1 font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 disabled:opacity-40 dark:hover:bg-zinc-200"
+          >
+            Change Order
+          </button>
+        </div>
+
 
         {/* Upload */}
 

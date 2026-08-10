@@ -16,9 +16,18 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
+import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
 
 export default function NewProductPage() {
+  const [signature, setSignature] = useState({
+    signature: null ,
+    timestamp: null
+  });
   const [allImages, setAllImages] = useState([]);
+  
+  console.log("allImages", allImages);
+  
+  
   const methods = useForm({
     resolver: zodResolver(newProductFormSchema),
     shouldFocusError: true,
@@ -40,7 +49,7 @@ export default function NewProductPage() {
         
         pattern: "",
 
-        category: [],
+        category: '`',
 
         tags: [],
 
@@ -59,8 +68,37 @@ export default function NewProductPage() {
 });
   const {setValue, formState: { errors } } = methods;
   
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("onSubmit", data);
+    try {
+      return;
+    const product = await createNewProduct(data);
+     const { signature, timestamp } = await getCloudinarySignature();
+     if(!signature || !timestamp) { 
+      toast.error("Somethings went wrong, try agian");
+      return;
+     }
+
+     const promises = allImages.map(image => {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload(image.file, {})
+        cloudinary.uploader.upload(image.file, (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        });
+      });
+     })
+
+     const images = await Promise.all(promises);
+     
+ 
+
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
+    }
   }
 
   const onErrors = (errors) => {
@@ -86,7 +124,7 @@ export default function NewProductPage() {
   return (
     <div className="min-h-screen bg-zinc-100 pb-10 dark:bg-black">
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit, onErrors)} className="mx-auto max-w-350 p-4">
+        <form onSubmit={methods.handleSubmit(onSubmit, onErrors)} className="mx-auto max-w-350 p-1 sm:p-4">
         {/* Header */}
 
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

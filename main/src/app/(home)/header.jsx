@@ -41,16 +41,16 @@ function Header() {
   return (
     <motion.header  
     style={{ backgroundColor: backgroundColor }} 
-    className="w-full px-6 flex items-center fixed top-0 left-0 justify-between h-14 bg-gradient-to-b from-black/70 via-black/50 to-transparent duration-200 z-50 " 
+    className="w-full sm:px-6 px-3 flex items-center fixed top-0 left-0 justify-between h-14 bg-linear-to-b from-black/70 via-black/50 to-transparent duration-200 z-50 " 
     >
-      <Link href={'/'} className="inline-block font-billabong md:text-4xl text-4xl ">  
-        <span className=' text-white'>     
+      <Link href={'/'} className="inline-block font-billabong md:text-4xl text-3xl ">  
+        <span className=' text-white duration-200'>     
           Matching Center 
         </span>
       </Link>
 
       <div className="flex items-center  ">
-      <div className='mr-4'>
+      <div className='sm:mr-4  '>
         {/* Menu Items */}
         <AnimatePresence>
           {isDesktop && (
@@ -72,17 +72,17 @@ function Header() {
 
         <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
           {theme === 'dark' ? 
-            <MoonStarIcon className="size-6 md:size-6 fill-white mr-4 text-white"  strokeWidth={1} /> 
+            <MoonStarIcon className="size-5 sm:size-6 fill-white mr-4 text-white"  strokeWidth={1} />  
             : 
-            <SunIcon className="size-6 md:size-6 fill-white mr-4 text-white"  strokeWidth={1} />
+            <SunIcon className=" size-5 sm:size-6 fill-white mr-4 text-white"  strokeWidth={1} />
           }
         </button>
 
         <Link href={'/admin'} className="inline-block">
-          <User2Icon className="size-6 md:size-6 fill-white mr-4"  strokeWidth={0} />
+          <User2Icon className="size-5 sm:size-6 fill-white mr-4"  strokeWidth={0} />
         </Link>
         
-        <ShoppingBagIcon className="size-6 md:size-6  text-white mr-4 md:mr-0 duration-500" 
+        <ShoppingBagIcon className="size-5 sm:size-6  text-white mr-4 md:mr-0 duration-500" 
         onClick={() => setIsCartOpen(prev => prev+1)}
         />
         
@@ -97,7 +97,7 @@ function Header() {
             transition={{ duration: 0.4, ease: 'easeInOut' }}
             onClick={ToggleMenuList}
           >
-            <MenuIcon className="size-6 md:size-6 text-white" strokeWidth={3} />
+            <MenuIcon className="size-5 sm:size-6 text-white" strokeWidth={3} />
           </motion.div>
         )}
         </AnimatePresence>
