@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
 import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
+import { createNewProductImages } from "@/app/lib/actions/newProduct.action";
 
 export default function NewProductPage() {
   const [signature, setSignature] = useState({
@@ -24,7 +25,9 @@ export default function NewProductPage() {
     timestamp: null
   });
   const [allImages, setAllImages] = useState([]);
-  
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [productId, setProuctId] = useState(null);
+
   console.log("allImages", allImages);
   
   
@@ -71,31 +74,43 @@ export default function NewProductPage() {
   const onSubmit = async (data) => {
     console.log("onSubmit", data);
     try {
-      return;
-    const product = await createNewProduct(data);
-     const { signature, timestamp } = await getCloudinarySignature();
-     if(!signature || !timestamp) { 
-      toast.error("Somethings went wrong, try agian");
-      return;
-     }
+      
+      if(!productId){
+        const product = await createNewProduct(data);
+        setProuctId(product.id);
+      }
 
-     const promises = allImages.map(image => {
-      return new Promise((resolve, reject) => {
-        cloudinary.uploader.upload(image.file, {})
-        cloudinary.uploader.upload(image.file, (error, result) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
+      const { signature, timestamp } = await getCloudinarySignature();
+      if(!signature || !timestamp) { 
+        toast.error("Somethings went wrong, try agian");
+        return;
+      }
+      
+      for (let i = 0; i < allImages.length; i++) {
+        const element = allImages[i];
+        try {
+          const isUploaded = uploadedImages.find(img => img.file.name === element.file.name) ;
+          if(isUploaded?.isJoined) continue;
+
+
+          let uploadedImage = null;
+          if( !isUploaded ) {
+            // uploadedImage = await uploadToCloudinary(element.file, signature, timestamp);
+            uploadedImage = true ;
+            setUploadedImages(prev => [...prev, {...element, uploadData: uploadedImage, isJoined : false}]);
           }
-        });
-      });
-     })
 
-     const images = await Promise.all(promises);
-     
- 
+          // await createNewProductImages(productId, {...uploadedImage, displayOrder: element.displayOrder});
+          setUploadedImages((prev) => {
+            const newImages = prev.filter(img => img.file.name !== element.file.name);
+            return [...newImages, {...element, uploadData: uploadedImage, isJoined : true}];
+          })
 
+        } catch (error) {
+          toast.error(error?.message || "Something went wrong");
+        }
+      }
+      
     } catch (error) {
       toast.error(error?.message || "Something went wrong");
     }
@@ -153,7 +168,7 @@ export default function NewProductPage() {
             {/* Left */}
 
             <div className="space-y-6 lg:col-span-5">
-              <ProductImages setAllImages={setAllImages} allImages={allImages} />         
+              <ProductImages setAllImages={setAllImages} allImages={allImages} uploadedImages={uploadedImages} />         
             </div>
 
             {/* Right */}

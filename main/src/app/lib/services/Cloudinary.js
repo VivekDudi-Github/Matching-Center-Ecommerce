@@ -14,6 +14,7 @@ export async function getCloudinarySignature() {
   const paramsToSign = {
     timestamp: timestamp,
     folder: 'ecommerce', 
+    upload_preset: "Matching Center Upload"
   };
 
   // Generate the cryptographic hash

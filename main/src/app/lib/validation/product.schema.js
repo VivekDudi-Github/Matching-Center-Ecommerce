@@ -47,7 +47,12 @@ export const newProductFormSchema = z.object({
 
   pattern: z.string().trim().min(1, "Pattern is required"),
 
-  images: z.array(z.file()).min(1, "At least one image is required"),
+  images: z.array(
+    z.object({
+      file: z.file().mime("image/jpeg", "image/png", "image/webp"),
+      displayOrder: z.number().positive(),
+    })
+  ).min(1, "At least one image is required"),
 
   width: z.coerce.number('Width is required').positive("Width must be greater than 0"),
 

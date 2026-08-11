@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ImagePlus, Trash2, Star, UploadCloud, CircleQuestionMarkIcon } from "lucide-react";
+import { ImagePlus, Trash2, Star, UploadCloud, CircleQuestionMarkIcon, CheckCircleIcon, CloudUpload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -13,46 +13,57 @@ const images = [
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=800",
 ];
 
-export default function ProductImages( {allImages = [], setAllImages}) {
+export default function ProductImages( {allImages = [], setAllImages, uploadedImages = []}) {
   const inputRef = useRef(null);
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [displayOrder, setDisplayOrder] = useState(1);
 
 
-  // const [allImages, setAllImages] = useState([]);
+
 
   const handleImageChange = (e) => {
     setSelectedImage(e);
   };
 
   const removeImage = (image) => {
-    setAllImages( prev => prev.filter((img) => img !== image));
-  }
-
-  const changeOrder = (newOrder) => {
-    if(allImages.length < 2) return;
-
-    const image = allImages[selectedImage];
-    setAllImages(prev => {
-      const newImages = [...prev];
-      const index = newImages.findIndex(img => img.displayOrder === image.displayOrder);
-      newImages.splice(index, 1);
-      newImages.splice(newOrder - 1, 0, image);
-      return newImages;
+    setAllImages( prev => {
+      const arr = prev.filter((img, index) => index !== image.displayOrder);
+      return arr.map((img, index) => ({
+        ...img,
+        displayOrder: index,
+      }));
     });
   }
 
+  // const changeOrder = (newOrder) => {
+  //   if(allImages.length < 2) return;
+
+  //   const image = allImages[selectedImage];
+  //   setAllImages(prev => {
+  //     const newImages = [...prev];
+  //     const index = newImages.findIndex(img => img.displayOrder === image.displayOrder);
+  //     newImages.splice(index, 1);
+  //     newImages.splice(newOrder - 1, 0, image);
+  //     return newImages;
+  //   });
+  // }
+ console.log(selectedImage);
+ 
   const addImage = (e) => {
-    const files = e.target.files;
+    let files = e.target.files || [];
+    
+    files = [...files].filter(img => {
+      const isBigger = img.size > 1024 * 1024  ;
+      if(isBigger){ toast.error("Images must be less than 10 MB, file name: " + img.name);}
+      return !isBigger;
+    });
 
     if (files.length > 0) {
       setAllImages(prev => {
         const newImages = [...prev, ...files];
         return newImages.map((image, index) => ({
           file: image,
-          displayOrder: index + 1,
-          index: index,
+          displayOrder: index,
         }));
       });
     }
@@ -60,7 +71,7 @@ export default function ProductImages( {allImages = [], setAllImages}) {
 
   useEffect(() => {
     if(allImages.length > 0 ) {
-      allImages.some((img) => img?.displayOrder === selectedImage) || setSelectedImage(1);
+      allImages.some((img) => img === selectedImage) || setSelectedImage(allImages[0]);
     } else {
       setSelectedImage(null);
     }
@@ -90,9 +101,9 @@ export default function ProductImages( {allImages = [], setAllImages}) {
         {/* Main Preview */}
 
         <div className="relative aspect-square overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-950">
-          {selectedImage ? (
+          {selectedImage && allImages.length ? ( 
             <Image
-            src={URL.createObjectURL(allImages.filter(img => img.displayOrder === selectedImage)[0].file)}
+            src={selectedImage.file ? URL.createObjectURL(selectedImage.file) : "abc"}
             alt="Product"
             fill
             className="object-cover"
@@ -109,7 +120,7 @@ export default function ProductImages( {allImages = [], setAllImages}) {
         {/* Thumbnails */}
 
         <div className="grid md:grid-cols-3 grid-cols-3 sm:grid-cols-3 gap-3">
-          {allImages.sort((a, b) => a.displayOrder - b.displayOrder).map((image, index) => (
+          {allImages.map((image, index) => (
             <div
               key={index}
               className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 dark:border-zinc-500"
@@ -118,17 +129,19 @@ export default function ProductImages( {allImages = [], setAllImages}) {
                 src={URL.createObjectURL(image.file)}
                 alt=""
                 fill
-                onClick={() => setSelectedImage(image.displayOrder)}
+                onClick={() => setSelectedImage(image)}
                 className="object-cover transition duration-300 group-hover:scale-105"
               />
 
               {/* Overlay */}
 
-              {/* <button className="rounded-lg bg-white text-white p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700">
-                  <Star size={14} />
-              </button> */}
+              {uploadedImages.some(img => img.file.name === image.file.name) && (
+                <span className="rounded-lg bg-white text-white p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100 dark:bg-black dark:hover:bg-zinc-700">
+                    <CheckCircleIcon size={14}  />
+                </span>
+              )}
 
-              <button 
+              <button type="button"
               onClick={() => removeImage(image)}
               className="rounded-lg bg-red-500 p-1.5 text-white shadow absolute bottom-2 left-2 transition hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700">
                 <Trash2 size={14} />
@@ -137,32 +150,6 @@ export default function ProductImages( {allImages = [], setAllImages}) {
             </div>
           ))}
         </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <label className="mb-2 col-span-2 text-lg font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
-            Select position
-            <CircleQuestionMarkIcon size={14} className="text-zinc-500 dark:text-zinc-400" 
-              onClick={() => toast.info("Selected Image will replace the image with entered position")}
-            />
-          </label>
-
-          <input 
-            onClick={(e) => setDisplayOrder(e.target.value)}
-            type="number"
-            min={1}
-            max={allImages.length}
-            placeholder="1"
-            className="w-full rounded-xl border border-zinc-500 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
-          />
-          <button type="button"
-            disabled={allImages.length < 2}
-            onClick={() => changeOrder(displayOrder)}
-            className="rounded-lg bg-zinc-900 px-6 py-1 font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 disabled:opacity-40 dark:hover:bg-zinc-200"
-          >
-            Change Order
-          </button>
-        </div>
-
 
         {/* Upload */}
 
@@ -187,12 +174,47 @@ export default function ProductImages( {allImages = [], setAllImages}) {
             ref={inputRef}
             onChange={addImage}
             type="file"
-            accept="image/*"
+            accept="image/jpeg, image/png, image/webp"
             multiple
             hidden
 
           />
         </label>
+        
+        {uploadedImages.length > 0 && 
+          <div className="">
+            <div className="flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800 p-6">
+              <div className="rounded-xl bg-zinc-100 dark:bg-zinc-800 p-2">
+                <CloudUpload className="h-5 w-5" />
+              </div>
+
+              <div>
+                <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                  Uploaded Images
+                </h2>
+                <p className="text-sm text-zinc-500">
+                  Images that have been uploaded.
+                </p>
+              </div>
+            </div>
+            <div className="grid md:grid-cols-3 grid-cols-3 sm:grid-cols-3 gap-3">
+              {uploadedImages.map((image, index) => (
+                  <div key={index} className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 dark:border-zinc-500">
+                    <Image
+                      src={URL.createObjectURL(image.file)}
+                      alt=""
+                      fill
+                      className="object-cover"
+                    />
+                    <p className="font-medium text-zinc-900 dark:text-white">
+                      {image.file.name}
+                    </p>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        }
 
         {/* Tips */}
 
@@ -209,7 +231,8 @@ export default function ProductImages( {allImages = [], setAllImages}) {
               </p>
 
               <ul className="list-disc space-y-1 pl-5 text-blue-600 dark:text-blue-400">
-                <li>Upload at least one product image.</li>
+                <li>Upload at least one product image under 10 MB.</li>
+                <li>Images will remain in the order you see now.</li>
                 <li>First image becomes the default customer image.</li>
                 <li>Recommended size: 1200 × 1200 px.</li>
                 <li>Use clear, well-lit fabric photos.</li>

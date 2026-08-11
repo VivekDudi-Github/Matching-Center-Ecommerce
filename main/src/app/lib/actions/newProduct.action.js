@@ -79,19 +79,17 @@ export async function createNewProduct(data) {
   return product;
 }
 
-export async function createNewProductImages(productId, images) {
+export async function createNewProductImages(productId, image) {
   try {
-    await prisma.productImages.createMany({
-      data: images.map((image) => {
-        return {
-          productId,
-          publicId: image.publicId,
-          url: image.url,
-          displayOrder: image.displayOrder,
-        };
-      }),
+    await prisma.productImages.create({
+      data: {
+        publicId: image.publicId,
+        url: image.url,
+        displayOrder: image.displayOrder,
+        productId,
+      }   
     });
-      return images;
+      return image;
   } catch (error) {
     throw new Error(error);
   }
