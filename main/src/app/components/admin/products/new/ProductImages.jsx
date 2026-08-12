@@ -53,7 +53,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
     let files = e.target.files || [];
     
     files = [...files].filter(img => {
-      const isBigger = img.size > 1024 * 1024  ;
+      const isBigger = img.size > 1024 * 1024 * 8 ;
       if(isBigger){ toast.error("Images must be less than 10 MB, file name: " + img.name);}
       return !isBigger;
     });
@@ -167,7 +167,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
           </p>
 
           <p className="mt-1 text-sm text-zinc-500">
-            PNG, JPG, WEBP up to 10 MB
+            PNG, JPG, WEBP up to 8 MB
           </p>
 
           <input

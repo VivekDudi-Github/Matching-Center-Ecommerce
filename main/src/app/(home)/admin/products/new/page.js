@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
 import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
-import { createNewProductImages } from "@/app/lib/actions/newProduct.action";
+import { createNewProduct, createNewProductImages } from "@/app/lib/actions/newProduct.action";
 
 export default function NewProductPage() {
   const [signature, setSignature] = useState({
@@ -29,7 +29,7 @@ export default function NewProductPage() {
   const [productId, setProuctId] = useState(null);
 
   console.log("allImages", allImages);
-  
+  console.log("uploadedImages", uploadedImages);  
   
   const methods = useForm({
     resolver: zodResolver(newProductFormSchema),
@@ -37,6 +37,7 @@ export default function NewProductPage() {
     defaultValues: {
         title: "",
         slug: "",
+        sku: "",
 
         price: "",
 
@@ -72,11 +73,12 @@ export default function NewProductPage() {
   const {setValue, formState: { errors } } = methods;
   
   const onSubmit = async (data) => {
+    
     console.log("onSubmit", data);
     try {
-      
+      if(allImages.length < 1 ) throw new Error("Please upload atleast one image");
       if(!productId){
-        const product = await createNewProduct(data);
+        const product = await createNewProduct({...data, images: []});
         setProuctId(product.id);
       }
 
@@ -103,23 +105,26 @@ export default function NewProductPage() {
           // await createNewProductImages(productId, {...uploadedImage, displayOrder: element.displayOrder});
           setUploadedImages((prev) => {
             const newImages = prev.filter(img => img.file.name !== element.file.name);
-            return [...newImages, {...element, uploadData: uploadedImage, isJoined : true}];
+            return [...newImages, {...element, uploadData: uploadedImage, isJoined : true}];  
           })
 
         } catch (error) {
+          console.log("error", error);
           toast.error(error?.message || "Something went wrong");
         }
       }
       
     } catch (error) {
+      console.log("error", error);      
       toast.error(error?.message || "Something went wrong");
     }
   }
 
   const onErrors = (errors) => {
     const keys = Object.keys(errors) ;
+    console.log("onErrors", errors);
+    
     if(keys.length > 0) {
-      console.log(errors[keys[0]]);
       const isArray = Array.isArray(errors[keys[0]]);
       if(isArray) {
         toast.error(errors[keys[0]][0].message || "Please fill all required color fields");  

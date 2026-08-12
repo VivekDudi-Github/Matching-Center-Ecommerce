@@ -1,13 +1,5 @@
 'use client';
 
-// import { v2 as cloudinary } from 'cloudinary';
-
-// cloudinary.config({
-//   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-//   api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-// });
-
-
 const uploadToCloudinary = async (file, signature, timestamp) => {
   try {
     const currentTimestamp = Math.round(new Date().getTime() / 1000);
@@ -29,7 +21,7 @@ const uploadToCloudinary = async (file, signature, timestamp) => {
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ;
   
     const cloudinaryResponse = await fetch(
-      `https://cloudinary.com${cloudName}/image/upload`, {
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method : "POST", 
         body: formData
       }

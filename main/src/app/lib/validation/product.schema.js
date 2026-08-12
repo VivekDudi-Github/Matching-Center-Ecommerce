@@ -23,7 +23,7 @@ export const newProductFormSchema = z.object({
   featured: z.boolean(),
 
   isPublished: z.boolean(),
-
+  sku: z.string().trim().min(1, "SKU is required"),
 
   colors: z
     .array(
@@ -49,10 +49,10 @@ export const newProductFormSchema = z.object({
 
   images: z.array(
     z.object({
-      file: z.file().mime("image/jpeg", "image/png", "image/webp"),
-      displayOrder: z.number().positive(),
+      file: z.file().mime(["image/jpeg", "image/png", "image/webp"]),
+      displayOrder: z.number().min(0, "Display order must be greater than 0"),
     })
-  ).min(1, "At least one image is required"),
+  ).optional(),
 
   width: z.coerce.number('Width is required').positive("Width must be greater than 0"),
 

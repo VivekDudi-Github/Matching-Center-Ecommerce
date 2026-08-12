@@ -88,7 +88,7 @@ model Product {
   category        Category @relation(fields: [categoryId], references: [id])
 
   featured        Boolean  @default(false)
-  width           String   @default("[]")
+  width           Int      @default(0)
   washCare        String   @default("")
   rating          Float    @default(0)
   reviews         Int      @default(0)
@@ -107,7 +107,7 @@ model ProductVariant {
   lowStockAlert   Decimal  @db.Decimal(10, 2)
 
   name            String
-  hex             String?
+  hex             String   @unique
   productId       Int
 
   product         Product  @relation(fields : [productId] , references: [id]) 
@@ -132,7 +132,7 @@ model ProductImages {
 
 model Category {
     id       Int     @id @default(autoincrement())
-    name     String
+    name     String  @unique
 
     products Product[]
 }
@@ -140,8 +140,8 @@ model Category {
 model Tag {
   id       Int @id @default(autoincrement())
 
-  name     String
-  slug     String @unique
+  name     String  @unique
+  slug     String? @unique
 
   products Product[]
 }

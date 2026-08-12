@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/app/lib/prisma';  
+import { prisma } from '@/app/lib/prisma';
 import {newProductFormSchema} from '@/app/lib/validation/product.schema';
 
 
@@ -12,11 +12,7 @@ export async function createNewProduct(data) {
 
 
   try {  
-    const { title, slug, price, originalPrice, pattern,featured, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = parsedData.data;
-  
-    // create the product
-    //get the signatures for uploiad images // upload to cloudinary
-    //create the product images rows.
+    const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = parsedData.data;
 
     const product = await prisma.product.create({
       data: {
@@ -25,9 +21,10 @@ export async function createNewProduct(data) {
         price,
         originalPrice,
         featured,
-        isPublished: false,
+        isPublished,
         description,
-        width,
+        width ,
+        sku,
         pattern,
         category: {
           connectOrCreate: {
@@ -66,9 +63,9 @@ export async function createNewProduct(data) {
             };
           })
         } ,
-        seoTitle,
+        seoTitle: seoTitle ?? title,
         washCare,
-        seoDescription,
+        seoDescription : seoDescription ?? description,
       },
     });
     return product;
