@@ -117,7 +117,7 @@ model ProductVariant {
 
 model ProductImages {
   id            Int              @id @default(autoincrement())
-  publicId      String
+  publicId      String           @unique
   url           String
   productId     Int
   displayOrder  Int              @default(0)

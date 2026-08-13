@@ -9,11 +9,14 @@ export async function createNewProduct(data) {
   if (!parsedData.success) {
     throw new Error(parsedData?.error  || "Something went wrong");
   }
-
-
   try {  
     const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = parsedData.data;
+    const dbUrl = new URL(process.env.DATABASE_URL_NON_POOLED);
 
+    console.log("DB HOST:", dbUrl.hostname);
+    console.log("DB PORT:", dbUrl.port);
+    console.log("DB DATABASE:", dbUrl.pathname);
+    
     const product = await prisma.product.create({
       data: {
         title,
@@ -52,13 +55,13 @@ export async function createNewProduct(data) {
           connectOrCreate: colors.map((color) => {
             return {
               where: {
-                name: color.name,
+                hex: color.hex,
               },
               create: {
                 name: color.name,
                 hex: color.hex,
                 availableMeters: color.availableMeters,
-                lowStockAlert: color.lowStockAlert,
+                lowStockAlert: color.lowStockAlert, 
               },
             };
           })
@@ -67,13 +70,44 @@ export async function createNewProduct(data) {
         washCare,
         seoDescription : seoDescription ?? description,
       },
+      include: {
+        color: true,
+        tags: true,
+        category: true,
+      }
     });
-    return product;
-  } catch (error) {
+    console.log("PRODUCT:", {
+      ...product, 
+      originalPrice: product.originalPrice.toNumber(),
+      price: product.price.toNumber(),
+      colors: product?.color?.map((color) => ({
+          name: color.name,
+          hex: color.hex,
+          availableMeters: color.availableMeters.toNumber(),
+          lowStockAlert: color.lowStockAlert.toNumber(),
+        }))
+      ,
+    });
+    return {
+      ...product, 
+      originalPrice: product.originalPrice.toNumber(),
+      price: product.price.toNumber(),
+      colors: 
+        product?.color?.map((color) => ({
+          name: color.name,
+          hex: color.hex,
+          availableMeters: color.availableMeters.toNumber(),
+          lowStockAlert: color.lowStockAlert.toNumber(),
+        }))
+      ,
+    };
+  } catch (error) {   
+    console.error("PRISMA ERROR:", error);
+    console.error("CODE:", error?.code);
+    console.error("META:", error?.meta);
+    console.error("MESSAGE:", error?.message);
     throw new Error(error);
   }
-
-  return product;
 }
 
 export async function createNewProductImages(productId, image) {

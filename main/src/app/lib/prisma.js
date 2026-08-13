@@ -6,7 +6,7 @@ const globalForPrisma = globalThis;
 export const prisma =
   globalForPrisma.prisma ?? new PrismaClient({
     adapter: new PrismaPg({
-      database: process.env.DATABASE_URL_NON_POOLED,
+      connectionString: process.env.DATABASE_URL_NON_POOLED,
     })
   });
 

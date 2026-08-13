@@ -77,10 +77,10 @@ export default function NewProductPage() {
     console.log("onSubmit", data);
     try {
       if(allImages.length < 1 ) throw new Error("Please upload atleast one image");
-      if(!productId){
+   
         const product = await createNewProduct({...data, images: []});
         setProuctId(product.id);
-      }
+      
 
       const { signature, timestamp } = await getCloudinarySignature();
       if(!signature || !timestamp) { 
