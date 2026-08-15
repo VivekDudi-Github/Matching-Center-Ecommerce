@@ -46,9 +46,9 @@ export default function ProductRow({ product }) {
     >
       {/* Product */}
 
-      <td className="px-6 py-5">
+      <td className="sm:px-6 sm:py-5 p-2 ">
         <div className="flex items-center gap-4">
-          <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700">
+          <div className="relative sm:size-16 size-10  overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
             <Image
               src={image}
               alt={name}
@@ -58,11 +58,11 @@ export default function ProductRow({ product }) {
           </div>
 
           <div>
-            <h3 className="font-semibold text-zinc-900 dark:text-white">
+            <h3 className="font-semibold truncate sm:text-sm  md:max-w-full max-w-36 text-xs md:text-md text-zinc-900 dark:text-white">
               {name}
             </h3>
 
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 sm:text-sm text-[10px] text-zinc-500">
               {category}
             </p>
           </div>
@@ -71,7 +71,7 @@ export default function ProductRow({ product }) {
       
       {/* Category */}
 
-      <td className="px-6 py-5">
+      <td className="md:px-6 md:py-5 p-2 md:block hidden">
         <span className="rounded-full bg-zinc-100 px-3 py-1 text-sm dark:bg-zinc-800">
           {category}
         </span>
@@ -79,15 +79,15 @@ export default function ProductRow({ product }) {
 
       {/* Price */}
 
-      <td className="px-6 py-5 font-semibold text-zinc-900 dark:text-white">
+      <td className="md:px-6 md:py-5 p-2 text-[11px] sm:text-sm font-semibold text-zinc-900 dark:text-white">
         ₹{price}
       </td>
 
       {/* Stock */}
 
-      <td className="px-6 py-5">
+      <td className="md:px-6 md:py-5 p-2">
         <div className="space-y-2">
-          <div className="font-medium text-zinc-900 dark:text-white">
+          <div className="font-medium text-[11px] sm:text-sm text-zinc-900 dark:text-white">
             {stock} m
           </div>
 
@@ -96,10 +96,10 @@ export default function ProductRow({ product }) {
 
       {/* Featured */}
 
-      <td className="px-6 py-5 text-center">
+      <td className="md:px-6 md:py-5 p-2 text-center">
         {featured ? (
           <Star
-            size={20}
+            size={17}
             className="mx-auto fill-black text-black dark:fill-white dark:text-white"
           />
         ) : (
@@ -109,9 +109,9 @@ export default function ProductRow({ product }) {
 
       {/* Status */}
 
-      <td className="px-6 py-5 text-center">
+      <td className="md:px-6 md:py-5 p-2 text-left">
         <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${stockColor}`}
+          className={`rounded-full px-3 py-1 sm:text-sm text-[10px] truncate font-semibold ${stockColor}`}
         >
           {stockLabel}
         </span>
@@ -119,31 +119,7 @@ export default function ProductRow({ product }) {
 
       {/* Actions */}
 
-      {/* <td className="px-6 py-5">
-        <div className="flex justify-end gap-2">
-          <button className="rounded-lg p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-800">
-            <Eye
-              size={18}
-              className="text-zinc-600 dark:text-zinc-300"
-            />
-          </button>
-
-          <button className="rounded-lg p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-800">
-            <Pencil
-              size={18}
-              className="text-blue-600"
-            />
-          </button>
-
-          <button className="rounded-lg p-2 transition hover:bg-red-100 dark:hover:bg-red-500/15">
-            <Trash2
-              size={18}
-              className="text-red-500"
-            />
-          </button>
-        </div>
-      </td> */}
-      <td className="px-6 py-5">
+      <td className="md:px-6 md:py-5 p-2">
         <ActionMenu
           viewHref={`/admin/products/${product.id}`}
           editHref={`/admin/products/${product.id}/edit`}

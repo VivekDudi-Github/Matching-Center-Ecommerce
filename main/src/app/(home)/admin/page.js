@@ -38,7 +38,7 @@ export default function AdminDashboard() {
     {
       title: "Low Stock",
       value: "9",
-      change: "Needs Attention",
+      change: "Check Needed",
       positive: false,
       icon: AlertTriangle,
     },
@@ -81,7 +81,9 @@ export default function AdminDashboard() {
             <RecentOrders />
           </div>
 
-          <TopProducts />
+          <div className="xl:col-span-1">
+            <TopProducts />
+          </div>
         </section>
       </div>
 

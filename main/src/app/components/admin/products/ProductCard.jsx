@@ -72,6 +72,15 @@ export default function ProductCard({ product }) {
           <span className="mt-2 inline-flex rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium dark:bg-zinc-800">
             {category}
           </span>
+
+            
+          {/* Status */}
+
+          <span
+            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${stockBadge}`}
+          >
+            {stockLabel}
+          </span>
         </div>
 
         {/* Price & Stock */}
@@ -102,30 +111,23 @@ export default function ProductCard({ product }) {
           </div>
         </div>
 
-        {/* Status */}
-
-        <span
-          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${stockBadge}`}
-        >
-          {stockLabel}
-        </span>
 
         {/* Actions */}
 
-        <div className="flex gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+        <div className="flex gap-3 border-t border-zinc-200 pt-0 lg:pt-4 dark:border-zinc-800">
           <button className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-300 py-2.5 transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800">
             <Eye size={18} />
-            View
+            <span className="hidden lg:block">View</span>
           </button>
 
           <button className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-blue-200 py-2.5 text-blue-600 transition hover:bg-blue-50 dark:border-blue-500/30 dark:hover:bg-blue-500/10">
             <Pencil size={18} />
-            Edit
+            <span className="hidden lg:block">Edit</span>
           </button>
 
           <button className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-red-200 py-2.5 text-red-500 transition hover:bg-red-50 dark:border-red-500/30 dark:hover:bg-red-500/10">
             <Trash2 size={18} />
-            Delete
+            <span className="hidden lg:block">Delete</span>
           </button>
         </div>
       </div>

@@ -14,15 +14,38 @@ export default function StatCard({
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
-      className="group rounded-2xl border col-span-1 border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg shadow-pink-200 dark:shadow-pink-950/50 dark:border-zinc-800 dark:bg-zinc-900"
+      className="group rounded-2xl border col-span-1 border-zinc-200 bg-white sm:p-6 p-4 py-3 shadow-sm transition-all hover:shadow-lg shadow-pink-200 dark:shadow-pink-950/50 dark:border-zinc-800 dark:bg-zinc-900"
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-            {title}
-          </p>
+          <h3 className="text-sm font-medium flex gap-2 text-zinc-500 dark:text-zinc-400">
+            <p className=" truncate ">{title}</p>
+            <div className=" flex items-center gap-2">
+              {positive ? (
+                <TrendingUp
+                  size={16}
+                  className="text-emerald-600 dark:text-emerald-400"
+                />
+              ) : (
+                <TrendingDown
+                  size={16}
+                  className="text-red-500"
+                />
+              )}
 
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+              <span
+                className={`text-sm font-medium truncate  ${
+                  positive
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-red-500"
+                }`}
+              >
+                {change}
+              </span>
+            </div>
+          </h3>
+
+          <h2 className="mt-3 sm:text-3xl text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
             {value}
           </h2>
         </div>
@@ -35,29 +58,7 @@ export default function StatCard({
         </div>
       </div>
 
-      <div className="mt-6 flex items-center gap-2">
-        {positive ? (
-          <TrendingUp
-            size={16}
-            className="text-emerald-600 dark:text-emerald-400"
-          />
-        ) : (
-          <TrendingDown
-            size={16}
-            className="text-red-500"
-          />
-        )}
-
-        <span
-          className={`text-sm font-medium ${
-            positive
-              ? "text-emerald-600 dark:text-emerald-400"
-              : "text-red-500"
-          }`}
-        >
-          {change}
-        </span>
-      </div>
+      
     </motion.div>
   );
 }
