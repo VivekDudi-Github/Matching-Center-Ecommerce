@@ -1,11 +1,11 @@
 'use client';
 
-const uploadToCloudinary = async (file, signature, timestamp) => {
+export const uploadToCloudinary = async (file, signature, timestamp) => {
   try {
     const currentTimestamp = Math.round(new Date().getTime() / 1000);
     const fiftyMin = 60*55 ;
   
-    const isValidTimestamp = timestamp+fiftyMin < currentTimestamp;
+    const isValidTimestamp = timestamp+fiftyMin > currentTimestamp;
     if(!isValidTimestamp) throw new Error("Invalid signature timestamp");
     
     const formData = new FormData() ;

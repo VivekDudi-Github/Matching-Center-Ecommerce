@@ -22,6 +22,8 @@ export async function getCloudinarySignature() {
     paramsToSign,
     process.env.CLOUDINARY_API_SECRET
   );
-
+  console.log("SIGNATURE:", signature);
+  console.log("TIMESTAMP:", timestamp);
+  
   return { signature, timestamp };
 }

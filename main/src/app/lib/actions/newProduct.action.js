@@ -80,7 +80,7 @@ export async function createNewProduct(data) {
       ...product, 
       originalPrice: product.originalPrice.toNumber(),
       price: product.price.toNumber(),
-      colors: product?.color?.map((color) => ({
+      color: product?.color?.map((color) => ({
           name: color.name,
           hex: color.hex,
           availableMeters: color.availableMeters.toNumber(),
@@ -92,7 +92,7 @@ export async function createNewProduct(data) {
       ...product, 
       originalPrice: product.originalPrice.toNumber(),
       price: product.price.toNumber(),
-      colors: 
+      color: 
         product?.color?.map((color) => ({
           name: color.name,
           hex: color.hex,
@@ -114,8 +114,8 @@ export async function createNewProductImages(productId, image) {
   try {
     await prisma.productImages.create({
       data: {
-        publicId: image.publicId,
-        url: image.url,
+        publicId: image.uploadData.publicId,
+        url: image.uploadData.url,
         displayOrder: image.displayOrder,
         productId,
       }   

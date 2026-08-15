@@ -7,7 +7,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 
 export default function PublishCard() {
   const {handleSubmit, register, reset, control, formState: { errors } } = useFormContext();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const status = useWatch({
     name: "isPublished",

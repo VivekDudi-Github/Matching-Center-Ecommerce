@@ -52,19 +52,23 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
   const addImage = (e) => {
     let files = e.target.files || [];
     
-    files = [...files].filter(img => {
-      const isBigger = img.size > 1024 * 1024 * 8 ;
-      if(isBigger){ toast.error("Images must be less than 10 MB, file name: " + img.name);}
-      return !isBigger;
+    files = [...files].filter(file => {
+      const isBigger = file.size > 1024 * 1024 * 8 ;
+      if(isBigger){ toast.error("Images must be less than 8 MB, file name: " + img.name);}
+      const isIncuded = allImages.some(img => img.file.name === file.name && img.file.size === file.size && img.file.lastModified === file.lastModified);
+      console.log(isIncuded, isBigger)
+      return !isBigger && !isIncuded;
     });
 
     if (files.length > 0) {
       setAllImages(prev => {
         const newImages = [...prev, ...files];
-        return newImages.map((image, index) => ({
-          file: image,
-          displayOrder: index,
-        }));
+        console.log("NEW IMAGES:", newImages);
+        return newImages.map((image, index) => {
+          return image?.file ? image : {
+            file: image,
+            displayOrder: index,
+        }});
       });
     }
   };
@@ -126,7 +130,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
               className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 dark:border-zinc-500"
             >
               <Image
-                src={URL.createObjectURL(image.file)}
+                src={image.file ? URL.createObjectURL(image.file) : "abc"}
                 alt=""
                 fill
                 onClick={() => setSelectedImage(image)}
