@@ -36,7 +36,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
   }
 
   const removeOldImage = (image) => {
-    const restImages = oldimages.filter(img => img.file.name !== image.file.name);
+    const restImages = oldimages.filter(img => img.publicId !== image.publicId);
     setValue("alreadyUploaded", restImages);
   }
 

@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
 import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
-import { createNewProduct, createNewProductImages } from "@/app/lib/actions/newProduct.action";
+import { createNewProduct, createNewProductImages, updateProduct } from "@/app/lib/actions/newProduct.action";
 import {uploadToCloudinary} from '@/app/lib/services/UploadToCloudinary';
 import { useParams, useRouter } from "next/navigation";
 import { getAdminProd } from "@/app/lib/actions/getAdminProd";
@@ -38,7 +38,7 @@ export default function EditProductPage() {
   const [allImages, setAllImages] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [productId, setProuctId] = useState(null);
-  const [oldImages, setOldImages] = useState([]);
+  // const [oldImages, setOldImages] = useState([]);
    
   const methods = useForm({
     resolver: zodResolver(newProductFormSchema),
@@ -84,17 +84,17 @@ export default function EditProductPage() {
     name: "colors" , control: methods.control
   });
 
-  const { replace: replaceImages } = useFieldArray({ 
+  const { replace: replaceImages, alreadyUploaded } = useFieldArray({ 
     name: "alreadyUploaded" , control: methods.control
   });
 
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      if(allImages.length < 1 ) throw new Error("Please upload atleast one image");
+      if(allImages.length + (alreadyUploaded.length || 0) < 1  ) throw new Error("Please upload atleast one image");
       let product = null;
       if(!productId){
-        product = await createNewProduct({...data, images: []});
+        product = await updateProduct({...data, images: []});
         setProuctId(product.id);
       } 
       
@@ -120,7 +120,7 @@ export default function EditProductPage() {
           uploadedImage = {...element, uploadData: uploadedData, isJoined : false};
           setUploadedImages(prev => [...prev, uploadedImage]);
         }
-       
+
         
         await createNewProductImages(productId || product.id, {...uploadedImage, file: null,  displayOrder: element.displayOrder});
         setUploadedImages((prev) => {
@@ -197,7 +197,6 @@ export default function EditProductPage() {
 
         if(product.images.length) {
           replaceImages(product.images);
-          setOldImages(product.images);
         }
       } catch (error) {
         return toast.error(error?.message || "Something went wrong");

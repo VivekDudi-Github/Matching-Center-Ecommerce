@@ -1,5 +1,6 @@
 'use server';
 
+import { TryCatch } from '@/app/hooks/TryCatch';
 import { prisma } from '@/app/lib/prisma';
 import {newProductFormSchema} from '@/app/lib/validation/product.schema';
 
@@ -9,14 +10,10 @@ export async function createNewProduct(data) {
   if (!parsedData.success) {
     throw new Error(parsedData?.error  || "Something went wrong");
   }
-  try {  
+  await TryCatch( async () => {
     const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = parsedData.data;
     const dbUrl = new URL(process.env.DATABASE_URL_NON_POOLED);
-
-    console.log("DB HOST:", dbUrl.hostname);
-    console.log("DB PORT:", dbUrl.port);
-    console.log("DB DATABASE:", dbUrl.pathname);
-    
+  
     const product = await prisma.product.create({
       data: {
         title,
@@ -99,20 +96,14 @@ export async function createNewProduct(data) {
           availableMeters: color.availableMeters.toNumber(),
           lowStockAlert: color.lowStockAlert.toNumber(),
         }))
-      ,
-    };
-  } catch (error) {   
-    console.error("PRISMA ERROR:", error);
-    console.error("CODE:", error?.code);
-    console.error("META:", error?.meta);
-    console.error("MESSAGE:", error?.message);
-    throw new Error(error);
-  }
+      }}
+    );
+  
 }
 
 export async function createNewProductImages(productId, image) {
   if(!productId) throw new Error("Product Id is missing");
-  try {
+  await TryCatch( async () => {
     await prisma.productImages.create({
       data: {
         publicId: image.uploadData.publicId,
@@ -123,7 +114,15 @@ export async function createNewProductImages(productId, image) {
       }   
     });
       return image;
-  } catch (error) {
-    throw new Error(error);
-  }
+  });
+}
+
+export const updateProduct = async(id, data) => {
+  await TryCatch( async () => {
+    if(!id) throw new Error("Product Id is missing");
+    const parsedData = newProductFormSchema.safeParse(data);
+    if (!parsedData.success) {
+      throw new Error(parsedData?.error  || "Something went wrong");
+    }
+  });
 }

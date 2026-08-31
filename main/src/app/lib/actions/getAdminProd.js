@@ -3,6 +3,10 @@
 import { serializePrisma } from "@/app/hooks/serializePrisma";
 
 export const getMoreAdminProdList = async(cursor) => { 
+  if (!cursor) {
+    return { list: [], newCursor: null, error: "Invalid or missing cursor position." };
+  }
+
   const products = await prisma.product.findMany({
     orderBy: {
       id : "desc"
