@@ -1,15 +1,21 @@
 "use client";
 
 import { Package2, AlertTriangle, PlusIcon, Trash2Icon } from "lucide-react";
-import { useFormContext, useFieldArray } from "react-hook-form";
+import { useFormContext, useFieldArray, useWatch } from "react-hook-form";
 import ColorPickerRow from "./ColorPickerRow";
 
 export default function InventoryCard({isNewProduct = true}) {
   const {register, control} = useFormContext();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fld, append, remove } = useFieldArray({
     name: "colors" , control
   });
+
+  const fields = useWatch({
+    name: "colors",
+    control,
+    defaultValue: []
+  })
 
   const appendNewField = () => {
     append({
@@ -55,7 +61,7 @@ export default function InventoryCard({isNewProduct = true}) {
       
 
       {fields.map((field, index) => (
-        <div key={field.id} className="rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800">
+        <div key={index} className="rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800">
           <div className="mb-5 flex items-center justify-between">
             <h3 className="font-semibold">Color #{index+1}</h3>
 

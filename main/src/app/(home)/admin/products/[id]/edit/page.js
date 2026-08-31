@@ -1,4 +1,5 @@
 'use client'
+
 import Link from "next/link";
 import { ArrowLeft, LoaderCircleIcon } from "lucide-react";
 
@@ -12,17 +13,19 @@ import SEOCard from "@/app/components/admin/products/new/SeoCard";
 import PublishCard from "@/app/components/admin/products/new/PublishCard";
 
 import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
 import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
 import { createNewProduct, createNewProductImages } from "@/app/lib/actions/newProduct.action";
 import {uploadToCloudinary} from '@/app/lib/services/UploadToCloudinary';
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { getAdminProd } from "@/app/lib/actions/getAdminProd";
 
+export default function EditProductPage() {
+  const {id} = useParams();
 
-export default function NewProductPage() {
   const router = useRouter();
   const [signature, setSignature] = useState({
     signature: null ,
@@ -30,13 +33,13 @@ export default function NewProductPage() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [inititalLoading, setInititalLoading] = useState(true);
+
   const [allImages, setAllImages] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [productId, setProuctId] = useState(null);
-
-  console.log("allImages", allImages);
-  console.log("uploadedImages", uploadedImages);  
-  
+  const [oldImages, setOldImages] = useState([]);
+   
   const methods = useForm({
     resolver: zodResolver(newProductFormSchema),
     shouldFocusError: true,
@@ -77,7 +80,14 @@ export default function NewProductPage() {
     }
 });
   const {setValue, formState: { errors } } = methods;
-  
+  const { replace } = useFieldArray({ 
+    name: "colors" , control: methods.control
+  });
+
+  const { replace: replaceImages } = useFieldArray({ 
+    name: "alreadyUploaded" , control: methods.control
+  });
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
@@ -146,9 +156,63 @@ export default function NewProductPage() {
     }
   }
 
+  useEffect(() => { 
+    const product = async() => {
+      if(!id) return;
+      try {
+        const product = await getAdminProd(id);
+        console.log("product", product);
+        
+        setValue("title", product.title);
+        setValue("slug", product.slug);
+        setValue("price", product.price);
+        setValue("originalPrice", product.originalPrice);
+        setValue("featured", product.featured);
+        setValue("isPublished", product.isPublished);
+        setValue("description", product.description);
+        setValue("width", product.width);
+        setValue("seoTitle", product.seoTitle);
+        setValue("washCare", product.washCare);
+        setValue("seoDescription", product.seoDescription);
+        setValue("pattern", product.pattern);
+        setValue("category", product.category.name); 
+        setValue("sku", product.sku);
+
+        if(product.tags.length) {
+          const tags = product.tags.map(tag => tag.name);
+          setValue("tags", tags);
+        }
+        
+        if (product.color?.length) {
+          replace(
+            product.color.map((color) => ({
+              name: color.name,
+              hex: color.hex,
+              hexText: color.hexText,
+              availableMeters: color.availableMeters,
+              lowStockAlert: color.lowStockAlert,
+            }))
+          );
+        }
+
+        if(product.images.length) {
+          replaceImages(product.images);
+          setOldImages(product.images);
+        }
+      } catch (error) {
+        return toast.error(error?.message || "Something went wrong");
+      } finally {
+        setInititalLoading(false);
+      }
+    }
+    product();
+
+  }, [id, setValue]);
+
   useEffect(() => {
     setValue("images", allImages);
   }, [allImages, setValue]);
+
 
   return (
     <div className="min-h-screen bg-zinc-100 pb-10 dark:bg-black">
@@ -167,7 +231,7 @@ export default function NewProductPage() {
               </Link>
 
               <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
-                Add New Product
+                Editing Product
               </h1>
 
               <p className="mt-2 text-zinc-500 dark:text-zinc-400">
@@ -204,7 +268,6 @@ export default function NewProductPage() {
             </div>
           </div>
         </form> 
-        {!isLoading && <div className=" w-full h-full bg-black/50  z-10">Loading</div>} 
       </FormProvider>
       {isLoading && 
         <div className="fixed top-0 left-0 flex flex-col justify-center  items-center w-full h-full bg-black/80 z-10">
@@ -214,6 +277,11 @@ export default function NewProductPage() {
           {productId && <p className="text-white text-center animate-pulse opacity-20 duration-100">Saving Product Images</p>}
         </div>
       }
+      {inititalLoading && (
+          <div className="fixed top-0 left-0 flex flex-col justify-center  items-center w-full h-full bg-black/80 z-10">
+            <LoaderCircleIcon className="w-12 h-12 text-white animate-spin ease-in-out duration-200 " />
+          </div>
+      )}
     </div>
   );
 }

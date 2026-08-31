@@ -66,17 +66,17 @@ export default function FabricProductCard({fabricDetails}) {
           />
         </button>
 
-        <Link href={`shop/${fabricData.id}`} className="relative md:h-64 h-36 w-full overflow-hidden rounded-md inline-block bg-stone-100">
+        <Link href={`products/${fabricData.id}`} className="relative md:h-64 h-36 w-full overflow-hidden rounded-md inline-block bg-stone-100">
             <SafeImage src={fabricData.imageUrl} alt={fabricData.title} />
           {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-stone-900/10 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-t from-stone-900/10 via-transparent to-transparent pointer-events-none" />
         </Link>
 
         {/* Content Area */}
         <div className="md:mt-4 mt-1 px-1 pb-1">
           {/* Title */}
-          <Link href={'/shop/' + fabricData.id} className="">
-            <h3 className="md:text-xl text-[12px] font-semibold min-h-[36px] text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors  truncate"> 
+          <Link href={'/products/' + fabricData.id} className="">
+            <h3 className="md:text-xl text-[12px] font-semibold min-h-9 text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors  truncate"> 
               {fabricData.title} 
             </h3>
           </Link>
@@ -123,7 +123,7 @@ export default function FabricProductCard({fabricDetails}) {
                     transition={{ duration: 0.2 }}
                     className="flex items-center text-[12px] gap-1 font-semibold tracking-wide"
                   >
-                    <ShoppingCart className="size-4 stroke-[2]" />
+                    <ShoppingCart className="size-4 stroke-2" />
                     <span className="hidden md:inline ">Add to Cart</span>
                   </motion.span>
                 ) : (
@@ -135,7 +135,7 @@ export default function FabricProductCard({fabricDetails}) {
                     transition={{ duration: 0.2 }}
                     className="flex items-center gap-1.5 text-xs font-semibold tracking-wide"
                   >
-                    <Check className="md:h-4 md:w-4 h-1 w-1 stroke-[3]" />
+                    <Check className="md:h-4 md:w-4 h-1 w-1 stroke-3" />
                     Added!
                   </motion.span>
                 )}

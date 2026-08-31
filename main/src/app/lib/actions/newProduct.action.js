@@ -111,6 +111,7 @@ export async function createNewProduct(data) {
 }
 
 export async function createNewProductImages(productId, image) {
+  if(!productId) throw new Error("Product Id is missing");
   try {
     await prisma.productImages.create({
       data: {
@@ -118,6 +119,7 @@ export async function createNewProductImages(productId, image) {
         url: image.uploadData.url,
         displayOrder: image.displayOrder,
         productId,
+
       }   
     });
       return image;

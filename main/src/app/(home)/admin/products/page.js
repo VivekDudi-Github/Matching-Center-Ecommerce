@@ -1,6 +1,7 @@
 import ProductToolbar from "@/app/components/admin/products/ProductToolbar";
 import ProductTable from "@/app/components/admin/products/ProductTable";
 import {prisma} from "@/app/lib/prisma";
+import { serializePrisma } from "@/app/hooks/serializePrisma";
 
 
 
@@ -9,12 +10,20 @@ export default async function ProductsPage() {
     orderBy: {
       id : "desc"
     }, 
+    include: {
+      color: true,
+      tags: true,
+      category: true,
+      images: true,
+    },
     take: 11
-  })
+  }); 
   const hasMoreLength = products.length > 10;
   if(hasMoreLength) {
     products.pop();
   }
+  console.log(hasMoreLength);
+  
   const cursor = hasMoreLength ? 
       products[products.length - 1].id : 
       null;
@@ -39,7 +48,7 @@ export default async function ProductsPage() {
 
       {/* Products */}
       <section className="md:mt-8 mt-4 grid grid-cols-1">
-        <ProductTable initalProducts={products} initialCursor={cursor} />
+        <ProductTable initalProducts={serializePrisma(products)} initialCursor={cursor} />
 
       </section>
       

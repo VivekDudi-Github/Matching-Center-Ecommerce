@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { PackageOpen } from "lucide-react";
+import { ArrowDown, Loader2Icon, PackageOpen } from "lucide-react";
 
 import ProductRow from "./ProductRow";
 import ProductCard from "./ProductCard";
 import ProductToolbar from "./ProductToolbar";
 import { useEffect, useState } from "react";
+import { getMoreAdminProdList } from "@/app/lib/actions/getAdminProd";
+import { toast } from "react-toastify";
 
 const columns = [
   "Product",
@@ -21,14 +23,30 @@ const columns = [
 
 export default function ProductTable({ initalProducts = [], initialCursor = null }) {
   const [ products, setProducts] = useState([]);
-  const [ cursor, ssetCursour] = useState(initialCursor);
+  const [ cursor, setCursour] = useState(initialCursor);
+  const [ isLoading, setIsLoading] = useState(false);
+
 
   const loadMore = async() => {
+    setIsLoading(true);
+    try {
+      const {list , newCursor} = await getMoreAdminProdList(cursor);
+      console.log("LIST:", list);
+      setProducts(prev => [...prev, ...list]);
+      setCursour(newCursor);
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
 
   }
+  console.log("products:", products);
+
 
   useEffect(() => {
     setProducts(initalProducts);
+    setCursour(initialCursor);
   }, [initalProducts])
 
   return (
@@ -86,6 +104,23 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
               <p className="mt-2 text-zinc-500 dark:text-zinc-400">
                 Add your first product to start selling.
               </p>
+            </div>
+          )}
+
+          {cursor && (
+            <div className="flex justify-center m-4">
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={loadMore}
+                className="inline-flex items-center text-sm p-2 justify-center gap-2 rounded-lg border  text-white dark:text-black  border-zinc-300 px-3 py-2 bg-black dark:bg-white font-medium  transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-300 hover:cursor-pointer "  
+              >
+                
+                {isLoading ? 
+                <Loader2Icon className="animate-spin duration-75 " size={18} />
+                : <ArrowDown size={18} /> }
+                Load More
+              </button>
             </div>
           )}
         </div>

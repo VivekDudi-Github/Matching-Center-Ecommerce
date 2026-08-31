@@ -3,23 +3,23 @@
 import Image from "next/image";
 import { ImagePlus, Trash2, Star, UploadCloud, CircleQuestionMarkIcon, CheckCircleIcon, CloudUpload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 
-const images = [
-  "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800",
-  "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=800",
-  "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800",
-  "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=800",
-];
 
 export default function ProductImages( {allImages = [], setAllImages, uploadedImages = []}) {
   const inputRef = useRef(null);
+  const {register, watch, setValue ,control, formState: { errors } } = useFormContext();
 
   const [selectedImage, setSelectedImage] = useState(null);
+  const oldimages = useWatch({
+    name: "alreadyUploaded",
+    control,
+    defaultValue: []
+  });
 
-
-
+  
+  console.log("OLD IMAGES:", oldimages, selectedImage, allImages);
 
   const handleImageChange = (e) => {
     setSelectedImage(e);
@@ -35,18 +35,11 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
     });
   }
 
-  // const changeOrder = (newOrder) => {
-  //   if(allImages.length < 2) return;
+  const removeOldImage = (image) => {
+    const restImages = oldimages.filter(img => img.file.name !== image.file.name);
+    setValue("alreadyUploaded", restImages);
+  }
 
-  //   const image = allImages[selectedImage];
-  //   setAllImages(prev => {
-  //     const newImages = [...prev];
-  //     const index = newImages.findIndex(img => img.displayOrder === image.displayOrder);
-  //     newImages.splice(index, 1);
-  //     newImages.splice(newOrder - 1, 0, image);
-  //     return newImages;
-  //   });
-  // }
  console.log(selectedImage);
  
   const addImage = (e) => {
@@ -105,9 +98,9 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
         {/* Main Preview */}
 
         <div className="relative aspect-square overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-950">
-          {selectedImage && allImages.length ? ( 
+          {selectedImage ? ( 
             <Image
-            src={selectedImage.file ? URL.createObjectURL(selectedImage.file) : "abc"}
+            src={selectedImage?.file ? URL.createObjectURL(selectedImage.file) : selectedImage?.url ? selectedImage.url : "/abc"}
             alt="Product"
             fill
             className="object-cover"
@@ -130,7 +123,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
               className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 dark:border-zinc-500"
             >
               <Image
-                src={image.file ? URL.createObjectURL(image.file) : "abc"}
+                src={image?.file ? URL.createObjectURL(image.file) : "/abc"}
                 alt=""
                 fill
                 onClick={() => setSelectedImage(image)}
@@ -153,6 +146,35 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
               
             </div>
           ))}
+          {oldimages.length > 0 && 
+            oldimages.map((image,index) => (
+              <div
+                key={index}
+                className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 dark:border-zinc-500"
+              >
+                <Image
+                  src={image?.url || "/abc"}
+                  alt=""
+                  fill
+                  onClick={() => setSelectedImage(image)}
+                  className="object-cover transition duration-300 group-hover:scale-105"
+                />
+
+                {/* Overlay */}
+
+                <span className="rounded-lg bg-white text-white p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100 dark:bg-black dark:hover:bg-zinc-700">
+                    <CheckCircleIcon size={14}  />
+                </span>
+                
+                <button type="button"
+                onClick={() => removeOldImage(image)}
+                className="rounded-lg bg-red-500 p-1.5 text-white shadow absolute bottom-2 left-2 transition hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700">
+                  <Trash2 size={14} />
+                </button>
+                
+              </div>
+            ))
+          }
         </div>
 
         {/* Upload */}

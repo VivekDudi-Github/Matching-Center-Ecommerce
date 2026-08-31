@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { color, motion } from "framer-motion";
 import {
   Eye,
   Pencil,
@@ -9,31 +9,52 @@ import {
   Star,
 } from "lucide-react";
 import ActionMenu from "./ActionMenu";
+import { useEffect, useState } from "react";
+import { array } from "zod";
 
 export default function ProductRow({ product }) {
   const {
-    image,
-    name,
+    images,
+    title,
     category,
     price,
-    stock,
+    color,
     featured,
   } = product;
 
-  const stockColor =
-    stock <= 0
-      ? "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400"
-      : stock <= 20
-      ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-400"
-      : "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400";
+  const [sortedColors, setSortedColors] = useState([]);
+  const [sortedImages, setSortedImages] = useState([]);
 
-  const stockLabel =
-    stock <= 0
-      ? "Out of Stock"
-      : stock <= 20
-      ? "Low Stock"
-      : "In Stock";
+  console.log("PRODUCT_IMAGE_MAP:",product?.id, images.filter(img => img.displayOrder === 0));
+  useEffect(() => {
+    const colorArr = [...color];
+    colorArr.sort((a, b) => a.availableMeters - b.availableMeters);
+    setSortedColors(colorArr);
 
+    if(images.length > 0) {
+      const sortedImages = images.sort((a, b) => a.displayOrder - b.displayOrder);
+      setSortedImages(sortedImages ?? []);
+    }
+
+  }, [color, images])
+
+  const stockColor = () => {
+    const stock = sortedColors?.[0]?.availableMeters || 0;
+    return stock <= 0
+          ? "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400"
+          : stock <= 20
+          ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-400"
+          : "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400";
+  }
+
+  const stockLabel = () => {
+    const stock = sortedColors?.[0]?.availableMeters || 0;
+    return stock <= 0
+          ? "Out of Stock"
+          : stock <= 20
+          ? "Low Stock"
+          : "In Stock";
+  }
   return (
     <motion.tr
       layout
@@ -49,21 +70,23 @@ export default function ProductRow({ product }) {
       <td className="sm:px-6 sm:py-5 p-2 ">
         <div className="flex items-center gap-4">
           <div className="relative sm:size-16 size-10  overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
-            <Image
-              src={image}
-              alt={name}
-              fill
-              className="object-cover"
-            />
+            {sortedImages.length > 0 && (
+              <Image
+                src={sortedImages[0].url} 
+                alt={title}
+                fill
+                className="object-cover"
+              />
+            )}
           </div>
 
           <div>
             <h3 className="font-semibold truncate sm:text-sm  md:max-w-full max-w-36 text-xs md:text-md text-zinc-900 dark:text-white">
-              {name}
+              {title}
             </h3>
 
             <p className="mt-1 sm:text-sm text-[10px] text-zinc-500">
-              {category}
+              {category?.name}
             </p>
           </div>
         </div>
@@ -71,9 +94,9 @@ export default function ProductRow({ product }) {
       
       {/* Category */}
 
-      <td className="md:px-6 md:py-5 p-2 md:block hidden">
+      <td className="md:px-6 md:py-5 p-0 text-left h-full  md:table-cell hidden ">   
         <span className="rounded-full bg-zinc-100 px-3 py-1 text-sm dark:bg-zinc-800">
-          {category}
+          {category?.name}
         </span>
       </td>
 
@@ -88,7 +111,7 @@ export default function ProductRow({ product }) {
       <td className="md:px-6 md:py-5 p-2">
         <div className="space-y-2">
           <div className="font-medium text-[11px] sm:text-sm text-zinc-900 dark:text-white">
-            {stock} m
+            {sortedColors?.[0]?.availableMeters || 0}m
           </div>
 
         </div>
@@ -111,9 +134,9 @@ export default function ProductRow({ product }) {
 
       <td className="md:px-6 md:py-5 p-2 text-left">
         <span
-          className={`rounded-full px-3 py-1 sm:text-sm text-[10px] truncate font-semibold ${stockColor}`}
+          className={`rounded-full px-3 py-1 sm:text-sm text-[10px] truncate font-semibold ${stockColor()}`}
         >
-          {stockLabel}
+          {stockLabel()}
         </span>
       </td>
 
