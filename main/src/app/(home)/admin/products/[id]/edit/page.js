@@ -13,13 +13,13 @@ import SEOCard from "@/app/components/admin/products/new/SeoCard";
 import PublishCard from "@/app/components/admin/products/new/PublishCard";
 
 import { useEffect, useState } from "react";
-import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
 import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
 import { createNewProduct, createNewProductImages, updateProduct } from "@/app/lib/actions/newProduct.action";
-import {uploadToCloudinary} from '@/app/lib/services/UploadToCloudinary';
+import {uploadToCloudinary, deleteCloudinaryImage} from '@/app/lib/services/UploadToCloudinary';
 import { useParams, useRouter } from "next/navigation";
 import { getAdminProd } from "@/app/lib/actions/getAdminProd";
 
@@ -37,6 +37,7 @@ export default function EditProductPage() {
 
   const [allImages, setAllImages] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [removedImages, setRemovedImages] = useState([]);
   const [productId, setProuctId] = useState(null);
   // const [oldImages, setOldImages] = useState([]);
    
@@ -84,24 +85,33 @@ export default function EditProductPage() {
     name: "colors" , control: methods.control
   });
 
-  const { replace: replaceImages, alreadyUploaded } = useFieldArray({ 
+  const { replace: replaceImages } = useFieldArray({ 
     name: "alreadyUploaded" , control: methods.control
   });
 
+  const alreadyUploaded = useWatch({
+    name: "alreadyUploaded",
+    control: methods.control,
+    defaultValue: []
+  })
+  console.log("REMOVED IMAGES:", removedImages);
+  
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      if(allImages.length + (alreadyUploaded.length || 0) < 1  ) throw new Error("Please upload atleast one image");
+      if(allImages.length + (alreadyUploaded?.length || 0) < 1  ) throw new Error("Please upload atleast one image");
       let product = null;
-      if(!productId){
-        product = await updateProduct({...data, images: []});
-        setProuctId(product.id);
-      } 
+      if(!id) return toast.error("Product ID is missing, please try again");
+
+      product = await updateProduct(id, {...data, images: []});
+      console.log("updated_product", product);
+      setProuctId(id);
+      
       
 
       const { signature, timestamp } = await getCloudinarySignature();
       if(!signature || !timestamp) { 
-        toast.error("Somethings went wrong, try again");
+        toast.error("Signature not available, please try again.");
         return;
       }
       setSignature({signature,timestamp});
@@ -128,6 +138,13 @@ export default function EditProductPage() {
           return [...newImages, {...uploadedImage, isJoined : true}];  
         })
         
+      }
+      for(let i = 0; i < removedImages.length; i++) {
+        if(!signature || !timestamp) { 
+          toast.error("Signature not available, please try again.");
+          return;
+        }
+        await deleteCloudinaryImage(removedImages[i].publicId);
       }
       return router.push(`/admin/products`);
 
@@ -188,7 +205,7 @@ export default function EditProductPage() {
             product.color.map((color) => ({
               name: color.name,
               hex: color.hex,
-              hexText: color.hexText,
+              hexText: color.hex,
               availableMeters: color.availableMeters,
               lowStockAlert: color.lowStockAlert,
             }))
@@ -245,7 +262,7 @@ export default function EditProductPage() {
             {/* Left */}
 
             <div className="space-y-6 lg:col-span-5">
-              <ProductImages setAllImages={setAllImages} allImages={allImages} uploadedImages={uploadedImages} />         
+              <ProductImages setAllImages={setAllImages} allImages={allImages} uploadedImages={uploadedImages} setRemovedImages={setRemovedImages}/>         
             </div>
 
             {/* Right */}
@@ -255,7 +272,7 @@ export default function EditProductPage() {
 
               <PricingCard />
 
-              <InventoryCard />
+              <InventoryCard isNewProduct={false} />
 
               <AttributesCard />
 

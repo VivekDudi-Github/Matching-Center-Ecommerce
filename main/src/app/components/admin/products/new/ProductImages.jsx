@@ -7,7 +7,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 
 
-export default function ProductImages( {allImages = [], setAllImages, uploadedImages = []}) {
+export default function ProductImages( {allImages = [], setAllImages, uploadedImages = [] , setRemovedImages} ) {
   const inputRef = useRef(null);
   const {register, watch, setValue ,control, formState: { errors } } = useFormContext();
 
@@ -19,10 +19,9 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
   });
 
   
-  console.log("OLD IMAGES:", oldimages, selectedImage, allImages);
+  console.log("OLD IMAGES:", oldimages, allImages);
 
-  const handleImageChange = (e) => {
-    setSelectedImage(e);
+  const handleImageChange = () => {
   };
 
   const removeImage = (image) => {
@@ -30,7 +29,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
       const arr = prev.filter((img, index) => index !== image.displayOrder);
       return arr.map((img, index) => ({
         ...img,
-        displayOrder: index,
+        displayOrder: index + oldimages.length,
       }));
     });
   }
@@ -38,9 +37,17 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
   const removeOldImage = (image) => {
     const restImages = oldimages.filter(img => img.publicId !== image.publicId);
     setValue("alreadyUploaded", restImages);
+    setRemovedImages(prev => [...prev, image]);
+
+    setAllImages(prev => 
+      prev.map((img,index) => ({
+        file : img.file,
+        displayOrder: index + restImages.length,
+      }) ) 
+    )
+
   }
 
- console.log(selectedImage);
  
   const addImage = (e) => {
     let files = e.target.files || [];
@@ -49,7 +56,6 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
       const isBigger = file.size > 1024 * 1024 * 8 ;
       if(isBigger){ toast.error("Images must be less than 8 MB, file name: " + img.name);}
       const isIncuded = allImages.some(img => img.file.name === file.name && img.file.size === file.size && img.file.lastModified === file.lastModified);
-      console.log(isIncuded, isBigger)
       return !isBigger && !isIncuded;
     });
 
@@ -60,7 +66,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
         return newImages.map((image, index) => {
           return image?.file ? image : {
             file: image,
-            displayOrder: index,
+            displayOrder: index + oldimages.length,
         }});
       });
     }
@@ -117,6 +123,35 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
         {/* Thumbnails */}
 
         <div className="grid md:grid-cols-3 grid-cols-3 sm:grid-cols-3 gap-3">
+          {oldimages.length > 0 && 
+            oldimages.map((image,index) => (
+              <div
+                key={index}
+                className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 dark:border-zinc-500"
+              >
+                <Image
+                  src={image?.url || "/abc"}
+                  alt=""
+                  fill
+                  onClick={() => setSelectedImage(image)}
+                  className="object-cover transition duration-300 group-hover:scale-105"
+                />
+
+                {/* Overlay */}
+
+                <span className="rounded-lg bg-green-600 text-black p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100  ">
+                    <CheckCircleIcon size={14}  />
+                </span>
+                
+                <button type="button"
+                onClick={() => removeOldImage(image)}
+                className="rounded-lg bg-red-500 p-1.5 text-white shadow absolute bottom-2 left-2 transition hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700">
+                  <Trash2 size={14} />
+                </button>
+                
+              </div>
+            ))
+          }
           {allImages.map((image, index) => (
             <div
               key={index}
@@ -134,7 +169,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
 
               {uploadedImages.some(img => img.file.name === image.file.name) && (
                 <span className="rounded-lg bg-white text-white p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100 dark:bg-black dark:hover:bg-zinc-700">
-                    <CheckCircleIcon size={14}  />
+                  <CheckCircleIcon size={14}  />
                 </span>
               )}
 
@@ -146,35 +181,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
               
             </div>
           ))}
-          {oldimages.length > 0 && 
-            oldimages.map((image,index) => (
-              <div
-                key={index}
-                className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 dark:border-zinc-500"
-              >
-                <Image
-                  src={image?.url || "/abc"}
-                  alt=""
-                  fill
-                  onClick={() => setSelectedImage(image)}
-                  className="object-cover transition duration-300 group-hover:scale-105"
-                />
 
-                {/* Overlay */}
-
-                <span className="rounded-lg bg-white text-white p-1.5 shadow absolute bottom-2 right-2 transition hover:bg-zinc-100 dark:bg-black dark:hover:bg-zinc-700">
-                    <CheckCircleIcon size={14}  />
-                </span>
-                
-                <button type="button"
-                onClick={() => removeOldImage(image)}
-                className="rounded-lg bg-red-500 p-1.5 text-white shadow absolute bottom-2 left-2 transition hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700">
-                  <Trash2 size={14} />
-                </button>
-                
-              </div>
-            ))
-          }
         </div>
 
         {/* Upload */}
