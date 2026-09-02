@@ -107,7 +107,7 @@ model ProductVariant {
   lowStockAlert   Decimal  @db.Decimal(10, 2)
 
   name            String
-  hex             String   @unique
+  hex             String   
   productId       Int
 
   product         Product  @relation(fields : [productId] , references: [id]) 
@@ -117,18 +117,30 @@ model ProductVariant {
 
 model ProductImages {
   id            Int              @id @default(autoincrement())
-  publicId      String           @unique
+  publicId      String           
   url           String
   productId     Int
-  displayOrder  Int              @default(0)
   product       Product          @relation(fields: [productId], references: [id])
+
+  displayOrder  Int              @default(0)
+  
 
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
-  @@index([productId])
+  @@index([productId, publicId])
 }
 
+model StrandedImages {
+  id            Int              @id @default(autoincrement())
+  publicId      String           
+  url           String
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([publicId])
+}
 
 model Category {
     id       Int     @id @default(autoincrement())

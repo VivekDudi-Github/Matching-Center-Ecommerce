@@ -7,10 +7,15 @@ import {
   Pencil,
   Trash2,
   Star,
+  LoaderIcon,
 } from "lucide-react";
 import ActionMenu from "./ActionMenu";
 import { useEffect, useState } from "react";
 import { array } from "zod";
+import {deleteProductAction, duplicateProductAction, revertDeleteProductAction} from '@/app/lib/actions/newProduct.action';
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+
 
 export default function ProductRow({ product }) {
   const {
@@ -21,11 +26,19 @@ export default function ProductRow({ product }) {
     color,
     featured,
   } = product;
+  const router = useRouter();
 
   const [sortedColors, setSortedColors] = useState([]);
   const [sortedImages, setSortedImages] = useState([]);
+  const [selectedImageIdx , setSelectedImageIdx] = useState(0);
 
-  console.log("PRODUCT_IMAGE_MAP:",product?.id, images.filter(img => img.displayOrder === 0));
+  const [isDeleted , setIsDeleted] = useState(false);
+  
+  const [isChangingImg, setIsChaningImg] = useState(false);
+  const [duplicateLoading, setDuplicateLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+
   useEffect(() => {
     const colorArr = [...color];
     colorArr.sort((a, b) => a.availableMeters - b.availableMeters);
@@ -55,26 +68,103 @@ export default function ProductRow({ product }) {
           ? "Low Stock"
           : "In Stock";
   }
+
+  const duplicateProduct = async(id) => {
+    try {
+      setDuplicateLoading(true);
+      const clonedProduct = await duplicateProductAction(id);
+      if(!clonedProduct) throw new Error("Failed to duplicate product");
+
+
+      router.push(`/admin/products/${clonedProduct.id}/edit`);
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
+    } finally {
+      setDuplicateLoading(false);
+    }
+  }
+
+  const deleteProduct = async(id) => {
+    try {
+      await deleteProductAction(id);
+      setIsDeleted(true);
+    }catch (error) {
+      console.log("error in deleting the product");
+      toast.error(error?.message || "Something went wrong");
+    }
+  }
+
+  const revertDelete = async(id) => {
+    setDeleteLoading(true);
+    try {
+      await revertDeleteProductAction(id);
+      setIsDeleted(false);
+    }catch (error) {
+      console.log("error in deleting the product");
+      toast.error(error?.message || "Something went wrong");
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
+
+  const transformedImageUrl = (transformation) => {
+    if(!sortedImages[selectedImageIdx]?.url) return "";
+    let url = sortedImages[selectedImageIdx]?.url;
+
+    url = url.replace("/upload/", `/upload/${transformation}/`);
+    return url;
+  }
+
+  useEffect(() => {
+    setIsChaningImg(true);
+  }, [selectedImageIdx, sortedImages])
+
   return (
     <motion.tr
       layout
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       whileHover={{
-        backgroundColor: "rgba(0,0,0,0.02)",
+        backgroundColor: "rgba(0,0,0,0.2)",
       }}
-      className="border-b border-zinc-100 dark:border-zinc-800"
+      className="border-b border-zinc-100 dark:border-zinc-800 relative"
     >
       {/* Product */}
-
       <td className="sm:px-6 sm:py-5 p-2 ">
+
+        {duplicateLoading && 
+          <div className="absolute top-0 left-0 h-full w-full bg-black z-20 text-white animate-pulse opacity-100 duration-500 text-center flex items-center justify-center text-sm font-semibold rounded-lg" >
+            Duplicating Product...
+          </div>
+        }
+        {isDeleted && 
+          <div className="absolute top-0 left-0 h-full w-full bg-black z-20 text-white  duration-500 text-center flex items-center justify-center text-sm font-semibold rounded-lg" >
+            Product Removed
+            <button className="ml-2 text-sm font-semibold text-zinc-900 dark:text-white rounded-md border border-white px-2 py-1 flex" 
+            onClick={() => revertDelete(product.id)}>
+              {deleteLoading ?
+                <div className="animate-pulse opacity-100 duration-500 text-center flex items-center justify-center text-sm font-semibold rounded-lg" >
+                  Undoing Delete...
+                  </div>
+                :
+                <span>Undo Delete</span>
+              } 
+            </button>
+          </div>
+        }
         <div className="flex items-center gap-4">
-          <div className="relative sm:size-16 size-10  overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+          <div className="relative sm:size-16 size-12 scale-125 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700"
+            onClick={() => setSelectedImageIdx((selectedImageIdx + 1) % sortedImages.length)}
+          >
+             <div className={`absolute top-0 left-0 h-full w-full bg-black/40 z-10 flex items-center justify-center ${isChangingImg ? "hidden" : "block"}`}>
+                <LoaderIcon className="animate-spin duration-500" />
+              </div>
             {sortedImages.length > 0 && (
               <Image
-                src={sortedImages[0].url} 
+                src={transformedImageUrl("w_512,q_auto")}
                 alt={title}
                 fill
+                onBlur={() => setIsChaningImg(false)}
                 className="object-cover"
               />
             )}
@@ -146,11 +236,10 @@ export default function ProductRow({ product }) {
         <ActionMenu
           viewHref={`/admin/products/${product.id}`}
           editHref={`/admin/products/${product.id}/edit`}
-          onDuplicate={() => console.log("duplicate")}
-          onDelete={() => console.log("delete")}
-        />
+          onDuplicate={() => duplicateProduct(product.id) }
+          onDelete={() => deleteProduct(product.id) }
+        />        
       </td>
-
     </motion.tr>
   );
 }

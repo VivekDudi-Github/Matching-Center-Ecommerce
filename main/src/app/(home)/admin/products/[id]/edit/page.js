@@ -18,8 +18,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
 import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
-import { createNewProduct, createNewProductImages, updateProduct } from "@/app/lib/actions/newProduct.action";
-import {uploadToCloudinary, deleteCloudinaryImage} from '@/app/lib/services/UploadToCloudinary';
+import { createNewProduct, createNewProductImages, deleteProductImages, updateProduct } from "@/app/lib/actions/newProduct.action";
+import {uploadToCloudinary} from '@/app/lib/services/UploadToCloudinary';
 import { useParams, useRouter } from "next/navigation";
 import { getAdminProd } from "@/app/lib/actions/getAdminProd";
 
@@ -144,7 +144,7 @@ export default function EditProductPage() {
           toast.error("Signature not available, please try again.");
           return;
         }
-        await deleteCloudinaryImage(removedImages[i].publicId);
+        await deleteProductImages({id:removedImages[i].id, publicId: removedImages[i].publicId});
       }
       return router.push(`/admin/products`);
 

@@ -126,16 +126,6 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
         </div>
       </motion.div>
 
-      {/* Mobile */}
-
-      {/* <div className="space-y-4 hidden">
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-          />
-        ))}
-      </div> */}
     </>
   );
 }

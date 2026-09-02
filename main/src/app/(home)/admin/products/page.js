@@ -7,6 +7,9 @@ import { serializePrisma } from "@/app/hooks/serializePrisma";
 
 export default async function ProductsPage() {
   const products = await prisma.product.findMany({
+    where: {
+      deletedAt: null,
+    },
     orderBy: {
       id : "desc"
     }, 
@@ -55,94 +58,3 @@ export default async function ProductsPage() {
     </div>
   );
 }
-
-// const products = [
-//   {
-//     id: 1,
-//     name: "Premium Cotton White",
-//     image:
-//       "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300",
-//     category: "Cotton",
-//     price: 280,
-//     stock: 125.5,
-//     featured: true,
-//     status: "Active",
-//   },
-//   {
-//     id: 2,
-//     name: "Printed Rayon",
-//     image:
-//       "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=300",
-//     category: "Rayon",
-//     price: 340,
-//     stock: 42.75,
-//     featured: false,
-//     status: "Active",
-//   },
-//   {
-//     id: 3,
-//     name: "Linen Blue",
-//     image:
-//       "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=300",
-//     category: "Linen",
-//     price: 420,
-//     stock: 9.5,
-//     featured: true,
-//     status: "Active",
-//   },
-//   {
-//     id: 4,
-//     name: "Silk Blend",
-//     image:
-//       "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=300",
-//     category: "Silk",
-//     price: 780,
-//     stock: 0,
-//     featured: false,
-//     status: "Out of Stock",
-//   },
-//   {
-//     id: 5,
-//     name: "Premium Cotton White",
-//     image:
-//       "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=300",
-//     category: "Cotton",
-//     price: 280,
-//     stock: 125.5,
-//     featured: true,
-//     status: "Active",
-//   },
-//   {
-//     id: 6,
-//     name: "Printed Rayon",
-//     image:
-//       "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=300",
-//     category: "Rayon",
-//     price: 340,
-//     stock: 42.75,
-//     featured: false,
-//     status: "Active",
-//   },
-//   {
-//     id: 7,
-//     name: "Linen Blue",
-//     image:
-//       "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=300",
-//     category: "Linen",
-//     price: 420,
-//     stock: 9.5,
-//     featured: true,
-//     status: "Active",
-//   },
-//   {
-//     id: 8,
-//     name: "Silk Blend",
-//     image:
-//       "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=300",
-//     category: "Silk",
-//     price: 780,
-//     stock: 0,
-//     featured: false,
-//     status: "Out of Stock",
-//   },
-// ];

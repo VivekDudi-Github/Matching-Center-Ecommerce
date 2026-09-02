@@ -48,11 +48,8 @@ export async function createNewProduct(data) {
           }),
         },
         color :{
-          connectOrCreate: colors.map((color) => {
+          create: colors.map((color) => {
             return {
-              where: {
-                hex: color.hex,
-              },
               create: {
                 name: color.name,
                 hex: color.hex,
@@ -116,15 +113,36 @@ export async function createNewProductImages(productId, image) {
   });
 }
 
-export async function deleteProductImages(publicId) {
-  if(!publicId) throw new Error("Image publicId is missing");
+export async function deleteProductImages({ id} ) {
+  if(!id) throw new Error("Image id is missing");
 
   return await TryCatch( async () => {
-    await prisma.productImages.deleteMany({
+    let filter = {};
+
+    if(id) filter.id = id;
+ 
+    const deletedRow = await prisma.productImages.delete({
       where: {
-        publicId: publicId,
+        ...filter
       }
     });
+
+    const isExist = await prisma.productImages.findFirst({
+      where: {
+        publicId: deletedRow.publicId
+      },
+      select: { id: true }
+    })
+    console.log("isExist: ", isExist);
+    
+    if(!isExist) {
+      await prisma.strandedImages.create({
+        data: {
+          publicId: deletedRow.publicId,
+          url: deletedRow.url,
+        }
+      })  
+    }
 
     return true;
   });
@@ -216,3 +234,120 @@ export const updateProduct = async(id, data) => {
     }
   });
 }
+
+export const deleteProductAction = async(id) => {
+  if(!id) throw new Error("Product Id is missing");
+  return await TryCatch( async () => {
+    const product = await prisma.product.update({
+      where: {
+        id: Number(id)
+      }, 
+      data: {
+        deletedAt: new Date()
+      }
+    });
+    return true;
+  });
+}
+
+export const revertDeleteProductAction = async(id) => {
+  if(!id) throw new Error("Product Id is missing");
+  return await TryCatch( async () => {
+    const product = await prisma.product.update({
+      where: {
+        id: Number(id)
+      }, 
+      data: {
+        deletedAt: null
+      }
+    });
+    return true;
+  });
+}
+
+export const duplicateProductAction = async(id) => {
+  if(!id) throw new Error("Product Id is missing");
+  return await TryCatch( async () => {
+    const product = await prisma.product.findUnique({
+      where: {
+        id: Number(id)
+      },
+      include: {
+        color: true,
+        tags: true,
+        category: true,
+        images: true,
+      }
+    });
+    if(!product) throw new Error("Product not found");
+
+    const newProduct = await prisma.product.create({
+      data: {
+        title: product.title,
+        slug: `${product.slug}-${product.title.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+        sku:`${product.sku}-${Date.now().toString().slice(-4)}` ,
+        price: product.price,
+        originalPrice: product.originalPrice,
+        featured: product.featured,
+        isPublished: product.isPublished,
+        description: product.description,
+        width: product.width,
+        pattern: product.pattern,
+        category: product.category ? {
+          connectOrCreate: {
+            where: { name: product.category.name },
+            create: { name: product.category.name },
+          }
+        } : undefined,
+        
+        tags: {
+          connectOrCreate: (product.tags || []).map((tag) => ({
+            where: { name: tag.name },
+            create: { name: tag.name },
+          })),
+        },
+        
+        color: {
+          create : (product.color || []).map((color) => ({
+              name: color.name,
+              hex: color.hex,
+              availableMeters: color.availableMeters,
+              lowStockAlert: color.lowStockAlert, 
+            }
+          ))
+        },
+        
+        images: {
+          create: (product.images || []).map((img) => ({
+            publicId: img.publicId,
+            url: img.url
+          }))
+        },
+        seoTitle: product?.seoTitle,
+        washCare: product?.washCare,
+        seoDescription : product?.seoDescription,
+      },
+      include: {
+        color: true,
+        tags: true,
+        category: true,
+      }
+    });
+    console.log("DUPLICATE_PRODUCT:", newProduct);
+
+    
+
+    return {
+      ...newProduct, 
+      originalPrice: newProduct.originalPrice.toNumber(),
+      price: newProduct.price.toNumber(),
+      color: 
+        newProduct?.color?.map((color) => ({
+          name: color.name,
+          hex: color.hex,
+          availableMeters: color.availableMeters.toNumber(),
+          lowStockAlert: color.lowStockAlert.toNumber(),
+        }))
+      }
+  });
+};
