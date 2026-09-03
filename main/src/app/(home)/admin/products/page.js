@@ -25,7 +25,6 @@ export default async function ProductsPage() {
   if(hasMoreLength) {
     products.pop();
   }
-  console.log(hasMoreLength);
   
   const cursor = hasMoreLength ? 
       products[products.length - 1].id : 

@@ -32,7 +32,7 @@ export default function CardSlider() {
   const [positionX, setPositionX] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const [productsList, setProductsList] = useState(products);
-
+  
 
   useEffect(() => {
     const resetWidth = async(resizedWindow = true) => {
@@ -64,13 +64,13 @@ export default function CardSlider() {
   const slideRight = () => { 
     setPositionX((prev) => Math.max(prev - 360, -maxScroll)); // Slides view window forward right
   };
-
+  
   return (
-    <div className="w-full touch-pan-y dark:bg-black px-6 py-12 md:px-16">
+    <div className="w-full touch-pan-y dark:bg-black px-6 py-12 md:px-16" >
       {/* Top Header Row with Navigation Controls */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-transparent sm:text-3xl bg-gradient-to-r dark:from-zinc-100 from-zinc-900 dark:zinc-500 via-zinc-600 to-amber-800 bg-clip-text"> 
+          <h2 className="text-2xl font-bold tracking-tight text-transparent sm:text-3xl bg-linear-to-r dark:from-zinc-100 from-zinc-900 dark:zinc-500 via-zinc-600 to-amber-800 bg-clip-text"> 
             Featured Fabrics
           </h2>
           <p className="mt-1 text-sm text-zinc-400">Explore premium textiles and luxury weave materials.</p>
@@ -78,7 +78,7 @@ export default function CardSlider() {
 
         {/* Direction Controls */}
         <div className="flex gap-2">
-          <button
+          <button 
             onClick={slideLeft}
             disabled={positionX === 0}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 text-zinc-400 transition-all hover:bg-zinc-800 hover:text-white disabled:opacity-30"
@@ -86,7 +86,7 @@ export default function CardSlider() {
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <button
+          <button 
             onClick={slideRight}
             disabled={positionX <= -maxScroll}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 text-zinc-400 transition-all hover:bg-zinc-800 hover:text-white disabled:opacity-30"
@@ -119,7 +119,7 @@ export default function CardSlider() {
           className="flex gap-6 pb-4 hover:cursor-pointer"
         >
           {productsList.map((product) => (
-            <div key={product.id} className="w-80  shrink-1">
+            <div key={product.id} className="w-80  shrink">
               <Card fabricDetails={product} />
             </div>
           ))}

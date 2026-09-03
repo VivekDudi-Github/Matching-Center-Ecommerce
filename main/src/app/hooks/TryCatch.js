@@ -7,6 +7,6 @@ export const TryCatch = async (fn) => {
     console.error("CODE:", error?.code);
     console.error("META:", error?.meta);
     console.error("MESSAGE:", error?.message);
-    return error;
+    throw error;
   }
 };

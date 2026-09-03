@@ -106,6 +106,8 @@ model ProductVariant {
   availableMeters Decimal  @db.Decimal(10, 2)
   lowStockAlert   Decimal  @db.Decimal(10, 2)
 
+  isLowStock      Boolean  @default(false)
+
   name            String
   hex             String   
   productId       Int

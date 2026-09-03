@@ -21,7 +21,7 @@ import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
 import { createNewProduct, createNewProductImages, deleteProductImages, updateProduct } from "@/app/lib/actions/newProduct.action";
 import {uploadToCloudinary} from '@/app/lib/services/UploadToCloudinary';
 import { useParams, useRouter } from "next/navigation";
-import { getAdminProd } from "@/app/lib/actions/getAdminProd";
+import { getAdminProdById } from "@/app/lib/actions/getAdminProd";
 
 export default function EditProductPage() {
   const {id} = useParams();
@@ -32,14 +32,17 @@ export default function EditProductPage() {
     timestamp: null
   });
 
+  const [product, setProduct] = useState(null);
+
   const [isLoading, setIsLoading] = useState(false);
   const [inititalLoading, setInititalLoading] = useState(true);
 
   const [allImages, setAllImages] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [removedImages, setRemovedImages] = useState([]);
+
   const [productId, setProuctId] = useState(null);
-  // const [oldImages, setOldImages] = useState([]);
+  
    
   const methods = useForm({
     resolver: zodResolver(newProductFormSchema),
@@ -68,7 +71,7 @@ export default function EditProductPage() {
         tags: [],
 
         colors: [
-          {name: '', hex: '', hexText: '', availableMeters: '', lowStockAlert: '' }
+          {name: '', hex: '', hexText: '', availableMeters: '', lowStockAlert: '5' }
         ],
 
         images: [],
@@ -94,7 +97,6 @@ export default function EditProductPage() {
     control: methods.control,
     defaultValue: []
   })
-  console.log("REMOVED IMAGES:", removedImages);
   
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -177,8 +179,9 @@ export default function EditProductPage() {
     const product = async() => {
       if(!id) return;
       try {
-        const product = await getAdminProd(id);
+        const product = await getAdminProdById(id);
         console.log("product", product);
+        setProduct(product);
         
         setValue("title", product.title);
         setValue("slug", product.slug);

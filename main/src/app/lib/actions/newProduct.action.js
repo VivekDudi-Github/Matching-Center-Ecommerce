@@ -12,7 +12,7 @@ export async function createNewProduct(data) {
   }
   return await TryCatch( async () => {
     const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = parsedData.data;
-  
+    
     const product = await prisma.product.create({
       data: {
         title,
@@ -69,6 +69,8 @@ export async function createNewProduct(data) {
         category: true,
       }
     });
+
+
     console.log("PRODUCT:", {
       ...product, 
       originalPrice: product.originalPrice.toNumber(),
@@ -156,70 +158,78 @@ export const updateProduct = async(id, data) => {
     if (!parsedData.success) {
       throw new Error(parsedData?.error  || "Something went wrong");
     }
-
+    let product = null;
     const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = parsedData.data;
-    const product = await prisma.product.update({
-      where: {
-        id: Number(id)
-      },
-      data: {
-        title,
-        slug,
-        price,
-        originalPrice,
-        featured,
-        isPublished,
-        description,
-        width ,
-        sku,
-        pattern,
-        category: {
-          connectOrCreate: {
+    
+    await prisma.$transaction(async (tx) => {
+      const dbTags = await Promise.all(
+        tags.map((tag) => {
+          return tx.tag.upsert({
             where: {
-              name: category,
+              name: tag,
             },
             create: {
-              name: category,
+              name: tag,
             },
-          }
+            update: {},
+          });
+        })
+      );
+
+      product = await tx.product.update({
+        where: {
+          id: Number(id)
         },
-        tags: {
-          connectOrCreate: tags.map((tag) => {
-            return {
+        data: {
+          title,
+          slug,
+          price,
+          originalPrice,
+          featured,
+          isPublished,
+          description,
+          width ,
+          sku,
+          pattern,
+          category: {
+            connectOrCreate: {
               where: {
-                name: tag,
+                name: category,
               },
               create: {
-                name: tag,
+                name: category,
               },
-            };
-          }),
-        },
-        color :{
-          connectOrCreate: colors.map((color) => {
-            return {
-              where: {
-                hex: color.hex,
-              },
-              create: {
+            }
+          },
+          tags: {
+            set: dbTags.map((tag) => ({ id: tag.id })),
+          },
+          color :{
+            deleteMany: {} , 
+            create: colors.map((color) => {
+              return {
                 name: color.name,
                 hex: color.hex,
                 availableMeters: color.availableMeters,
                 lowStockAlert: color.lowStockAlert, 
-              },
-            };
-          })
-        } ,
-        seoTitle: seoTitle ?? title,
-        washCare,
-        seoDescription : seoDescription ?? description,
-      },
-      include: {
-        color: true,
-        tags: true,
-        category: true,
-      }
+              };
+            })
+          } ,
+          seoTitle: seoTitle ?? title,
+          washCare,
+          seoDescription : seoDescription ?? description,
+        },
+        include: {
+          color: true,
+          tags: true,
+          category: true,
+        }
+      });  
+    
     });
+
+
+
     return {
     ...product, 
     originalPrice: product.originalPrice.toNumber(),

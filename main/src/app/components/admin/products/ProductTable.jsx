@@ -9,6 +9,7 @@ import ProductToolbar from "./ProductToolbar";
 import { useEffect, useState } from "react";
 import { getMoreAdminProdList } from "@/app/lib/actions/getAdminProd";
 import { toast } from "react-toastify";
+import { useSearchParams } from "next/navigation";
 
 const columns = [
   "Product",
@@ -26,11 +27,17 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
   const [ cursor, setCursour] = useState(initialCursor);
   const [ isLoading, setIsLoading] = useState(false);
 
+  const params = useSearchParams();
 
   const loadMore = async() => {
     setIsLoading(true);
     try {
-      const {list , newCursor} = await getMoreAdminProdList(cursor);
+      const search = params.get("search") ?? "";
+      const category = params.get("category") ?? "";
+      const status = params.get("status") ?? "";
+
+
+      const {list , newCursor} = await getMoreAdminProdList(cursor, search, category, status);
       console.log("LIST:", list);
       setProducts(prev => [...prev, ...list]);
       setCursour(newCursor);
@@ -39,10 +46,7 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
     } finally {
       setIsLoading(false);
     }
-
   }
-  console.log("products:", products);
-
 
   useEffect(() => {
     setProducts(initalProducts);

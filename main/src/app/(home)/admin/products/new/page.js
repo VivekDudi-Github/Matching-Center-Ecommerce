@@ -64,7 +64,7 @@ export default function NewProductPage() {
         tags: [],
 
         colors: [
-          {name: '', hex: '', hexText: '', availableMeters: '', lowStockAlert: '' }
+          {name: '', hex: '', hexText: '', availableMeters: '', lowStockAlert: '5' }
         ],
 
         images: [],

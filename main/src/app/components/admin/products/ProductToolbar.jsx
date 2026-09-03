@@ -1,29 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Plus, Filter, X } from "lucide-react";
+import { Search, Plus, Filter, X, ScanSearchIcon } from "lucide-react";
 import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+
 
 const categories = [
-  "All Categories",
-  "Cotton",
-  "Linen",
-  "Silk",
-  "Rayon",
-  "Polyester",
+  { label: "All Categories", value: "" },
+  { label: "Cotton", value: "cotton" },
+  { label: "Linen", value: "linen" },
+  { label: "Silk", value: "silk" },
+  { label: "Rayon", value: "rayon" },
+  { label: "Polyester", value: "polyester" },
 ];
 
 const statusOptions = [
-  "All Status",
-  "Active",
-  "Low Stock",
-  "Out of Stock",
+  { label: "All Status", value: "" },
+  { label: "Active", value: "active" },
+  { label: "Low Stock", value: "low-stock" },
+  { label: "Out of Stock", value: "out-of-stock" },
 ];
 
 export default function ProductToolbar() {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All Categories");
-  const [status, setStatus] = useState("All Status");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [search, setSearch] = useState(
+    searchParams.get("search") ?? ""
+  );
+
+  const [category, setCategory] = useState(
+    searchParams.get("category") ?? "All Categories"
+  );
+
+  const [status, setStatus] = useState(
+    searchParams.get("status") ?? "All Status"
+  );
+
 
   const hasFilters =
     search ||
@@ -34,7 +48,27 @@ export default function ProductToolbar() {
     setSearch("");
     setCategory("All Categories");
     setStatus("All Status");
+
+    router.push("/admin/products");
   };
+
+  const updateUrl = (newSearch, newCategory, newStatus) => {
+    const params = new URLSearchParams();
+
+    if (newSearch) {
+      params.set("search", newSearch);
+    }
+
+    if (newCategory !== "All Categories") {
+      params.set("category", newCategory);
+    }
+
+    if (newStatus !== "All Status") {
+      params.set("status", newStatus);
+    }
+
+    router.push(`?${params.toString()}`);
+  }
 
   return (
     <div className="rounded-2xl border-zinc-200 bg-white sm:p-4 p-2 duration-200 shadow-sm  dark:bg-black">
@@ -54,21 +88,40 @@ export default function ProductToolbar() {
               type="text"
               placeholder="Search products..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+
+                updateUrl(value, category, status);
+              }}
               className="w-full rounded-lg border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
             />
+            <button className="lg:hidden absolute h-[45.6px] top-0 right-0 items-center duration-200 justify-center gap-2 border dark:border-black border-white rounded-lg bg-zinc-900 p-2  text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200" > 
+              <ScanSearchIcon size={29} />
+            </button>
           </div>
+          
+          <button className="lg:inline-flex hidden  items-center duration-200 justify-center gap-2 border dark:border-black border-white rounded-lg bg-zinc-900 p-2  text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200" > 
+            <ScanSearchIcon size={29} />
+          </button>
 
           <div className="grid grid-cols-2 gap-2 ">
             {/* Category */}
 
             <select
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setCategory(value);
+
+                updateUrl(search, value, status);
+              }}
               className="rounded-lg  border col-span-1 border-zinc-300 bg-white px-2 py-2 text-sm outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
             >
               {categories.map((item) => (
-                <option key={item}>{item}</option>
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
               ))}
             </select>
 
@@ -76,11 +129,18 @@ export default function ProductToolbar() {
 
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setStatus(value);
+
+                updateUrl(search, category, value);
+              }}
               className="rounded-lg col-span-1 border border-zinc-300 bg-white p-2 text-sm outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
             >
               {statusOptions.map((item) => (
-                <option key={item}>{item}</option>
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
               ))}
             </select>
           </div>
@@ -114,6 +174,7 @@ export default function ProductToolbar() {
             <Plus size={18} />
             Add Product
           </Link>
+
         </div>
       </div>
 
@@ -127,7 +188,7 @@ export default function ProductToolbar() {
           </div>
 
           {search && (
-            <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium dark:bg-zinc-800">
+            <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium dark:bg-zinc-800 text-wrap max-w-fit overflow-auto">
               "{search}"
             </span>
           )}

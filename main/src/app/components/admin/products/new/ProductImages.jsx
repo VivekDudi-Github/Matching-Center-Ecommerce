@@ -19,7 +19,6 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
   });
 
   
-  console.log("OLD IMAGES:", oldimages, allImages);
 
   const handleImageChange = () => {
   };
