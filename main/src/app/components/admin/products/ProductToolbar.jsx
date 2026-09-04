@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Search, Plus, Filter, X, ScanSearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 
@@ -22,9 +22,11 @@ const statusOptions = [
   { label: "Out of Stock", value: "out-of-stock" },
 ];
 
-export default function ProductToolbar() {
+export default function ProductToolbar({ loadInitial}) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const timeOutRef = useRef();
 
   const [search, setSearch] = useState(
     searchParams.get("search") ?? ""
@@ -91,17 +93,20 @@ export default function ProductToolbar() {
               onChange={(e) => {
                 const value = e.target.value;
                 setSearch(value);
-
-                updateUrl(value, category, status);
+                if(timeOutRef.current) clearTimeout(timeOutRef.current);
+                timeOutRef.current = setTimeout(() => {
+                  updateUrl(value, category, status);
+                }, 1000)
+                
               }}
               className="w-full rounded-lg border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
             />
-            <button className="lg:hidden absolute h-[45.6px] top-0 right-0 items-center duration-200 justify-center gap-2 border dark:border-black border-white rounded-lg bg-zinc-900 p-2  text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200" > 
+            <button onClick={loadInitial} className="lg:hidden absolute h-[45.6px] top-0 right-0 items-center duration-200 justify-center gap-2 border dark:border-black border-white rounded-lg active:scale-90 bg-zinc-900 p-2  text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200" > 
               <ScanSearchIcon size={29} />
             </button>
           </div>
           
-          <button className="lg:inline-flex hidden  items-center duration-200 justify-center gap-2 border dark:border-black border-white rounded-lg bg-zinc-900 p-2  text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200" > 
+          <button onClick={loadInitial} className="lg:inline-flex hidden  items-center duration-200 justify-center gap-2 border dark:border-black border-white rounded-lg bg-zinc-900 p-2 active:scale-90  text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200" > 
             <ScanSearchIcon size={29} />
           </button>
 

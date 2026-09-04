@@ -79,19 +79,20 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        
+
+        {/* Bottom */}
+
+        <div className="border-t border-zinc-200 p-5 dark:border-zinc-800">
+          <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-500 transition hover:bg-red-50 dark:hover:bg-red-500/10">
+            <LogOut size={20} />
+
+            <span className="font-medium">
+              Logout
+            </span>
+          </button>
+        </div>
       </nav>
-
-      {/* Bottom */}
-
-      {/* <div className="border-t border-zinc-200 p-5 dark:border-zinc-800">
-        <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-red-500 transition hover:bg-red-50 dark:hover:bg-red-500/10">
-          <LogOut size={20} />
-
-          <span className="font-medium">
-            Logout
-          </span>
-        </button>
-      </div> */}
     </aside>
   );
 }

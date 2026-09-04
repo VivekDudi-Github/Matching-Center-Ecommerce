@@ -7,9 +7,10 @@ import ProductRow from "./ProductRow";
 import ProductCard from "./ProductCard";
 import ProductToolbar from "./ProductToolbar";
 import { useEffect, useState } from "react";
-import { getMoreAdminProdList } from "@/app/lib/actions/getAdminProd";
+import { getFirstAdminProdList, getMoreAdminProdList } from "@/app/lib/actions/getAdminProd";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
+import TableLoading from "./TrSkeleton";
 
 const columns = [
   "Product",
@@ -48,6 +49,26 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
     }
   }
 
+  const loadInitial = async() => {
+    setIsLoading(true);
+    try {
+      setProducts([]);
+      setCursour(null);
+
+      const search = params.get("search") ?? "";
+      const category = params.get("category") ?? "";
+      const status = params.get("status") ?? "";
+
+      const {list , newCursor} = await getFirstAdminProdList( search, category, status);
+      setProducts(list);
+      setCursour(newCursor);
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     setProducts(initalProducts);
     setCursour(initialCursor);
@@ -57,7 +78,7 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
     <>
       
       {/* Toolbar */}
-      <ProductToolbar />
+      <ProductToolbar loadInitial={loadInitial} />
  
       {/* Desktop */}
 
@@ -71,30 +92,31 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
         <div className="overflow-x-auto block">
           {products.length ? (
             <table className="min-w-full relative">
-            <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-              <tr>
-                {columns.map((column, index) => (
-                  <th
-                    key={index}
-                    className={`md:px-6 md:py-4 p-2 text-left md:text-sm text-[9px] font-semibold uppercase tracking-wider text-zinc-500 ${column === "Category" ? "md:block hidden" : ""}`}
-                  >
-                    {column}
-                  </th>
+              <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+                <tr>
+                  {columns.map((column, index) => (
+                    <th
+                      key={index}
+                      className={`md:px-6 md:py-4 p-2 text-left md:text-sm text-[9px] font-semibold uppercase tracking-wider text-zinc-500 ${column === "Category" ? "md:block hidden" : ""}`}
+                    >
+                      {column}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+
+              <tbody>
+                {products.map((product) => (
+                  <ProductRow
+                    key={product.id}
+                    product={product}
+                  />
                 ))}
-              </tr>
-            </thead>
-
-
-            <tbody>
-              {products.map((product) => (
-                <ProductRow
-                  key={product.id}
-                  product={product}
-                />
-              ))}
               </tbody>
             </table>
-          ) : (
+          ) : null}
+          { !products.length && !isLoading &&  (
             <div className="rounded-2xl top-0 left-0 border  border-zinc-400 bg-white p-16 text-center dark:border-black dark:bg-black"> 
               <PackageOpen
                 size={60}
@@ -110,6 +132,8 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
               </p>
             </div>
           )}
+
+          <TableLoading isLoading={isLoading} />
 
           {cursor && (
             <div className="flex justify-center m-4">

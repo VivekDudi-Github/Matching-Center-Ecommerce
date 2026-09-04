@@ -234,7 +234,7 @@ export default function ProductRow({ product }) {
 
       <td className="md:px-6 md:py-5 p-2">
         <ActionMenu
-          viewHref={`/admin/products/${product.id}`}
+          viewHref={`/products/${product.id}`}
           editHref={`/admin/products/${product.id}/edit`}
           onDuplicate={() => duplicateProduct(product.id) }
           onDelete={() => deleteProduct(product.id) }

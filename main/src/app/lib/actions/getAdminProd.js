@@ -56,7 +56,7 @@ const getMoreAdminProdListNotStatusBased = async(cursor, search, category) => {
     };
 
 
-    const variants = await prisma.product.findMany({
+    const products = await prisma.product.findMany({
       where: {
         ...where
       },
@@ -76,8 +76,8 @@ const getMoreAdminProdListNotStatusBased = async(cursor, search, category) => {
       take: 11
     });
 
-    const newCursor = variants.length > 10 ? variants[9].id : null;
-    if(newCursor) variants.pop();
+    const newCursor = products.length > 10 ? products[9].id : null;
+    if(newCursor) products.pop();
 
     return {list : serializePrisma(products), newCursor};
   });
@@ -199,14 +199,12 @@ const getMoreAdminProdListStatusBased = async(cursor, search, category, status) 
 export const getFirstAdminProdList = async( search, category, status) => {
   return await TryCatch( async () => {
   
-  if(status && status !== "All Status") {
-    return await getFirstAdminProdListStatusBased(cursor, search, category, status);
-  }else {
-    return await getFirstAdminProdListNotStatusBased(cursor, search, category);
+    if(status && status !== "All Status") {
+      return await getFirstAdminProdListStatusBased( search, category, status);
+    }else {
+      return await getFirstAdminProdListNotStatusBased( search, category);
     }
   });
-
-
 }
 
 const getFirstAdminProdListNotStatusBased = async( search, category) => {
@@ -269,7 +267,9 @@ const getFirstAdminProdListNotStatusBased = async( search, category) => {
     if(hasMoreLength) {
       products.pop();
     }
-    return {products : serializePrisma(products) , cursor: hasMoreLength ? products[products.length - 1].id : null};
+    console.log("LIST:", products?.length);
+    return {list : serializePrisma(products) , newCursor: hasMoreLength ? products[products.length - 1].id : null};
+  
   })
 };
 

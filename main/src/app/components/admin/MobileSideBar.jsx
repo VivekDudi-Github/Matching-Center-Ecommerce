@@ -19,6 +19,7 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
   Bell,
+  LogOutIcon,
 } from "lucide-react";
 
 const links = [
@@ -134,7 +135,7 @@ export default function MobileSidebar() {
                     >
                       <div
                         className={`flex items-center justify-start gap-4 duration-200 rounded-md
-                          ${active ? 'bg-black dark:bg-white text-white dark:text-black' : 'hover:bg-zinc-400  text-black dark:text-white hover:text-black  dark:hover:bg-zinc-500 dark:hover:text-black'}`}
+                          ${active ? 'bg-black dark:bg-white text-white dark:text-black' : 'hover:bg-zinc-400  text-black dark:text-white hover:text-white  dark:hover:bg-zinc-500 dark:hover:text-black'}`}
                       >
                         <div className="p-2  ">   
                           <item.icon size={25}/>
@@ -145,6 +146,12 @@ export default function MobileSidebar() {
                     </Link>
                   );
                 })}
+                <div
+                  className={`flex items-center justify-start gap-4 duration-200 rounded-md p-2
+                      text-red-500 hover:bg-red-500 hover:text-white `}
+                 >
+                    <LogOutIcon size={20} />
+                </div>
               </nav>
 
               {/* Footer */}

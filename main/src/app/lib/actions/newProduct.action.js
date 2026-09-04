@@ -226,7 +226,7 @@ export const updateProduct = async(id, data) => {
         }
       });  
     
-    });
+    }, {timeout: 20000});
 
 
 

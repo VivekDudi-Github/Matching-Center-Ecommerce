@@ -102,14 +102,14 @@ export default function EditProductPage() {
     setIsLoading(true);
     try {
       if(allImages.length + (alreadyUploaded?.length || 0) < 1  ) throw new Error("Please upload atleast one image");
-      let product = null;
       if(!id) return toast.error("Product ID is missing, please try again");
+      let product = null;
+      
 
       product = await updateProduct(id, {...data, images: []});
       console.log("updated_product", product);
       setProuctId(id);
-      
-      
+           
 
       const { signature, timestamp } = await getCloudinarySignature();
       if(!signature || !timestamp) { 
