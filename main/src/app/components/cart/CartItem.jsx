@@ -7,14 +7,14 @@ import useCartStore from "@/app/store/CartStore";
 export default function CartItem({ item }) {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
-  console.log(item);
+  console.log("item:", item?.images[0]?.url);
   
   return (
     <div key={item.id} className="flex gap-4 border-b border-zinc-200 shadow shadow-black flex-wrap p-4 dark:border-zinc-800 duration-200">
       <div className="relative h-24 w-24 overflow-hidden rounded-xl bg-zinc-100">
-        {item?.imageUrl && (
+        {item?.images?.[0]?.url && (
           <Image
-            src={item?.imageUrl || '/fabrics_1.webp'}
+            src={item?.images[0]?.url || '/fabrics_1.webp'}
             alt={item?.name || 'fabrics-img'}
             fill
             className="object-cover"

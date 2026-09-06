@@ -56,7 +56,7 @@ export default function ProductPage() {
 
   const handleAddToCart = () => {
     setIsAdded(true) ;
-    addItem(PRODUCT_DATA);
+    addItem({...PRODUCT_DATA, quantity:Math.min(selectedColor?.availableMeters/1000, 1)});
     setTimeout(() => setIsAdded(false), 2000);
   }
 
@@ -90,7 +90,7 @@ export default function ProductPage() {
   if(isLoading) return  <Skeleton /> ;
   
   return (
-    <div className="min-h-screen -mt-12 bg-zinc-100 dark:bg-black pb-20 lg:pb-0 font-sans">
+    <div className="min-h-screen -mt-12 pt-12 bg-zinc-100 dark:bg-black pb-20 lg:pb-0 font-sans">
       
       <main className="max-w-350 mx-auto lg:p-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4">
@@ -122,9 +122,9 @@ export default function ProductPage() {
                 {PRODUCT_DATA?.reviews} Ratings & Reviews
               </span>
             </div>
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-6 flex-wrap">
               {PRODUCT_DATA?.tags.map((t,i) => 
-                <span key={i} className="text-sm text-zinc-500 font-medium rounded-xl bg-zinc-300 dark:bg-white px-2 ">#{t.name}</span>
+                <span key={i} className="text-sm shrink-0 text-zinc-500 font-medium rounded-xl bg-zinc-300 dark:bg-white px-2 ">#{t.name}</span>
               )}
             </div>
             
@@ -138,10 +138,10 @@ export default function ProductPage() {
             </div>
 
             {/* Pricing */}
-            <div className="mb-6">
+            <div className="my-3">
               <p className="text-green-600 dark:text-green-400 text-sm font-bold mb-1">Special price</p>
               <div className="flex items-end gap-3">
-                <span className="text-3xl font-semibold text-zinc-900 dark:text-white">
+                <span className="text-3xl font-semibold text-zinc-900 dark:text-white flex items-end">
                   ₹{PRODUCT_DATA.price}
                 </span>
                 <span className="text-base text-zinc-500 line-through mb-1">
@@ -154,7 +154,7 @@ export default function ProductPage() {
             </div>
 
             {/* Details Table */}
-            <div className="mt-8 border-t border-zinc-200 dark:border-zinc-800 pt-6">
+            <div className="mt-4 border-t border-zinc-200 dark:border-zinc-800 pt-6">
               <h3 className="text-lg font-medium mb-4 dark:text-white">Product Details</h3>
               <div className="grid grid-cols-3 gap-y-4 text-sm">
                 <div className="text-zinc-500">Fabric</div>
@@ -165,6 +165,9 @@ export default function ProductPage() {
                 
                 <div className="text-zinc-500">Width</div>
                 <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA.width} Inches</div>
+
+                <div className="text-zinc-500">Wash Care</div>
+                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA.washCare}</div>
                 
                 <div className="text-zinc-500">Description</div>
                 <div className="col-span-2 text-zinc-900 dark:text-zinc-200 leading-relaxed">
@@ -174,12 +177,6 @@ export default function ProductPage() {
             </div>
             {/* Action Buttons */}
             <div className="flex gap-4 mt-6 px-4 lg:px-0 flex-wrap h-14">
-              {/* <button className="flex-1 h-14 bg-[#ffffff] text-black font-bold text-lg rounded flex items-center justify-center gap-2 hover:bg-[#ffffffa3]  transition-colors dark:border-0 border-2 border-[#f05f19]" 
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart size={22} />
-                ADD TO CART
-              </button> */}
               <motion.button
                 onClick={handleAddToCart}
                 disabled={isAdded}

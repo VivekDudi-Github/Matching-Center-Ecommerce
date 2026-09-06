@@ -34,7 +34,7 @@ function SkeletonBlock({ className }) {
 // 3. Main Product Page Skeleton Component
 export default function ProductPageSkeleton() {
   return (
-    <div className="  px-4 py-8 md:py-12 bg-white dark:bg-black">
+    <div className="  px-4 py-8 md:py-12 md:pt-16 pt-14 bg-white dark:bg-black -mt-14">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12 items-start">
         
         <div className="flex flex-col-reverse lg:flex-row gap-4 w-full">

@@ -1,5 +1,6 @@
 'use server';
 
+import { serializePrisma } from '@/app/hooks/serializePrisma';
 import { TryCatch } from '@/app/hooks/TryCatch';
 import { prisma } from '@/app/lib/prisma';
 import {newProductFormSchema} from '@/app/lib/validation/product.schema';
@@ -55,6 +56,7 @@ export async function createNewProduct(data) {
                 hex: color.hex,
                 availableMeters: color.availableMeters,
                 lowStockAlert: color.lowStockAlert, 
+                isLowStock: color.availableMeters <= color.lowStockAlert,
               },
             };
           })
@@ -83,20 +85,8 @@ export async function createNewProduct(data) {
         }))
       ,
     });
-    return {
-      ...product, 
-      originalPrice: product.originalPrice.toNumber(),
-      price: product.price.toNumber(),
-      color: 
-        product?.color?.map((color) => ({
-          name: color.name,
-          hex: color.hex,
-          availableMeters: color.availableMeters.toNumber(),
-          lowStockAlert: color.lowStockAlert.toNumber(),
-        }))
-      }}
-    );
-  
+    return serializePrisma(product);
+  });
 }
 
 export async function createNewProductImages(productId, image) {
@@ -212,6 +202,7 @@ export const updateProduct = async(id, data) => {
                 hex: color.hex,
                 availableMeters: color.availableMeters,
                 lowStockAlert: color.lowStockAlert, 
+                isLowStock: color.availableMeters <= color.lowStockAlert,
               };
             })
           } ,

@@ -44,7 +44,7 @@ function CartSidebar({openChange}) {
               exit={{opacity: 0, x: '100%'}}
               transition={{ duration: 0.4, ease: 'easeInOut' }}
               style={{ zIndex : 50}}
-              className='flex flex-col bg-white dark:text-white dark:bg-black md:w-1/2 sm:w-3/5 w-full max-w-[450px] 
+              className='flex flex-col bg-white dark:text-white dark:bg-black md:w-1/2 sm:w-3/5 w-full max-w-112.5 
               h-screen fixed max-h-svh overflow-y-auto right-0 top-0 transition-[width] duration-300 '
             >
 

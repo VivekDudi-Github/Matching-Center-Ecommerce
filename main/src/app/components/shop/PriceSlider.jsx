@@ -14,7 +14,7 @@ export default function PriceSlider({ min, max, step, value, onValueChange }) {
       {/* The background track */}
       <Slider.Track className="relative h-2 bg-zinc-200 dark:bg-zinc-800 rounded-full grow">
         {/* The active filled section between the thumbs */}
-        <Slider.Range className="absolute h-full bg-black dark:bg-white rounded-full" />
+        <Slider.Range className="absolute h-full bg-amber-950 dark:bg-white rounded-full" />
       </Slider.Track>
       
       <Slider.Thumb 

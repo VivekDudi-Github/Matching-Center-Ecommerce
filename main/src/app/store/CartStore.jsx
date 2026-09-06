@@ -13,17 +13,10 @@ const useCartStore = create(
     addItem: (product) =>
       set((state) => {
         const existing = state.items.find((i) => i.id === product.id);
-
+        console.log("product-quantity", product?.quantity);
         if (existing) {
           return {
-            items: state.items.map((i) =>
-              i.id === product.id
-                ? {
-                    ...i,
-                    quantity: i.quantity + product.quantity,
-                  }
-                : i
-            ),
+            items: state.items
           };
         }
 
@@ -61,18 +54,24 @@ export default useCartStore;
 
 export const selectSubtotal = (state) =>
   state.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.originalPrice * item.quantity,
     0
   );
 
 export const selectShipping = (state) => {
   const subtotal = selectSubtotal(state);
-
   return subtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING;
 };
 
+export const selectDiscount = (state) => {
+  return selectSubtotal(state) - selectTotal(state) ;
+};
+
 export const selectTotal = (state) =>
-  selectSubtotal(state) + selectShipping(state);
+  state.items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
 export const selectTotalItems = (state) =>
   state.items.length;

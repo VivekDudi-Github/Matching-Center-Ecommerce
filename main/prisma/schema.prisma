@@ -99,6 +99,13 @@ model Product {
   deletedAt       DateTime?
   updatedAt       DateTime  @updatedAt
   createdAt       DateTime  @default(now())
+
+  @@index([categoryId])
+  @@index([isPublished])
+  @@index([price])
+  @@index([originalPrice])
+  @@index([featured])
+  @@index([title])
 }
 
 model ProductVariant {
@@ -115,6 +122,8 @@ model ProductVariant {
   product         Product  @relation(fields : [productId] , references: [id]) 
   
   @@index([productId])
+  @@index([isLowStock])
+  @@index([availableMeters])
 }
 
 model ProductImages {
