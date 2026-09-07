@@ -97,7 +97,7 @@ export default function ProductPage() {
           
           {/* LEFT SIDE: Image Gallery & Desktop Actions */}
           <div className="lg:col-span-5 bg-white dark:bg-stone-950/30 p-4 lg:p-6 lg:rounded-sm lg:shadow-sm">
-            <ProductGallery images={PRODUCT_DATA.images} />
+            <ProductGallery images={PRODUCT_DATA?.images} />
             
           </div>
 

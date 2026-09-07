@@ -10,9 +10,9 @@ export default function SafeImage({ src, alt }) {
   return (
     <div className="relative h-full w-full bg-zinc-950">
       {!isLoaded && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-900">
-          <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-zinc-800/60 to-transparent" />
-          <Scissors className="h-8 w-8 animate-pulse text-zinc-700" />
+        <div className="absolute inset-0 z-10 flex items-center justify-center animate-pulse  bg-zinc-900">
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-zinc-500 dark:via-zinc-300 via-zinc-800/60 to-transparent" />
+          <Scissors className="h-8 w-8 animate-pulse text-amber-700" />
         </div>
       )}
 
@@ -27,7 +27,7 @@ export default function SafeImage({ src, alt }) {
           opacity: { duration: 0.4 },
           scale: { duration: 0.6, ease: "easeOut" }
         }}
-        onLoad={() => setIsLoaded(true)} // Instantly flips only this specific image's state
+        onLoad={() => setIsLoaded(true)} 
       />
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { serializePrisma } from "@/app/hooks/serializePrisma";
 import { TryCatch } from "@/app/hooks/TryCatch";
-
+import { prisma } from "@/app/lib/prisma";
 
 export const getShopSelections = async () => {
   return await TryCatch(async () => {
@@ -48,19 +48,30 @@ export const getShopSelections = async () => {
   });
 };
 
-export const getProducts = async ({categoryId, outOfStock, minPrice, maxPrice,sort, search, cursor }) => {
+export const getProducts = async ({categoryId = '', outOfStock, minPrice, maxPrice,sort, searchText, cursor }) => {
+    console.log("cursor", cursor);
+    if(typeof categoryId === "string") {
+        categoryId = categoryId?.split(",")?.map(id => parseInt(id));
+    } else {
+        categoryId = [];
+    }
+    
     return await TryCatch(async () => {
         const products = await prisma.product.findMany({
             where:{
+                isPublished: true,
                 deletedAt: null,
-                ...(categoryId && { categoryId }),
+                ...(categoryId.length && { 
+                    categoryId: {
+                        in : categoryId
+                } }),
                 ...(minPrice && { price: { gte: minPrice } }),
                 ...(maxPrice && { price: { lte: maxPrice } }),
-                ...(search && { 
+                ...(searchText && { 
                     OR: [
                         {
                             title: {
-                                contains: search,
+                                contains: searchText,
                                 mode: "insensitive",
                             },
                         },
@@ -68,7 +79,7 @@ export const getProducts = async ({categoryId, outOfStock, minPrice, maxPrice,so
                             tags: {
                                 some: {
                                     name: {
-                                        contains: search,
+                                        contains: searchText,
                                         mode: "insensitive",
                                     },
                                 },
@@ -76,10 +87,12 @@ export const getProducts = async ({categoryId, outOfStock, minPrice, maxPrice,so
                         }, 
                     ],
                 }),
-                ...(outOfStock && {
+                ...(!outOfStock && {
                     color: {
-                        some: {
-                            availableMeters : 0,
+                        some:{
+                            availableMeters :{
+                                gt : 0
+                            }
                         }
                     }
                 })
@@ -97,12 +110,17 @@ export const getProducts = async ({categoryId, outOfStock, minPrice, maxPrice,so
             },
             take: 11,
             ...(cursor && {skip: 1}),
-            ...(cursor && { cursor }),
+            ...(cursor && { 
+                cursor : {
+                    id : cursor
+                } 
+            }),
         });
 
         let newCursor = null;
-        if(cursor && products.length > 10) {
+        if(products.length > 10) {
             newCursor = products.length > 10 ? products[9].id : null;
+            products.pop();
         }
 
         return {products : serializePrisma(products), newCursor};

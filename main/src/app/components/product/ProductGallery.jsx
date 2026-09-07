@@ -1,8 +1,10 @@
 'use client';
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import SafeImage from '../SafeImage';
 
 export default function ProductGallery({ images }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
   
   const [showZoom, setShowZoom] = useState(false);
@@ -39,11 +41,7 @@ export default function ProductGallery({ images }) {
                 : 'border-zinc-200 dark:border-zinc-800'
             }`}
           >
-            <img 
-              src={img?.url} 
-              alt={`Thumbnail ${index + 1}`} 
-              className="w-full h-full object-cover rounded-sm duration-200" 
-            />
+            <SafeImage src={img?.url} alt={index} />
           </button>
         ))}
       </div>

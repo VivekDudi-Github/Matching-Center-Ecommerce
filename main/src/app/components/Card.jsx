@@ -43,14 +43,14 @@ export default function FabricProductCard({fabricDetails}) {
       >
         {/* Top Badges Overlay */}
         <div className="absolute md:top-6 top-3 md:left-6 left-3 z-10 flex items-center gap-2 duration-200">
-          {fabricData.saleTag && (
+          {fabricData?.saleTag && (
             <span className="rounded-full bg-red-500 px-3 py-1 md:text-xs text-[7px] font-bold tracking-wide text-white shadow-sm"> 
-              {fabricData.saleTag}
+              {fabricData?.saleTag}
             </span>
           )}
           <span className=" items-center gap-1 md:flex hidden rounded-full bg-white/90 backdrop-blur-md px-2.5 py-1 md:text-xs text-[5px]  font-medium text-stone-700 shadow-sm border border-stone-100">
             <Scissors className="h-3 w-3 text-amber-700" />
-            By the {fabricData.unit}
+            By the meters
           </span>
         </div>
 
@@ -67,7 +67,8 @@ export default function FabricProductCard({fabricDetails}) {
         </button>
 
         <Link href={`products/${fabricData.id}`} className="relative md:h-64 h-36 w-full overflow-hidden rounded-md inline-block bg-stone-100">
-            <SafeImage src={fabricData.imageUrl} alt={fabricData.title} />
+            <SafeImage src={fabricData?.images[0]?.url} alt={fabricData.title} />
+          
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-linear-to-t from-stone-900/10 via-transparent to-transparent pointer-events-none" />
         </Link>

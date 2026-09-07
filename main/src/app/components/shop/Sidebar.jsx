@@ -2,10 +2,11 @@
 
 import {useEffect, useState} from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, FilterIcon, Minus, SearchIcon } from "lucide-react";
+import { ChevronDown, ChevronUp, FilterIcon, Loader2Icon, Minus, SearchIcon } from "lucide-react";
 import PriceSlider from "./PriceSlider";
 import { getShopSelections } from "@/app/lib/actions/shopActions";
 import { SortSelector } from "./SortSelector";
+import SideBardSkeleton from "./SideBardSkeleton";
 
 
 const sortOptions = [
@@ -15,7 +16,7 @@ const sortOptions = [
   { value: "newest", label: "Newest" },
 ];
 
-export default function Sidebar({ openSections, toggleSection, collapseAll }) {
+export default function Sidebar({ openSections, toggleSection, setCursor, setParams }) {
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [isLoading, setisLoading] = useState(false);
   
@@ -27,11 +28,19 @@ export default function Sidebar({ openSections, toggleSection, collapseAll }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("featured");
+  const [outOfStock, setoutOfStock] = useState(false);
 
 
   const updateUrl = () => {
     const params = new URLSearchParams();
-
+    if(selectedCategories.length) params.set("categoryId", selectedCategories.join(","));
+    if(priceRange[0] >= priceLow) params.set("minPrice", priceRange[0]);
+    if(priceRange[1] <= priceHigh) params.set("maxPrice", priceRange[1]);
+    params.set("sort", sortBy);
+    params.set("search", search);
+    params.set("outOfStock", outOfStock);
+    setCursor(null);
+    setParams(params);
   }
 
   const handleCategoryChange = (category) => {
@@ -46,7 +55,6 @@ export default function Sidebar({ openSections, toggleSection, collapseAll }) {
     const fetchSelections = async () => {
       setisLoading(true);
       const res = await getShopSelections();
-      console.log("res:", res);
       setCategories(res.categories);
       setPriceLow(Number(res.priceRange.low));
       setPriceHigh(Number(res.priceRange.high));
@@ -57,6 +65,8 @@ export default function Sidebar({ openSections, toggleSection, collapseAll }) {
 
     fetchSelections();
   }, [])
+
+  if(isLoading) return <SideBardSkeleton />
 
   return (
     <div className="flex flex-col gap-6 text-zinc-900 dark:text-zinc-100">
@@ -96,8 +106,8 @@ export default function Sidebar({ openSections, toggleSection, collapseAll }) {
               {categories.map((cat) => (
                 <label key={cat?.id || cat?.name} className="flex items-start gap-3 cursor-pointer">
                   <input 
-                    checked={selectedCategories.includes(cat?.name)}
-                    onChange={() => handleCategoryChange(cat?.name)}
+                    checked={selectedCategories.includes(cat?.id)}
+                    onChange={() => handleCategoryChange(cat?.id)}
                     type="checkbox" 
                     className="mt-1 rounded border-zinc-300 dark:border-zinc-700 text-black dark:text-white focus:ring-black dark:focus:ring-white bg-transparent" 
                   />
@@ -171,7 +181,10 @@ export default function Sidebar({ openSections, toggleSection, collapseAll }) {
               className="flex flex-col gap-3 overflow-hidden"
             > 
               <label className="group flex cursor-pointer items-start pt-4 gap-3"> 
-                <input type="checkbox" className=" mt-0.5 h-4 w-4 cursor-pointer rounded-xs border-zinc-300 bg-transparent text-zinc-950 accent-zinc-950 focus:ring-1 focus:ring-zinc-900 focus:ring-offset-0 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:accent-white dark:focus:ring-zinc-300 " /> 
+                <input
+                checked={outOfStock} 
+                onChange={() => setoutOfStock( prev => !prev)}
+                type="checkbox" className=" mt-0.5 h-4 w-4 cursor-pointer rounded-xs border-zinc-300 bg-transparent text-zinc-950 accent-zinc-950 focus:ring-1 focus:ring-zinc-900 focus:ring-offset-0 dark:border-zinc-700 dark:bg-transparent dark:text-white dark:accent-white dark:focus:ring-zinc-300 " /> 
                   <span className=" text-sm text-zinc-600 transition-colors duration-200 group-hover:text-zinc-950 dark:text-zinc-400 dark:group-hover:text-white " > 
                     In Stock 
                   </span> 
@@ -184,31 +197,11 @@ export default function Sidebar({ openSections, toggleSection, collapseAll }) {
   
       {/* filter button */}
       <button
-        className="
-          group relative w-full overflow-hidden
-          border border-zinc-700/80
-          bg-zinc-950
-          px-4 py-2.5
-          text-sm font-medium tracking-wide text-white
-          shadow-[0_4px_20px_rgba(0,0,0,0.25)]
-          transition-all duration-300
-          hover:border-amber-700
-          dark:hover:border-amber-200/50
-          hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)]
-          active:translate-y-px
-          cursor-pointer
-        "
+        className={` group relative w-full overflow-hidden border border-zinc-700/80 bg-zinc-950  px-4 py-2.5 text-sm font-medium tracking-wide text-white shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300  hover:border-amber-700  dark:hover:border-amber-200/50 hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)]  active:translate-y-px  cursor-pointer`}
         onClick={updateUrl}
       >
         <span
-          className="
-            absolute inset-0
-            -translate-x-full
-            bg-linear-to-r
-            from-transparent via-white/10 to-transparent
-            transition-transform duration-700
-            group-hover:translate-x-full
-          "
+          className={` absolute inset-0 -translate-x-full  bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full `}
         />
 
         <span className="relative flex items-center justify-center gap-2">

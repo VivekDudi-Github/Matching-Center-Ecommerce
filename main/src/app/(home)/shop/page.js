@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FilterIcon, Menu, Minus, Moon, Sun } from "lucide-react";
 
@@ -8,17 +8,23 @@ import Card from "../../components/Card";
 import Sidebar from "@/app/components/shop/Sidebar";
 import MobileDrawer from "@/app/components/shop/MobileDrawer";
 
-import {products} from '../../components/CardSlider';
+import {getProducts} from '@/app/lib/actions/shopActions';
+import { toast } from "react-toastify";
+import CardSkeleton from "@/app/components/card/CardSkeleton";
 
 export default function ShopLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  
+  const [searchParams, setSearchParams] = useState(new URLSearchParams());
+  const [cursor, setCursor] = useState(null);
+  const [products, setProducts] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const [openSections, setOpenSections] = useState({
-    categories: true,
+    categories: false,
     price: true,
     stock: true,
-    sort: true,
+    sort: false,
   });
 
   const toggleSection = (section) => {
@@ -33,7 +39,65 @@ export default function ShopLayout() {
       sort: false,
     });
   };
+
+  useEffect(() => {
+    const fetchItems = async() => {
+      setIsLoading(true);
+      try {
+        console.log("searchParams:", searchParams);
+       
+        const categoryId = searchParams.get("categoryId") ?? [];
+        const outOfStock = searchParams.get("outOfStock") ?? true;
+        const minPrice = searchParams.get("minPrice") ;
+        const maxPrice = searchParams.get("maxPrice") ;
   
+        const sort = searchParams.get("sort") ?? "featured";
+        const search = searchParams.get("search") ?? "";
+  
+        console.log("search:", search)
+        const res = await getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search});
+        console.log("products res:", res);
+  
+        setProducts(res.products);
+        setCursor(res.newCursor);
+      } catch (error) {
+        toast.error(error?.message || "Something went wrong while fetching product");
+        console.log("error in fetching product: ", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchItems();
+  }, [searchParams])
+
+  const triggerCursorFetch = async(index) => {
+    if(index === products.length - 4 && cursor) {
+        try {
+          setIsLoading(true);
+          console.log("fetching products");
+          const categoryId = searchParams.get("categoryId") ?? [];
+          const outOfStock = searchParams.get("outOfStock") ?? true;
+          const minPrice = searchParams.get("minPrice") ;
+          const maxPrice = searchParams.get("maxPrice") ;
+
+          const sort = searchParams.get("sort") ?? "featured";
+          const search = searchParams.get("search") ?? "";
+          
+          console.log("search:", search)
+          const res = await getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search, cursor});
+          console.log("products res:", res);
+
+          setProducts(prev => [...prev, ...res.products]);
+          setCursor(res.newCursor);
+
+        } catch (error) {
+           toast.error(error?.message || "Something went wrong while fetching product");
+           console.log("error in fetching product: ", error);
+        } finally {
+          setIsLoading(false);
+        }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
@@ -60,6 +124,8 @@ export default function ShopLayout() {
             <Minus size={16} className="ml-2 text-zinc-500 dark:text-zinc-300 cursor-pointer"  />
           </div>
         <Sidebar 
+          setCursor={setCursor}
+          setParams={setSearchParams}
           openSections={openSections} 
           toggleSection={toggleSection} 
           collapseAll={collapseAll} 
@@ -74,6 +140,8 @@ export default function ShopLayout() {
             <Minus size={16} className="ml-2 text-zinc-500 dark:text-zinc-300 cursor-pointer"  />
           </div>
           <Sidebar 
+            setCursor={setCursor}
+            setParams={setSearchParams}
             openSections={openSections} 
             toggleSection={toggleSection} 
             collapseAll={collapseAll} 
@@ -98,7 +166,12 @@ export default function ShopLayout() {
           >
             {products.map((item,i) => (
               <motion.div 
-                key={i}
+                key={item.id}
+                onViewportEnter={() => triggerCursorFetch(i)}
+                viewport={{
+                  once: true,
+                  amount: 0.5,
+                }}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
                   visible: { opacity: 1, y: 0 }
@@ -107,6 +180,11 @@ export default function ShopLayout() {
                 <Card fabricDetails={item}/>
               </motion.div>
             ))}
+            {
+              Array.from({length: 10}).map((_, i) => 
+                <CardSkeleton key={i} />
+            )
+            }
           </motion.div>
         </main>
       </div>
