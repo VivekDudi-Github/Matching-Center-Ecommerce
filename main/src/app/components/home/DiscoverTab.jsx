@@ -14,8 +14,8 @@ const discoversItems = [
 
 ]
 
-function DiscoverTab() {
-  const duplicateItems = [...discoversItems, ...discoversItems];
+function DiscoverTab({categories}) {
+  const duplicateItems = [...categories, ...categories];
   const containerRef = useRef();
   const controlRef = useRef();
   const xTranslation = useMotionValue(0);
@@ -53,6 +53,7 @@ function DiscoverTab() {
   const handleHoverPause = () => controlRef.current ? controlRef.current.pause() : null;
   const handleHoverPlay = () => controlRef.current ? controlRef.current.play() : null;
 
+  const getIndex = (i) => Math.floor((i / duplicateItems.length) * discoversItems.length);
 
   return (
     <div className='dark:bg-black  w-full mb-3 '>
@@ -71,9 +72,9 @@ function DiscoverTab() {
           {duplicateItems.map( (d ,i) => (
             <div key={i} className='relative w-56 md:w-80 shrink-0 rounded-xs overflow-hidden'> 
               <img width={100} height={384} className=' w-full h-96 brightness-75 object-cover'  
-              src={d.img} alt={d.alt} 
+              src={discoversItems[getIndex(i)].img } alt={d.name} 
               />
-              <span className='absolute  left-1/2 top-1/2 -translate-x-1/2 -translate-y-8 font-bold font-mont text-3xl text-nowrap text-white' >Fabrics </span>        
+              <span className='absolute  left-1/2 top-1/2 -translate-x-1/2 -translate-y-8 font-bold font-mont text-3xl text-nowrap text-white' >{d?.name} </span>        
               <div className='absolute inset-0 inset-y-1/2 '><ShopNowBtn /></div>
             </div>
           ))}

@@ -48,9 +48,9 @@ export const getShopSelections = async () => {
   });
 };
 
-export const getProducts = async ({categoryId = '', outOfStock, minPrice, maxPrice,sort, searchText, cursor }) => {
-    console.log("cursor", cursor);
-    if(typeof categoryId === "string") {
+export const getProducts = async ({categoryId = '', outOfStock, minPrice, maxPrice,sort, searchText, cursor }) => { 
+    
+    if(typeof categoryId === "string" && categoryId.length > 0) {
         categoryId = categoryId?.split(",")?.map(id => parseInt(id));
     } else {
         categoryId = [];
@@ -126,4 +126,11 @@ export const getProducts = async ({categoryId = '', outOfStock, minPrice, maxPri
         return {products : serializePrisma(products), newCursor};
     });
 };
-            
+           
+
+export const getCategories = async () => {
+    return await TryCatch(async () => {
+        const categories = await prisma.category.findMany({});
+        return serializePrisma(categories);
+    });
+}

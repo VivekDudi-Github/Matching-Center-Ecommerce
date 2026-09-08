@@ -100,7 +100,7 @@ export default function ShopLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-black -mt-12 transition-colors duration-300">
       {/* Mobile Top Bar */}
       <div className="lg:hidden flex items-center justify-between py-1 px-4 lg:p-4 border-b border-zinc-200 dark:border-zinc-800">
         <h1 className="text-xl font-bold dark:text-white">Shop</h1>
@@ -180,7 +180,7 @@ export default function ShopLayout() {
                 <Card fabricDetails={item}/>
               </motion.div>
             ))}
-            {
+            {isLoading &&
               Array.from({length: 10}).map((_, i) => 
                 <CardSkeleton key={i} />
             )

@@ -10,9 +10,9 @@ import { AnimatePresence , motion} from 'framer-motion';
 import { useHydratedStore } from '@/app/hooks/useHyderatedStore';
 import Skeleton from '@/app/components/product/ProductPageSkeleton';
 import { getProduct } from '@/app/lib/actions/getProduct';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-
+import Link from 'next/link';
 
 // const PRODUCT_DATA = {
 //   title: 'Premium Handwoven Silk Blend Fabric - 1 Yard',
@@ -223,17 +223,19 @@ export default function ProductPage() {
                   hover:bg-red-700 dark:hover:bg-white/80 bg-red-600 dark:bg-white dark:text-black text-white md:w-36  max-w-2/5  `}
               >
                 <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key="add"
-                    initial={{ y: 15, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -15, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex items-center text-[15px] gap-1 font-semibold tracking-wide"
-                  >
-                    <IndianRupeeIcon className="size-4 stroke-2" />
-                    <span className=" ">Buy Now</span>
-                  </motion.span>
+                  <Link href={'/checkout'}>
+                    <motion.span
+                      key="add"
+                      initial={{ y: 15, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -15, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-center text-[15px] gap-1 font-semibold tracking-wide"
+                    >
+                      <IndianRupeeIcon className="size-4 stroke-2" />
+                      <span className=" ">Buy Now</span>
+                    </motion.span>
+                  </Link>
                 </AnimatePresence>
               </motion.button>
             

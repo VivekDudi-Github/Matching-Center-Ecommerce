@@ -4,8 +4,12 @@ import DiscoverTab from "../components/home/DiscoverTab";
 import TopBanner from "../components/home/TopBanner";
 import CardSlider from "../components/CardSlider";
 import HyderationWrapper from "../components/HyderationWrapper";
+import { getCategories, getProducts } from "../lib/actions/shopActions";
 
-export default function Home() {
+export default async function Home() {
+  const {products, newCursor} = await getProducts({outOfStock: false, sort: "featured"});
+  const categories = await getCategories(); 
+
 
   return (
     <div className="flex flex-col h-full w-full flex-1 items-center justify-start  font-sans dark:bg-black bg-white"> 
@@ -22,12 +26,12 @@ export default function Home() {
             Explore a world of vibrant fabrics and unique textiles perfect for any project. From clothing to home décor, find the materials that inspire your creativity. 
           </p>
           <ShopNowBtn />
-        </div>
+        </div> 
       </div>
-      <DiscoverTab/>
+      <DiscoverTab categories={categories}/>
       
       <HyderationWrapper>
-        <CardSlider/>
+        <CardSlider cursor={newCursor} prods={products}/>
       </HyderationWrapper>
     </div>
   );

@@ -63,8 +63,8 @@ function Header() {
             className="flex items-center justify-end gap-6 text-white font-semibold  text-md"
           >
             <div>Fabrics</div>
-            <div>Collections</div>
             <div>On Sale</div>
+            <div>Already Orders</div>
           </motion.div>
           )}
         </AnimatePresence>

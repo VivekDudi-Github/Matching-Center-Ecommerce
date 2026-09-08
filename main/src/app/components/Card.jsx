@@ -26,6 +26,7 @@ export default function FabricProductCard({fabricDetails}) {
   const fabricData = fabricDetails;
   const addItem = useCartStore(s => s.addItem); 
 
+
   const handleAddToCart = () => {
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
@@ -39,7 +40,7 @@ export default function FabricProductCard({fabricDetails}) {
         animate={{ opacity: 1, y: 0 }}
         whileHover={{ y: -6 }}
         transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
-        className="group relative w-full max-w-sm overflow-hidden rounded-md bg-white dark:bg-zinc-950 md:p-1 p-1 shadow-sm shadow-amber-800/20 border border-stone-300 dark:border-zinc-800/80 dark:hover:border-zinc-700/50  transition-shadow duration-300 hover:shadow-xl "
+        className="group relative w-full max-w-sm overflow-hidden rounded-md bg-white dark:bg-zinc-950/20 md:p-1 p-1 shadow-sm shadow-amber-800/20 border border-stone-300 dark:border-zinc-800/80 dark:hover:border-zinc-700/50  transition-shadow duration-300 hover:shadow-xl "
       >
         {/* Top Badges Overlay */}
         <div className="absolute md:top-6 top-3 md:left-6 left-3 z-10 flex items-center gap-2 duration-200">
@@ -67,7 +68,7 @@ export default function FabricProductCard({fabricDetails}) {
         </button>
 
         <Link href={`products/${fabricData.id}`} className="relative md:h-64 h-36 w-full overflow-hidden rounded-md inline-block bg-stone-100">
-            <SafeImage src={fabricData?.images[0]?.url} alt={fabricData.title} />
+            <SafeImage src={fabricData?.images?.[0]?.url} alt={fabricData.title} />
           
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-linear-to-t from-stone-900/10 via-transparent to-transparent pointer-events-none" />
@@ -76,11 +77,31 @@ export default function FabricProductCard({fabricDetails}) {
         {/* Content Area */}
         <div className="md:mt-4 mt-1 px-1 pb-1">
           {/* Title */}
-          <Link href={'/products/' + fabricData.id} className="">
-            <h3 className="md:text-xl text-[12px] font-semibold min-h-9 text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors  truncate"> 
-              {fabricData.title} 
-            </h3>
-          </Link>
+          <div className=" flex flex-wrap justify-between shrink-0">
+            <Link href={'/products/' + fabricData.id} className="">
+              <h3 className="md:text-xl text-[12px] font-semibold min-h-9 text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors  truncate"> 
+                {fabricData.title} 
+              </h3>
+            </Link>
+           {/* colors */}
+          {fabricData?.color?.length && 
+            <div className=" shrink  flex md:gap-1 gap-0.5 flex-wrap flex-row items-end">
+              {fabricData.color.slice(0,3).map((c,i) => 
+                <div key={i} className=" rounded-sm border-spacing-1.5 border dark:border-zinc-700 border-zinc-400 ">
+                  <div style={{
+                    color: "white",
+                    backgroundColor: c.hex,
+                  }} className={` md:text-sm text-[8px] shrink px-1 dark:text-stone-400 font-medium`} >
+                    {c.name}
+                  </div>
+                </div>
+              )}
+              {fabricData.color.length > 3 && <div className="text-stone-500 md:text-xs text-[8px] font-medium">+{fabricData.color.length - 3}..</div>}
+            </div>
+          }
+
+
+          </div>
 
           {/* Description */}
           <p className="mt-1 line-clamp-2 md:h-12 h-0 md:text-sm text-[12px] text-stone-500 leading-relaxed  ">
