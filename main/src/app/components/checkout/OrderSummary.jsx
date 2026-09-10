@@ -2,13 +2,26 @@
 
 import { ShoppingBag } from "lucide-react";
 import OrderItem from "./OrderItem";
+import useCartStore, { selectDiscount, selectShipping, selectSubtotal, selectTotal } from "@/app/store/CartStore";
+import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 
-export default function OrderSummary({
-  items = [],
-  subtotal = 0,
-  shipping = 0,
-  total = 0,
-}) {
+export default function OrderSummary() {
+  const isHyderated = useHydratedStore();
+
+  const items = useCartStore(s => s.items);
+  console.log("items:", items);
+  const subtotal = useCartStore(selectSubtotal);
+  const shipping = useCartStore(selectShipping);
+  const total = useCartStore(selectTotal);
+
+  const totalDiscount = useCartStore(selectDiscount);
+  
+  function getGstTotal(){
+    return total + (total*5/100) ;
+  }
+
+  if(!isHyderated) return null;
+
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
@@ -50,10 +63,11 @@ export default function OrderSummary({
             <span className="text-zinc-500">Subtotal</span>
 
             <span className="font-medium dark:text-white">
-              ₹{subtotal.toLocaleString()}
+              ₹{subtotal}
             </span>
           </div>
 
+          
           <div className="flex justify-between">
             <span className="text-zinc-500">Shipping</span>
 
@@ -68,18 +82,27 @@ export default function OrderSummary({
             )}
           </div>
 
+          <div className="flex justify-between">
+            <span className="text-zinc-500">Discount</span>
+
+            <span className="font-medium dark:text-white">
+              - ₹{totalDiscount}
+            </span>
+          </div>
+
+
           <div className="flex justify-between border-t border-dashed border-zinc-300 pt-4 text-lg font-semibold dark:border-zinc-700">
             <span className="dark:text-white">Total</span>
 
             <span className="text-zinc-900 dark:text-white">
-              ₹{total.toLocaleString()}
+              ₹{ Math.floor(getGstTotal()) + (getGstTotal() > 1 ? shipping : 0) }
             </span>
           </div>
         </div>
 
         {/* Place Order */}
 
-        <button className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white dark:text-black">
+        <button disabled={total == 0} className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white dark:text-black">
           Place Order
         </button>
 

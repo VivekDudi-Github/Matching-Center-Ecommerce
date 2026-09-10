@@ -77,15 +77,15 @@ export default function FabricProductCard({fabricDetails}) {
         {/* Content Area */}
         <div className="md:mt-4 mt-1 px-1 pb-1">
           {/* Title */}
-          <div className=" flex flex-wrap justify-between shrink-0">
+          <div className=" flex flex-wrap justify-between shrink-0 min-h-9">
             <Link href={'/products/' + fabricData.id} className="">
-              <h3 className="md:text-xl text-[12px] font-semibold min-h-9 text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors  truncate"> 
+              <h3 className="md:text-xl text-[12px] font-semibold min-h-4 md:min-h-8 text-stone-800 dark:text-stone-100 tracking-tight group-hover:text-amber-900 dark:group-hover:text-red-400 transition-colors  truncate"> 
                 {fabricData.title} 
               </h3>
             </Link>
            {/* colors */}
           {fabricData?.color?.length && 
-            <div className=" shrink  flex md:gap-1 gap-0.5 flex-wrap flex-row items-end">
+            <div className=" shrink hidden md:flex md:gap-1 gap-0.5 flex-wrap flex-row items-end">
               {fabricData.color.slice(0,3).map((c,i) => 
                 <div key={i} className=" rounded-sm border-spacing-1.5 border dark:border-zinc-700 border-zinc-400 ">
                   <div style={{
@@ -97,6 +97,21 @@ export default function FabricProductCard({fabricDetails}) {
                 </div>
               )}
               {fabricData.color.length > 3 && <div className="text-stone-500 md:text-xs text-[8px] font-medium">+{fabricData.color.length - 3}..</div>}
+            </div>
+          }
+          {fabricData?.color?.length && 
+            <div className=" shrink md:hidden flex md:gap-1 gap-0.5 flex-wrap flex-row items-end">
+              {fabricData.color.slice(0,2).map((c,i) => 
+                <div key={i} className=" rounded-sm border-spacing-1.5 border dark:border-zinc-700 border-zinc-400 ">
+                  <div style={{
+                    color: "white",
+                    backgroundColor: c.hex,
+                  }} className={` md:text-sm text-[8px] shrink px-1 dark:text-stone-400 font-medium`} >
+                    {c.name}
+                  </div>
+                </div>
+              )}
+              {fabricData.color.length > 2 && <div className="text-stone-500 md:text-xs text-[8px] font-medium">+{fabricData.color.length - 3}..</div>}
             </div>
           }
 

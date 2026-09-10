@@ -79,7 +79,7 @@ export default function ProductGallery({ images }) {
 
       {showZoom && (
         <div 
-          className="hidden md:block absolute top-0 left-[calc(100%+4rem)] w-[146%] h-[105%] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 shadow-2xl rounded z-50 pointer-events-none"  
+          className="hidden md:block absolute top-0 left-[calc(100%+4rem)] w-[146%] h-[105%] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 shadow-2xl rounded z-30 pointer-events-none"  
           style={{
             backgroundImage: `url(${images[selectedIndex].url})`,
             backgroundPosition: zoomStyle.backgroundPosition,

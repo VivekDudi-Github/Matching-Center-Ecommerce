@@ -39,10 +39,10 @@ import Link from 'next/link';
 
 export default function ProductPage() {
   const {id} = useParams();
-  // const isHyderated = useHydratedStore();
+  const router = useRouter();
   
   const [selectedColor, setSelectedColor] = useState(null); 
-  const addItem = useCartStore(s => s.addItem);
+  const addItem = useCartStore(s => s.addItem);``
   const items = useCartStore(s => s.items);
 
   const [isAdded, setIsAdded] = useState(false);
@@ -60,15 +60,16 @@ export default function ProductPage() {
     setTimeout(() => setIsAdded(false), 2000);
   }
 
+  const handleBuyNow = () => {
+    addItem({...PRODUCT_DATA, quantity:Math.min(selectedColor?.availableMeters/1000, 1)});
+    router.push('/checkout');
+
+  }
+
   const discountPercent = () => {
     const discount = PRODUCT_DATA.originalPrice - PRODUCT_DATA.price;
     return Math.round((discount / PRODUCT_DATA.originalPrice) * 100);
   } 
-
-  // useEffect(() => { 
-  //   items.length > 0 ? setIsAdded(true) : setIsAdded(false);
-  // }, [])
-
 
   useEffect(() => {
     setIsLoading(true);
@@ -96,7 +97,7 @@ export default function ProductPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4">
           
           {/* LEFT SIDE: Image Gallery & Desktop Actions */}
-          <div className="lg:col-span-5 bg-white dark:bg-stone-950/30 p-4 lg:p-6 lg:rounded-sm lg:shadow-sm">
+          <div className="lg:col-span-5 bg-white dark:bg-stone-950/30 p-4 lg:p-6 lg:rounded-sm lg:shadow-sm z-10">
             <ProductGallery images={PRODUCT_DATA?.images} />
             
           </div>
@@ -218,24 +219,23 @@ export default function ProductPage() {
 
               {/* Buy Now Button */}
               <motion.button
+                onClick={handleBuyNow}
                 whileTap={{ scale: 0.95 }}
                 className={`relative flex-1 z-0  items-center justify-center overflow-hidden rounded-xl px-5  font-medium transition-all shadow-sm 
                   hover:bg-red-700 dark:hover:bg-white/80 bg-red-600 dark:bg-white dark:text-black text-white md:w-36  max-w-2/5  `}
               >
                 <AnimatePresence mode="wait" initial={false}>
-                  <Link href={'/checkout'}>
-                    <motion.span
-                      key="add"
-                      initial={{ y: 15, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -15, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="flex items-center text-[15px] gap-1 font-semibold tracking-wide"
-                    >
-                      <IndianRupeeIcon className="size-4 stroke-2" />
-                      <span className=" ">Buy Now</span>
-                    </motion.span>
-                  </Link>
+                  <motion.span
+                    key="add"
+                    initial={{ y: 15, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -15, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center text-[15px] gap-1 font-semibold tracking-wide"
+                  >
+                    <IndianRupeeIcon className="size-4 stroke-2" />
+                    <span className=" ">Buy Now</span>
+                  </motion.span>
                 </AnimatePresence>
               </motion.button>
             

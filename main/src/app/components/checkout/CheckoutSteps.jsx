@@ -20,7 +20,7 @@ export default function CheckoutSteps({currentStep}) {
 
         {/* Line */}
 
-        <div className="mx-3 h-[2px] flex-1 bg-green-600" />
+        <div className="mx-3 h-0.5 flex-1 bg-green-600" />
 
         {/* Checkout */}
 
@@ -36,7 +36,7 @@ export default function CheckoutSteps({currentStep}) {
 
         {/* Line */}
 
-        <div className="mx-3 h-[2px] flex-1 bg-zinc-300 dark:bg-zinc-700" />
+        <div className="mx-3 h-0.5 flex-1 bg-zinc-300 dark:bg-zinc-700" />
 
         {/* Confirmation */}
 

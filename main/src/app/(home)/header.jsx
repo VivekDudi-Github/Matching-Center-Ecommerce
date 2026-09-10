@@ -64,7 +64,7 @@ function Header() {
           >
             <div>Fabrics</div>
             <div>On Sale</div>
-            <div>Already Orders</div>
+            <div>Orders</div>
           </motion.div>
           )}
         </AnimatePresence>
@@ -118,10 +118,10 @@ function Header() {
               Fabrics
             </div>
             <div className="text-center gap-2 p-2 text-white font-light text-md hover:bg-black px-2 duration-200  ">
-              Collections
+              On Sale
             </div>
             <div className="text-center p-2 text-white font-light text-md hover:bg-black px-2 duration-200  ">
-              On Sale
+              Orders
             </div>
           </motion.div>
         )}

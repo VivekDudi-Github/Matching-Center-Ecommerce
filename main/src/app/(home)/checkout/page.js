@@ -35,16 +35,7 @@ const CART = [
   },
 ];
 
-export default function CheckoutPage() {
-  const subtotal = CART.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
-  const shipping = subtotal >= 2000 ? 0 : 80;
-
-  const total = subtotal + shipping;
-
+export default function CheckoutPage() { 
   return (
     <div className="min-h-screen bg-zinc-100 dark:bg-zinc-950">
       <main className="mx-auto max-w-7xl px-4 py-6 lg:px-8 lg:py-10">
@@ -75,12 +66,7 @@ export default function CheckoutPage() {
 
           <div className="lg:col-span-5">
             <div className="lg:sticky lg:top-24">
-              <OrderSummary
-                items={CART}
-                subtotal={subtotal}
-                shipping={shipping}
-                total={total}
-              />
+              <OrderSummary />
             </div>
           </div>
         </div>

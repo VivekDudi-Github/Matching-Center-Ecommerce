@@ -30,32 +30,36 @@ import CardSkeleton from "./card/CardSkeleton";
 
 // ];
 
-export default function CardSlider({prods = [], cursor}) {
+export default function CardSlider({prods = [], cursor : propCursor}) {
+  const isFetchingRef = useRef(false);
+  
   const sliderRef = useRef(null);
   const [positionX, setPositionX] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
-  const [productsList, setProductsList] = useState([...prods]);
+  const [productsList, setProductsList] = useState(prods);
 
-  const [isLoading, setIsLoading] = useState(true)
-  const [isFetched, setIsFetched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
+  const [cursor, setCursor] = useState(propCursor || null);
 
 
   const fetchProducts = async (i) => {
-    if(i !== 6 || isFetched) return  ;
+    if(i !== productsList.length-1 || !cursor || isFetchingRef.current  ) return  ;
     setIsLoading(true);
+    isFetchingRef.current = true;
     try {
-      if(!cursor) return ;
-      const {products, newCursor} = await getProducts({cursor, sort: "featured", outOfStock: false});
-      setProductsList(prev => [...prev, ...products]);       
-      setIsFetched(true);
+      
+      const {products, newCursor} = await getProducts({cursor: cursor, sort: "featured", outOfStock: false });
+      setCursor(newCursor);
+      setProductsList(prev => [...prev, ...products]);     
     } catch (error) {
       console.log("error in fetching product: ", error);
       toast.error(error?.message || "Something went wrong while fetching product");
-    } finally {setIsLoading(false);}
+    } finally {
+      setIsLoading(false);
+      isFetchingRef.current = false;
+    }
   }
-  
-  console.log("productlist:", productsList);
-  
+   
 
   const slideLeft = () => {
     setPositionX((prev) => Math.min(prev + 360, 0)); // Slides view window back left
@@ -65,29 +69,35 @@ export default function CardSlider({prods = [], cursor}) {
     setPositionX((prev) => Math.max(prev - 360, -maxScroll)); // Slides view window forward right
   };
 
-  
-  useEffect(() => {
-    const resetWidth = async(resizedWindow = true) => {
+  const resetWidth = async(resizedWindow = true) => {
     if (sliderRef.current ) {
       
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
+      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log("reset width", sliderRef.current.scrollWidth, sliderRef.current.offsetWidth)
       const remainingDistance = sliderRef?.current?.scrollWidth - sliderRef?.current?.offsetWidth;
       setMaxScroll(remainingDistance);
 
-      if(resizedWindow) setPositionX((prev) => prev <= -remainingDistance ? -remainingDistance : prev/2);
+      if(resizedWindow) setPositionX((prev) => prev <= -remainingDistance ? -remainingDistance : prev === 0 ? 0 : prev- 150);
     }}
     
+
+  
+  useEffect(() => {
     const observer = new ResizeObserver(() => {
        requestAnimationFrame(resetWidth);
     });
-    observer.observe(sliderRef.current);
 
+    observer.observe(sliderRef.current);
     return () => {
       observer.disconnect();
     } 
-  }, []); 
+  }, []);
 
+  useEffect(() => {
+    if(productsList.length > 0) resetWidth(true);
+  },[isLoading])
+  
+  // console.log(positionX, maxScroll)
 
   return (
     <div className="w-full touch-pan-y dark:bg-black px-6 py-12 md:px-16" >
@@ -103,7 +113,7 @@ export default function CardSlider({prods = [], cursor}) {
         {/* Direction Controls */}
         <div className="flex gap-2">
           <button 
-            onClick={slideLeft}
+            onClick={slideLeft} 
             disabled={positionX === 0}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 text-zinc-400 transition-all hover:bg-zinc-800 hover:text-white disabled:opacity-30"
             aria-label="Slide Left"
@@ -111,7 +121,7 @@ export default function CardSlider({prods = [], cursor}) {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button 
-            onClick={slideRight}
+            onClick={slideRight} 
             disabled={positionX <= -maxScroll}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 text-zinc-400 transition-all hover:bg-zinc-800 hover:text-white disabled:opacity-30"
             aria-label="Slide Right"
@@ -122,16 +132,16 @@ export default function CardSlider({prods = [], cursor}) {
       </div>
 
       {/* Hidden Overflow Mask */}
-      <div ref={sliderRef} className="w-full min-h-72 overflow-hidden rounded-3xl">
+      <div className="w-full min-h-72 overflow-hidden rounded-3xl">
         {/* Animated Slide Track */}
         <motion.div
+          ref={sliderRef}
           drag='x'
           dragElastic={0.2} 
           dragConstraints={{ left: -maxScroll, right: 0 }}
            onDragEnd={(event, info) => {
             const swipeThreshold = 50; // Minimum pixel distance to trigger a slide
             const { offset } = info;
-
             if (offset.x < -swipeThreshold && positionX > -maxScroll) {
               slideRight();
             } else if (offset.x > swipeThreshold && positionX < 0) {
@@ -150,14 +160,14 @@ export default function CardSlider({prods = [], cursor}) {
               once: true,
               amount: 0.5,
             }}
-            className="w-80  shrink"
+            className="w-80  "
             >
               <Card fabricDetails={product} />
             </motion.div>
           ))}
-          {!isLoading && (
-            Array.from({length: 4}).map((_, i) => 
-              <div key={i}  className="shrink">
+          {isLoading && (
+            Array.from({length: 4}).map((_, i) =>  
+              <div key={i}  className="">
                 <CardSkeleton />
               </div>
             )

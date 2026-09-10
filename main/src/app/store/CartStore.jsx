@@ -1,4 +1,5 @@
 'use client';
+import { color } from "framer-motion";
 import { create } from "zustand";
 import {persist} from "zustand/middleware";
 
@@ -7,13 +8,12 @@ const FREE_SHIPPING_ABOVE = 2000;
 
 const useCartStore = create(
   persist (
-    (set) => ({
+    (set, get) => ({
     items: [],
 
     addItem: (product) =>
       set((state) => {
         const existing = state.items.find((i) => i.id === product.id);
-        console.log("product-quantity", product?.quantity);
         if (existing) {
           return {
             items: state.items
@@ -21,23 +21,35 @@ const useCartStore = create(
         }
 
         return {
-          items: [...state.items, product],
+          items: [...state.items, {
+            ...product,
+            color: product.color.map(c => ({
+              ...c,
+              quantity: 0,
+            })),
+          }],
         };
       }),
 
-    updateQuantity: (id, quantity) =>
+    updateQuantity: (id,colorId, quantity) =>
       set((state) => ({
-        items: state.items.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                quantity: Number(quantity),
-              }
-            : item
-        ),
+        items: state.items.map((item) =>{
+          if(item.id === id) {
+            const colors = item.color;
+            const idx = item.color.findIndex(c => c.id === colorId);
+            if(colors[idx]) {
+              colors[idx].quantity = quantity;
+            }
+            
+            return {...item, color: [...colors]};
+            } else {
+              return item;
+          }
+        }),
       })),
 
-
+    getItem: (id) => get().items.find((item) => item.id === id),
+    
     removeItem: (id) =>
       set((state) => ({
         items: state.items.filter((item) => item.id !== id),
@@ -52,14 +64,26 @@ const useCartStore = create(
 
 export default useCartStore;
 
+
+export const getTotalQuantity = (state, itemId) => {
+  const item = state.items.find((i) => i.id === itemId);
+  return item.color.reduce((sum, color) => sum + (Number(color.quantity)|| 0), 0);
+};
+
+export const selectTotal = (state) =>
+  state.items.reduce(
+    (sum, item) => sum + item.price * getTotalQuantity(state, item.id),
+    0
+  );
+
 export const selectSubtotal = (state) =>
   state.items.reduce(
-    (sum, item) => sum + item.originalPrice * item.quantity,
+    (sum, item) => sum + item.originalPrice * getTotalQuantity(state, item.id),
     0
   );
 
 export const selectShipping = (state) => {
-  const subtotal = selectSubtotal(state);
+  const subtotal = selectTotal(state);
   return subtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING;
 };
 
@@ -67,11 +91,8 @@ export const selectDiscount = (state) => {
   return selectSubtotal(state) - selectTotal(state) ;
 };
 
-export const selectTotal = (state) =>
-  state.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+export const getCartItem = (state, id) =>
+  state.items.find((item) => item.id === id);
 
 export const selectTotalItems = (state) =>
   state.items.length;

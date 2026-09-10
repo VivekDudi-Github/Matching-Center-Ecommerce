@@ -58,7 +58,7 @@ export default function CartFooter() {
             <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ 5% GST</p>
           </span>
 
-          <span>₹{getGstTotal()}</span>
+          <span>₹{getGstTotal() + shipping}</span>
         </div>
       </div>
 
