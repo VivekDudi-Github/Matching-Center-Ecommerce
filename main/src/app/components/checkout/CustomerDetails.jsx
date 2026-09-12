@@ -1,9 +1,7 @@
 "use client";
 
 import { User, MapPin, CreditCard, FileText } from "lucide-react";
-import {FormProvider, useForm, useWatch} from 'react-hook-form';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { newOrderFormSchema } from "@/app/lib/validation/newOrder.schema"; 
+import { useFormContext, useWatch } from "react-hook-form";
 
 const StateList = [
   "Andaman and Nicobar Islands" ,
@@ -44,38 +42,17 @@ const StateList = [
 ]
 
 export default function CustomerDetailsCard() {
-  const methods = useForm({
-    resolver: zodResolver(newOrderFormSchema),
-    shouldFocusError: true,
-    defaultValues: {
-      name: "",
-      phone: "",
-      email: "",
-      address: "",
-      area: "",
-      locality: "",
-      landmark: "",
-      city: "",
-      state: "",
-      pincode: "",
-      payment: "",
-      notes: "",
-    }
-  });
-
-  const {setValue, register, control,  formState: { errors } } = methods;
+  const { register, control, setValue} = useFormContext()
   const orderNotes = useWatch({
     control,
     name: "notes",
     defaultValue: ""
   })
-
-
   
 
   return (
-    <FormProvider {...methods}>
-      <form className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div>
+      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
         {/* Customer Details */}
 
@@ -158,6 +135,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("area")}
               type="text"
+              minLength={2}
               placeholder="Area"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -165,7 +143,7 @@ export default function CustomerDetailsCard() {
 
           <div>
             <label className="mb-2 block text-sm font-medium">
-              Landmark
+              Landmark (Optional)
             </label>
 
             <input
@@ -184,6 +162,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("city")}
               type="text"
+              minLength={2}
               placeholder="City"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -215,7 +194,9 @@ export default function CustomerDetailsCard() {
 
             <input
               {...register("pincode")}
-              type="text"
+              type="number"
+              maxLength={6}
+              minLength={6}
               placeholder="Pincode"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -231,12 +212,13 @@ export default function CustomerDetailsCard() {
           </h2>
         </div>
 
-        <div className="mt-5 rounded-xl border border-zinc-200 p-4 dark:border-zinc-700">
+        <div className="mt-5 rounded-xl border border-zinc-200 p-4 space-y-2 dark:border-zinc-700">
           <label className="flex cursor-pointer items-center gap-3">
             <input
+              required
               {...register("payment")}
               type="radio"
-              defaultChecked
+              value={'UPI Payment'}
               name="payment"
             />
 
@@ -249,6 +231,7 @@ export default function CustomerDetailsCard() {
                 Secure online payment
               </p>
             </div>
+            
           </label>
         </div>
 
@@ -271,7 +254,7 @@ export default function CustomerDetailsCard() {
           <p className={`text-xs text-right ${orderNotes.length >= 350 ? "text-red-500" : "text-zinc-500"}`}>
             {orderNotes.length}/350 characters max
           </p>
-      </form>
-    </FormProvider>
+      </div>
+    </div>
   );
 }

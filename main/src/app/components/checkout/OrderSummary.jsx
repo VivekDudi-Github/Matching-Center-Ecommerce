@@ -102,7 +102,7 @@ export default function OrderSummary() {
 
         {/* Place Order */}
 
-        <button disabled={total == 0} className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white dark:text-black">
+        <button type="submit" disabled={total == 0} className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white dark:text-black">
           Place Order
         </button>
 
