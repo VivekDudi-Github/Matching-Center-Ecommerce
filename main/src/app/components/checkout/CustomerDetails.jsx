@@ -1,7 +1,8 @@
 "use client";
 
 import { User, MapPin, CreditCard, FileText } from "lucide-react";
-import { useFormContext, useWatch } from "react-hook-form";
+import { FormProvider, useFormContext, useWatch } from "react-hook-form";
+import { useEffect, useState } from "react";
 
 const StateList = [
   "Andaman and Nicobar Islands" ,
@@ -41,18 +42,23 @@ const StateList = [
   "West Bengal" ,
 ]
 
-export default function CustomerDetailsCard() {
-  const { register, control, setValue} = useFormContext()
+export default function CustomerDetailsCard() { 
+
+  const { register, control, getValues, setValue} = useFormContext()
   const orderNotes = useWatch({
     control,
     name: "notes",
     defaultValue: ""
   })
-  
+   
+
+  const setLoacalStorage = () => {
+    localStorage.setItem("userDetails", JSON.stringify(getValues()));
+  };
 
   return (
     <div>
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="rounded-2xl border border-zinc-300 bg-white sm:p-6 p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
         {/* Customer Details */}
 
@@ -72,6 +78,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("name")}
               type="text"
+              onBlur={() => setLoacalStorage() }
               placeholder="Enter your name"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -84,7 +91,8 @@ export default function CustomerDetailsCard() {
 
             <input
               {...register("phone")}
-              type="tel"
+              type="number"
+              onBlur={() => setLoacalStorage() }
               placeholder="9876543210"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -98,6 +106,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("email")}
               type="email"
+              onBlur={() => setLoacalStorage() }
               placeholder="example@email.com"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -113,6 +122,8 @@ export default function CustomerDetailsCard() {
           </h2>
         </div>
 
+        {/* Address */}
+
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <div className="md:col-span-2">
             <label className="mb-2 block text-sm font-medium">
@@ -122,6 +133,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("address")}
               type="text"
+              onBlur={() => setLoacalStorage() }
               placeholder="House No, Street"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -135,6 +147,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("area")}
               type="text"
+              onBlur={() => setLoacalStorage() }
               minLength={2}
               placeholder="Area"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
@@ -149,6 +162,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("landmark")}
               type="text"
+              onBlur={() => setLoacalStorage() }
               placeholder="Optional"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
@@ -162,6 +176,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("city")}
               type="text"
+              onBlur={() => setLoacalStorage() }
               minLength={2}
               placeholder="City"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
@@ -195,6 +210,7 @@ export default function CustomerDetailsCard() {
             <input
               {...register("pincode")}
               type="number"
+              onBlur={() => setLoacalStorage() }
               maxLength={6}
               minLength={6}
               placeholder="Pincode"
@@ -218,7 +234,9 @@ export default function CustomerDetailsCard() {
               required
               {...register("payment")}
               type="radio"
-              value={'UPI Payment'}
+              onBlur={() => setLoacalStorage() }
+              checked
+              value={'UPI'}
               name="payment"
             />
 

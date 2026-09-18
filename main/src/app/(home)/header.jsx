@@ -30,7 +30,6 @@ function Header() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-  console.log(isDesktop);
   
   if(isDesktop === null) return null; 
 

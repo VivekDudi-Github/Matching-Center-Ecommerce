@@ -83,8 +83,8 @@ export const selectSubtotal = (state) =>
   );
 
 export const selectShipping = (state) => {
-  const subtotal = selectTotal(state);
-  return subtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING;
+  const total = selectTotal(state);
+  return total >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING;
 };
 
 export const selectDiscount = (state) => {

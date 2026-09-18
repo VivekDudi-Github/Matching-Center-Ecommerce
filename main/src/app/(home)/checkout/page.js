@@ -4,9 +4,12 @@ import OrderSummary from "@/app/components/checkout/OrderSummary";
 import CheckoutSteps from "@/app/components/checkout/CheckoutSteps";
 import {FormProvider, useForm, useWatch} from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { newOrderFormSchema } from "@/app/lib/validation/newOrder.schema"; 
+import { newOrderFormSchemaClient } from "@/app/lib/validation/newOrder.schema"; 
 import { toast } from "react-toastify";
 import { useState } from "react";
+import useCartStore from "@/app/store/CartStore";
+import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
+import { createorder } from "@/app/lib/actions/order.action";
 
 const CART = [
   {
@@ -41,37 +44,75 @@ const CART = [
   },
 ];
 
+
 export default function CheckoutPage() { 
+  const isHyderated = useHydratedStore();
+
+
+  const items = useCartStore(s => s.items);
+
+  const getStorageData = (feild) => {
+    if(typeof  window !== "undefined") {
+      return JSON.parse(localStorage.getItem("userDetails")  )?.[feild] ?? "";
+    } 
+    return "";
+  }
+  
   const methods = useForm({
-      resolver: zodResolver(newOrderFormSchema),
+      resolver: zodResolver(newOrderFormSchemaClient),
       shouldFocusError: true,
       defaultValues: {
-        name: "",
-        phone: "",
-        email: "",
-        address: "",
-        area: "",
-        locality: "",
-        landmark: "",
-        city: "",
-        state: "",
-        pincode: "",
-        payment: "",
-        notes: "",
+        name:  getStorageData("name"),
+        phone: getStorageData("phone"),
+        email: getStorageData("email"),
+        address: getStorageData("address"),
+        area:  getStorageData("area"),
+        locality: getStorageData("locality"),
+        landmark: getStorageData("landmark"),
+        city:  getStorageData("city"),
+        state: getStorageData("state"),
+        pincode: getStorageData("pincode"),
+        payment: getStorageData("payment"),
+        notes: getStorageData("notes"),
       }
     });
+     
   
-    const [isLoading, setIsLoading] = useState(false);
+    
+   const [isLoading, setIsLoading] = useState(false);
 
 
   
     const onSubmit = async (data) => {
       setIsLoading(true);
       try {
-        console.log(data);
+        let filteredCartData = items.map(item => ({
+          productId : item.id,
+          productName : item.title,
+          productPrice : item.price,
+          color : item.color.filter(c => c.quantity > 0)
+              .map(c => ({
+                colorId : c.id,
+                colorName : c.name,
+                quantity : c.quantity
+            })
+          )
+        }))
+        data.items = filteredCartData;
+        const response = await createorder(data);
+
+        if(!response?.success){
+          console.log("response" , response.message);
+          if(!Array.isArray(response.message)) return toast.error(response.message || "Something went wrong", {autoClose: 7000});
+          response.message.slice(0,4).forEach(message => toast.error(message));
+          return;
+        }
+        if(response.success) toast.success(response.message || "Order created successfully", {autoClose: 7000});
       } catch (error) {
         console.log("error", error);      
-        toast.error(error?.message || "Something went wrong");
+        toast.error(error?.message || "Something went wrong", {
+          autoClose: 10000
+        });
       } finally {
         setIsLoading(false);
       }
@@ -95,20 +136,21 @@ export default function CheckoutPage() {
     }
 
 
+  if(!isHyderated) return null;
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit, onErrors)} 
-        className="min-h-screen bg-zinc-100 dark:bg-zinc-950"
+        className="min-h-screen bg-zinc-100 dark:bg-linear-to-b from-zinc-900 via-zinc-950 to-black"
       >
         <main className="mx-auto max-w-7xl px-4 py-6 lg:px-8 lg:py-10">
           {/* Heading */}
 
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
+          <div className="mb-4">
+            <h1 className="sm:text-3xl text-2xl font-bold text-zinc-900 dark:text-white">
               Checkout
             </h1>
 
-            <p className="mt-2 text-zinc-500 dark:text-zinc-400">
+            <p className="mt-1 sm:text-base text-sm text-zinc-500 dark:text-zinc-400">
               Fill in your details and review your order before placing it.
             </p>
           </div>
@@ -128,7 +170,7 @@ export default function CheckoutPage() {
 
             <div className="lg:col-span-5">
               <div className="lg:sticky lg:top-24">
-                <OrderSummary />
+                <OrderSummary isLoading={isLoading}/>
               </div>
             </div>
           </div>

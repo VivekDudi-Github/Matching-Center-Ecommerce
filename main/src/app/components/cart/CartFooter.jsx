@@ -11,7 +11,7 @@ import {useHydratedStore} from '@/app/hooks/useHyderatedStore';
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-export default function CartFooter() {
+export default function CartFooter({closeCart}) {
   const isHyderated = useHydratedStore();
 
   const [collapsed, setCollapsed] = useState(true);
@@ -65,6 +65,7 @@ export default function CartFooter() {
       
       <div className="flex ">
         <Link
+          onClick={closeCart}
           href="/checkout"
           className="mt-3 flex h-12 w-full items-center justify-center rounded-l-xl bg-black text-white transition hover:opacity-90 dark:bg-white dark:text-black"
         >

@@ -1,15 +1,15 @@
 "use client";
 
-import { ShoppingBag } from "lucide-react";
+import { Loader2Icon, ShoppingBag } from "lucide-react";
 import OrderItem from "./OrderItem";
 import useCartStore, { selectDiscount, selectShipping, selectSubtotal, selectTotal } from "@/app/store/CartStore";
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 
-export default function OrderSummary() {
+export default function OrderSummary({isLoading}) {
   const isHyderated = useHydratedStore();
 
   const items = useCartStore(s => s.items);
-  console.log("items:", items);
+  
   const subtotal = useCartStore(selectSubtotal);
   const shipping = useCartStore(selectShipping);
   const total = useCartStore(selectTotal);
@@ -17,13 +17,15 @@ export default function OrderSummary() {
   const totalDiscount = useCartStore(selectDiscount);
   
   function getGstTotal(){
-    return total + (total*5/100) ;
+    let sum = total+ shipping;
+
+    return sum + (sum*5/100) ;
   }
 
   if(!isHyderated) return null;
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-2xl border border-zinc-300 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
 
       <div className="flex items-center gap-2 border-b border-zinc-200 p-6 dark:border-zinc-800">
@@ -92,18 +94,25 @@ export default function OrderSummary() {
 
 
           <div className="flex justify-between border-t border-dashed border-zinc-300 pt-4 text-lg font-semibold dark:border-zinc-700">
-            <span className="dark:text-white">Total</span>
+            <span className="flex items-baseline gap-1">Total 
+              <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ 5% GST</p>
+            </span>
 
             <span className="text-zinc-900 dark:text-white">
-              ₹{ Math.floor(getGstTotal()) + (getGstTotal() > 1 ? shipping : 0) }
+              ₹{ Math.floor(getGstTotal()) }
             </span>
           </div>
         </div>
 
         {/* Place Order */}
 
-        <button type="submit" disabled={total == 0} className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white dark:text-black">
-          Place Order
+        <button type="submit" disabled={total == 0 || isLoading} 
+        className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
+          {isLoading ? 
+          <Loader2Icon className="animate-spin"/> 
+          : 
+          "Place Order"}
+          
         </button>
 
         <p className="mt-4 text-center text-xs text-zinc-500">

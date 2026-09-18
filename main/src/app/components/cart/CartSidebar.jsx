@@ -62,7 +62,7 @@ function CartSidebar({openChange}) {
                 return (<CartItem key={item?.id} item={item} />)
                 }}
               )}
-              {items.length > 0 ? <CartFooter /> : (
+              {items.length > 0 ? <CartFooter closeCart={closeCart} /> : (
                 <div className='text-2xl  top-1/12 w-full absolute text-center tracking-wide font-mont p-4'> 
                   No Products in cart yet..😭
                 </div> 

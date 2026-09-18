@@ -11,7 +11,7 @@ export default function OrderItem({ item : propItem  }) {
 
   const item = useCartStore((s) => getCartItem(s,propItem.id));   
 
-  const total = useCartStore(selectTotal);
+  const total = item.price * useCartStore(s => getTotalQuantity(s, item.id));
   const totalQuantity = useCartStore(s => getTotalQuantity(s,item.id));
 
   if(!isHyderated) return null;
@@ -42,7 +42,7 @@ export default function OrderItem({ item : propItem  }) {
                 <span
                   hidden={c.quantity === 0}
                   key={i}
-                  className={`inline-flex items-center mr-1 gap-1 rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-900 ring-1 ring-zinc-400 dark:bg-zinc-700 dark:text-white `}
+                  className={`inline-flex items-center mr-1 gap-1 rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-900 ring-1 ring-zinc-400 dark:ring-zinc-800 dark:bg-violet-800 dark:text-white `}
                 >
                   {c.name}
                 </span>

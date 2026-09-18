@@ -243,23 +243,23 @@ model Address {
 }
 
 model OrderItem {
-  id          Int      @id @default(autoincrement())
-  orderId     Int
-  order       Order    @relation(fields: [orderId], references: [id])
+  id              Int      @id @default(autoincrement())
+  orderId         Int
+  order           Order    @relation(fields: [orderId], references: [id])
   
 
-  productId   Int
-  product     Product  @relation(fields: [productId], references: [id])
+  productId       Int
+  product         Product  @relation(fields: [productId], references: [id])
   
   title           String
   price           Decimal  @db.Decimal(10, 2)
   originalPrice   Decimal  @db.Decimal(10, 2)
   
-  availableMeters Decimal  @db.Decimal(10, 2)
-  displayOrder    Int      @default(0)
-  color           String   
-  images          String    
+  color           Json     @db.JsonB   
 
-  dimensions    String   
-  categoryId    String
+  dimensions      String   
+  categoryId      String
+
+  @@index([productId])
+  @@index([orderId])
 } 
