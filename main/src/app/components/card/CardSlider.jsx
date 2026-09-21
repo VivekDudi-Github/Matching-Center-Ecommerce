@@ -4,9 +4,9 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Card from './Card';
-import { getProducts } from "../lib/actions/shopActions";
+import { getProducts } from "../../lib/actions/shopActions";
 import { toast } from "react-toastify";
-import CardSkeleton from "./card/CardSkeleton";
+import CardSkeleton from "./CardSkeleton";
 
 // Mock list array of fabrics to populate our slider
 // export const products = [

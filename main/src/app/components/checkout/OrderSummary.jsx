@@ -5,9 +5,8 @@ import OrderItem from "./OrderItem";
 import useCartStore, { selectDiscount, selectShipping, selectSubtotal, selectTotal } from "@/app/store/CartStore";
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 
-export default function OrderSummary({isLoading}) {
+export default function OrderSummary({isLoading, status , session}) {
   const isHyderated = useHydratedStore();
-
   const items = useCartStore(s => s.items);
   
   const subtotal = useCartStore(selectSubtotal);
@@ -20,10 +19,11 @@ export default function OrderSummary({isLoading}) {
     let sum = total+ shipping;
 
     return sum + (sum*5/100) ;
-  }
+  };
 
   if(!isHyderated) return null;
-
+  
+  
   return (
     <div className="rounded-2xl border border-zinc-300 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
@@ -106,14 +106,16 @@ export default function OrderSummary({isLoading}) {
 
         {/* Place Order */}
 
-        <button type="submit" disabled={total == 0 || isLoading} 
-        className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
-          {isLoading ? 
-          <Loader2Icon className="animate-spin"/> 
-          : 
-          "Place Order"}
-          
-        </button>
+        <button type="submit" 
+          disabled={total == 0 || isLoading || status !== "authenticated"} 
+          className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
+            {(isLoading || status === "loading") ?
+            <Loader2Icon className="animate-spin"/> 
+            : 
+            "Place Order"
+            }  
+        </button>  
+
 
         <p className="mt-4 text-center text-xs text-zinc-500">
           By placing this order, you agree to our Terms & Conditions.

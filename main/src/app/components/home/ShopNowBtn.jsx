@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import BigButton from '../BigButton';
+import BigButton from './BigButton';
 
 function ShopNowBtn({id}) {
   return (

@@ -42,7 +42,7 @@ const StateList = [
   "West Bengal" ,
 ]
 
-export default function CustomerDetailsCard() { 
+export default function CustomerDetailsCard({session, status}) { 
 
   const { register, control, getValues, setValue} = useFormContext()
   const orderNotes = useWatch({
@@ -57,7 +57,10 @@ export default function CustomerDetailsCard() {
   };
 
   return (
-    <div>
+    <div style={{pointerEvents: session ? "auto" : "none"}} 
+      className={`${session ? "" : "hidden lg:block relative h-150 overflow-hidden blur-[1px] shadow shadow-zinc-500  rounded-xl "}`}
+    >
+      {!session && <div className="absolute inset-0 bg-linear-to-b from-transparent to-white black dark:to-black" /> }
       <div className="rounded-2xl border border-zinc-300 bg-white sm:p-6 p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
         {/* Customer Details */}

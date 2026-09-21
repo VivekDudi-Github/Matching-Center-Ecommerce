@@ -2,7 +2,7 @@ import ShopNowBtn from "../components/home/ShopNowBtn";
 import '../globals.css';
 import DiscoverTab from "../components/home/DiscoverTab";
 import TopBanner from "../components/home/TopBanner";
-import CardSlider from "../components/CardSlider";
+import CardSlider from "../components/card/CardSlider";
 import HyderationWrapper from "../components/HyderationWrapper";
 import { getCategories, getProducts } from "../lib/actions/shopActions";
 

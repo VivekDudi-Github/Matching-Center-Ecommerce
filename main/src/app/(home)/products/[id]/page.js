@@ -5,7 +5,7 @@ import { ShoppingCart, Zap, Star, Check, IndianRupeeIcon } from 'lucide-react';
 import ProductGallery from '@/app/components/product/ProductGallery';
 import ColorSelector from '@/app/components/product/ColorSelector';
 import useCartStore from '@/app/store/CartStore';
-import CardSlider from '@/app/components/CardSlider';
+import CardSlider from '@/app/components/card/CardSlider';
 import { AnimatePresence , motion} from 'framer-motion';
 import { useHydratedStore } from '@/app/hooks/useHyderatedStore';
 import Skeleton from '@/app/components/product/ProductPageSkeleton';

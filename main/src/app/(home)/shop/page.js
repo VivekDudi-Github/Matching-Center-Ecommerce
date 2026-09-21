@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FilterIcon, Menu, Minus, Moon, Sun } from "lucide-react";
 
-import Card from "../../components/Card";
+import Card from "../../components/card/Card";
 import Sidebar from "@/app/components/shop/Sidebar";
 import MobileDrawer from "@/app/components/shop/MobileDrawer";
 

@@ -17,8 +17,9 @@ model Customer  {
   id          Int      @id @default(autoincrement())
   
   name        String
-  email       String?  @unique
-  number      String
+  email       String   @unique
+  number      String   @unique
+  verified    Boolean  @default(false)
   
   orders      Order[]
   payments    Payment[]
@@ -234,9 +235,10 @@ model Address {
   address    String
   city       String
   state      String
-  pincode    String  
+  pincode    String         
+  street     String
   area       String
-  landmark   String
+  landmark   String?
 
   updatedAt  DateTime   @updatedAt
   createdAt  DateTime   @default(now())

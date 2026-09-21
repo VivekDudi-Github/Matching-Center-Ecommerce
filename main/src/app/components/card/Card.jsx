@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Heart, Scissors, Check } from "lucide-react";
-import SafeImage from "./SafeImage";
+import SafeImage from "../SafeImage";
 import Link from "next/link";
-import useCartStore from "../store/CartStore";
+import useCartStore from "../../store/CartStore";
 
 // const fabricData = {
 //   id: "fab-01",

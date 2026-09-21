@@ -10,6 +10,8 @@ import { useState } from "react";
 import useCartStore from "@/app/store/CartStore";
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 import { createorder } from "@/app/lib/actions/order.action";
+import { useSession } from "next-auth/react";
+import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 
 const CART = [
   {
@@ -47,7 +49,7 @@ const CART = [
 
 export default function CheckoutPage() { 
   const isHyderated = useHydratedStore();
-
+  const {data : session, status} = useSession();
 
   const items = useCartStore(s => s.items);
 
@@ -85,6 +87,9 @@ export default function CheckoutPage() {
   
     const onSubmit = async (data) => {
       setIsLoading(true);
+      if(status !== "authenticated") {
+        return toast.error("Please login to place order");
+      }
       try {
         let filteredCartData = items.map(item => ({
           productId : item.id,
@@ -116,7 +121,7 @@ export default function CheckoutPage() {
       } finally {
         setIsLoading(false);
       }
-    }
+    };
 
     const onErrors = (errors) => {
       console.log("onErrors", errors);
@@ -133,7 +138,7 @@ export default function CheckoutPage() {
         }
         return;
       }
-    }
+    };
 
 
   if(!isHyderated) return null;
@@ -161,16 +166,33 @@ export default function CheckoutPage() {
 
           <div className="grid gap-6 lg:grid-cols-12">
             {/* Customer Details */}
-
-            <div className="lg:col-span-7">
-              <CustomerDetailsCard />
+            
+            <div className="lg:col-span-7 relative">
+              {status !== "authenticated" && 
+                <div className="">
+                  <p className="mt-6 flex sm:text-base text-base text-red-500 dark:text-red-400 ">
+                    <AlertTriangleIcon className="mr-2 size-5 " />
+                    Please login first so you can track your orders
+                  </p>
+                  <button type="button" 
+                    hidden={status == "authenticated"} 
+                    className="mt-3 flex h-12 w-full mb-3 items-center justify-center rounded-xl bg-black text-base font-bold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
+                      {(isLoading || status === "loading") ?
+                        <Loader2Icon className="animate-spin"/> 
+                        :
+                        "Google Login / SignUp"
+                      }
+                  </button>
+                </div>
+              }
+              <CustomerDetailsCard session={session} status={status} />
             </div>
 
             {/* Order Summary */}
 
             <div className="lg:col-span-5">
               <div className="lg:sticky lg:top-24">
-                <OrderSummary isLoading={isLoading}/>
+                <OrderSummary isLoading={isLoading} session={session} status={status}/>
               </div>
             </div>
           </div>

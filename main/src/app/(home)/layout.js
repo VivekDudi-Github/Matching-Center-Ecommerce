@@ -5,6 +5,7 @@ import Header from "./header";
 import Footer from "./Footer";
 import { ThemeProvider } from "@/app/components/ThemeProvider";
 import ToastProvider from "@/app/components/ToastProvider";
+import SessionProviderWrapper from "../components/SessionProviderWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,15 +44,17 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} ${billabong.variable} ${montserrat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ToastProvider/>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className=" min-h-13">
-            <Header />
-          </div>
-          {children}
-          
-          <Footer />
-        </ThemeProvider>
+        <SessionProviderWrapper>
+          <ToastProvider/>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className=" min-h-13">
+              <Header />
+            </div>
+            {children}
+            
+            <Footer />
+          </ThemeProvider>
+        </SessionProviderWrapper>
       </body>
     </html>
   );

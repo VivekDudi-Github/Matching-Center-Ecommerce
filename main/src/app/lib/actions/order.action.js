@@ -5,7 +5,6 @@ import {  newOrderFormSchemaServer } from "../validation/newOrder.schema";
 import {prisma} from "@/app/lib/prisma";
 import { resError, resSuccess } from "@/app/hooks/resObj";
 import z from "zod";
-import { p } from "framer-motion/client";
 
 export const createorder = async(data) => {
   const parsedData = newOrderFormSchemaServer.safeParse(data);
@@ -53,6 +52,14 @@ export const createorder = async(data) => {
     if(errorMessages.length > 0) {
       return resError(errorMessages.join("\n"));
     }
+
+    const customer = await prisma.customer.findUnique({
+      where: {
+        email: email,
+        verified: true
+      }
+    });
+
 
     return resSuccess("Order created successfully");
  
