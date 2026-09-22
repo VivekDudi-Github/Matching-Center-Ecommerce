@@ -6,11 +6,11 @@ import {FormProvider, useForm, useWatch} from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newOrderFormSchemaClient } from "@/app/lib/validation/newOrder.schema"; 
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useCartStore from "@/app/store/CartStore";
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 import { createorder } from "@/app/lib/actions/order.action";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 
 const CART = [
@@ -50,6 +50,7 @@ const CART = [
 export default function CheckoutPage() { 
   const isHyderated = useHydratedStore();
   const {data : session, status} = useSession();
+  
 
   const items = useCartStore(s => s.items);
 
@@ -140,6 +141,12 @@ export default function CheckoutPage() {
       }
     };
 
+    useEffect(() => {
+      if(status === "authenticated"){
+        methods.setValue("name", session.user.name);
+        methods.setValue("email", session.user.email);
+      }
+    }, [session])
 
   if(!isHyderated) return null;
   return (
@@ -158,6 +165,7 @@ export default function CheckoutPage() {
             <p className="mt-1 sm:text-base text-sm text-zinc-500 dark:text-zinc-400">
               Fill in your details and review your order before placing it.
             </p>
+
           </div>
 
           <CheckoutSteps currentStep={2}/>
@@ -176,7 +184,8 @@ export default function CheckoutPage() {
                   </p>
                   <button type="button" 
                     hidden={status == "authenticated"} 
-                    className="mt-3 flex h-12 w-full mb-3 items-center justify-center rounded-xl bg-black text-base font-bold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
+                    onClick={() => signIn("google")}
+                    className="mt-3 flex h-12 w-full mb-3 cursor-pointer items-center justify-center rounded-xl bg-black text-base font-bold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
                       {(isLoading || status === "loading") ?
                         <Loader2Icon className="animate-spin"/> 
                         :

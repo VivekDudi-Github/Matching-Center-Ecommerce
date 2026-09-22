@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { FilterIcon, Menu, Minus, Moon, Sun } from "lucide-react";
+import { AlertTriangleIcon, FilterIcon, Menu, Minus, Moon, Sun } from "lucide-react";
 
 import Card from "../../components/card/Card";
 import Sidebar from "@/app/components/shop/Sidebar";
@@ -102,8 +102,14 @@ export default function ShopLayout() {
   return (
     <div className="min-h-screen bg-white dark:bg-black -mt-12 transition-colors duration-300">
       {/* Mobile Top Bar */}
-      <div className="lg:hidden flex items-center justify-between py-1 px-4 lg:p-4 border-b border-zinc-200 dark:border-zinc-800">
-        <h1 className="text-xl font-bold dark:text-white">Shop</h1>
+      <div className="lg:hidden flex items-center justify-between py-1 pt-14 px-4 lg:p-4 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="">
+          <h1 className="text-xl font-bold dark:text-white">Shop</h1>
+          <p className="mt-1 flex sm:text-base text-xs text-red-500 ">
+            <AlertTriangleIcon className="mr-1 size-3.5 sm:size-5 " />
+            The deliveries are only available in HARYANA at moment.
+          </p>
+        </div>
         <div className="flex items-center gap-4 p-1">
 
         {/* filter button */}
@@ -152,6 +158,10 @@ export default function ShopLayout() {
         <main className="flex-1 w-full ">
           <div className="hidden lg:flex justify-between items-end mb-8">
             <h1 className="text-4xl font-extrabold tracking-tight dark:text-white">Shop</h1>
+            <p className="mt-1 flex sm:text-base text-base text-red-500 ">
+              <AlertTriangleIcon className="mr-2 size-5 " />
+              The deliveries are only available in HARYANA at moment.
+            </p>
           </div>
 
           {/* Product Flex */}

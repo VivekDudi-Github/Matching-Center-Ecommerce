@@ -207,7 +207,7 @@ enum PaymentStatus {
   Refunded
 }
 
-enum Method{
+enum Method {
   COD
   UPI
 }
@@ -235,8 +235,7 @@ model Address {
   address    String
   city       String
   state      String
-  pincode    String         
-  street     String
+  pincode    String  
   area       String
   landmark   String?
 

@@ -41,6 +41,7 @@ const StateList = [
   "Uttarakhand" ,
   "West Bengal" ,
 ]
+const HrList = ["Haryana"];
 
 export default function CustomerDetailsCard({session, status}) { 
 
@@ -75,15 +76,15 @@ export default function CustomerDetailsCard({session, status}) {
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium">
-              Full Name
+              Name
             </label>
 
             <input
               {...register("name")}
               type="text"
-              onBlur={() => setLoacalStorage() }
+              disabled={status === "authenticated"}
               placeholder="Enter your name"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border disabled:opacity-50 border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
           </div>
 
@@ -103,15 +104,15 @@ export default function CustomerDetailsCard({session, status}) {
 
           <div className="md:col-span-2">
             <label className="mb-2 block text-sm font-medium">
-              Email (Optional)
+              Email
             </label>
 
             <input
               {...register("email")}
               type="email"
-              onBlur={() => setLoacalStorage() }
-              placeholder="example@email.com"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              disabled={status === "authenticated"}
+              placeholder="example@gmail.com"
+              className="w-full rounded-xl border disabled:opacity-50 border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             />
           </div>
         </div>
@@ -197,7 +198,7 @@ export default function CustomerDetailsCard({session, status}) {
               placeholder="State"
               className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
             >
-              {StateList.map(state => (
+              {HrList.map(state => (
                 <option key={state} value={state}>
                   {state}
                 </option>
