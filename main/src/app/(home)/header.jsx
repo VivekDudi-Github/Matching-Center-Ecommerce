@@ -63,7 +63,7 @@ function Header() {
           >
             <div>Fabrics</div>
             <div>On Sale</div>
-            <div>Orders</div>
+            <Link href={"/orders"}>Orders</Link>
           </motion.div>
           )}
         </AnimatePresence>
@@ -119,9 +119,9 @@ function Header() {
             <div className="text-center gap-2 p-2 text-white font-light text-md hover:bg-black px-2 duration-200  ">
               On Sale
             </div>
-            <div className="text-center p-2 text-white font-light text-md hover:bg-black px-2 duration-200  ">
+            <Link href={"/orders"} className="text-center p-2 text-white font-light text-md hover:bg-black px-2 duration-200  ">
               Orders
-            </div>
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

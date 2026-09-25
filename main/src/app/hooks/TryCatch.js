@@ -1,3 +1,5 @@
+import { resError } from "./resObj";
+
 export const TryCatch = async (fn) => {
   try {
     const result = await fn();
@@ -7,6 +9,6 @@ export const TryCatch = async (fn) => {
     console.error("CODE:", error?.code);
     console.error("META:", error?.meta);
     console.error("MESSAGE:", error?.message);
-    throw error;
+    return resError(error.message || "Something went wrong, please try again");
   }
 };

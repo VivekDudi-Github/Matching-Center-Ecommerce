@@ -12,6 +12,7 @@ import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 import { createorder } from "@/app/lib/actions/order.action";
 import { useSession, signIn } from "next-auth/react";
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const CART = [
   {
@@ -50,7 +51,7 @@ const CART = [
 export default function CheckoutPage() { 
   const isHyderated = useHydratedStore();
   const {data : session, status} = useSession();
-  
+  const router = useRouter();
 
   const items = useCartStore(s => s.items);
 
@@ -70,7 +71,6 @@ export default function CheckoutPage() {
         email: getStorageData("email"),
         address: getStorageData("address"),
         area:  getStorageData("area"),
-        locality: getStorageData("locality"),
         landmark: getStorageData("landmark"),
         city:  getStorageData("city"),
         state: getStorageData("state"),
@@ -114,6 +114,7 @@ export default function CheckoutPage() {
           return;
         }
         if(response.success) toast.success(response.message || "Order created successfully", {autoClose: 7000});
+        router.push("/orders");
       } catch (error) {
         console.log("error", error);      
         toast.error(error?.message || "Something went wrong", {
@@ -168,7 +169,7 @@ export default function CheckoutPage() {
 
           </div>
 
-          <CheckoutSteps currentStep={2}/>
+          <CheckoutSteps currentStep={3}/>
 
           {/* Layout */}
 

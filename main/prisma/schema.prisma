@@ -258,8 +258,8 @@ model OrderItem {
   
   color           Json     @db.JsonB   
 
-  dimensions      String   
-  categoryId      String
+  width           Int   
+  categoryId      Int
 
   @@index([productId])
   @@index([orderId])
