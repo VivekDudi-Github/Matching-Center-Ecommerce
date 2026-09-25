@@ -12,7 +12,7 @@ import {
 import ActionMenu from "./ActionMenu";
 import { useEffect, useState } from "react";
 import { array } from "zod";
-import {deleteProductAction, duplicateProductAction, revertDeleteProductAction} from '@/app/lib/actions/newProduct.action';
+import {deleteProductAction, duplicateProductAction, revertDeleteProductAction} from '@/app/lib/controller/productActions';
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 

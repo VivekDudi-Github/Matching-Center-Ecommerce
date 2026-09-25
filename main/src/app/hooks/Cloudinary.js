@@ -1,6 +1,7 @@
 'use server';
 
 import { v2 as cloudinary } from 'cloudinary';
+import { resError, resSuccess } from './resObj';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -9,7 +10,8 @@ cloudinary.config({
 });
 
 export async function getCloudinarySignature() {
-  const timestamp = Math.round(new Date().getTime() / 1000);try {
+  const timestamp = Math.round(new Date().getTime() / 1000);
+  try {
     
     console.log("signature generated");
     const paramsToSign = {
@@ -26,10 +28,10 @@ export async function getCloudinarySignature() {
     console.log("SIGNATURE:", signature);
     console.log("TIMESTAMP:", timestamp);
     
-    return { signature, timestamp };
+    return resSuccess({ signature, timestamp });
   } catch (error) {
     console.error("Error generating Cloudinary signature:", error);
-    throw new Error("Error generating Cloudinary signature");
+    return resError("Error generating Cloudinary signature");
   }
 }
 

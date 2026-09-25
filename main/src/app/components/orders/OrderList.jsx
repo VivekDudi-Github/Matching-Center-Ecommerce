@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { PackageOpen } from "lucide-react";
 import OrderCard from "./OrderCard";
 
-export default function OrdersList({ orders = [] }) {
+export default function OrdersList({ orders = [] , curosr }) {
   if (!orders.length) {
     return (
       <motion.div

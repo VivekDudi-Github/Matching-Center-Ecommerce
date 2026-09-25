@@ -16,12 +16,12 @@ import OrderStatus from "./OrderStatus";
 export default function OrderCard({ order }) {
   const [isOpen, setIsOpen] = useState(true);
 
-  const itemCount = order?.items?.length || 0;
+  const itemCount = order?.orderItems?.length || 0;
 
   return (
     <motion.article
       layout
-      className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
+      className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm shadow-zinc-500 dark:shadow-none dark:border-zinc-800 dark:bg-zinc-950"
     >
       {/* Order Header */}
       <div className="p-4 sm:p-5">
@@ -67,7 +67,7 @@ export default function OrderCard({ order }) {
       </div>
 
       {/* Order Items */}
-      <div className="border-t border-zinc-100 dark:border-zinc-800">
+      <div className="border-t border-zinc-300 dark:border-zinc-700">
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -103,7 +103,7 @@ export default function OrderCard({ order }) {
             animate={{ opacity: 1 }}
             className="divide-y divide-zinc-100 dark:divide-zinc-800"
           >
-            {order.items?.map((item) => (
+            {order.orderItems?.map((item) => (
               <OrderItem
                 key={item.id}
                 item={item}
@@ -114,7 +114,7 @@ export default function OrderCard({ order }) {
       </div>
 
       {/* Order Total */}
-      <div className="border-t border-zinc-100 bg-zinc-50/70 px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900/40 sm:px-5">
+      <div className="border-t border-zinc-400 bg-zinc-50/70 px-4 py-4 dark:border-zinc-700 dark:bg-zinc-900/40 sm:px-5">
         <div className="ml-auto w-full space-y-2 sm:max-w-xs">
           <div className="flex justify-between text-sm text-zinc-500 dark:text-zinc-400">
             <span>Subtotal</span>

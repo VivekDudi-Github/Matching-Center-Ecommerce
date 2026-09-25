@@ -2,15 +2,16 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { AlertTriangleIcon, FilterIcon, Menu, Minus, Moon, Sun } from "lucide-react";
+import { AlertTriangleIcon, FilterIcon, Menu, Minus} from "lucide-react";
 
 import Card from "../../components/card/Card";
 import Sidebar from "@/app/components/shop/Sidebar";
 import MobileDrawer from "@/app/components/shop/MobileDrawer";
 
-import {getProducts} from '@/app/lib/actions/shopActions';
+import {getProducts} from '@/app/lib/controller/shopActions';
 import { toast } from "react-toastify";
 import CardSkeleton from "@/app/components/card/CardSkeleton";
+import { exfn } from "@/app/hooks/extractActions";
 
 export default function ShopLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -55,7 +56,7 @@ export default function ShopLayout() {
         const search = searchParams.get("search") ?? "";
   
         console.log("search:", search)
-        const res = await getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search});
+        const res = await exfn(() => getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search}));
         console.log("products res:", res);
   
         setProducts(res.products);
@@ -84,7 +85,7 @@ export default function ShopLayout() {
           const search = searchParams.get("search") ?? "";
           
           console.log("search:", search)
-          const res = await getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search, cursor});
+          const res = await exfn( () => getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search, cursor} ));
           console.log("products res:", res);
 
           setProducts(prev => [...prev, ...res.products]);

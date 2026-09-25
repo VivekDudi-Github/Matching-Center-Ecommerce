@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, FilterIcon, Loader2Icon, Minus, SearchIcon } from "lucide-react";
 import PriceSlider from "./PriceSlider";
-import { getShopSelections } from "@/app/lib/actions/shopActions";
+import { getShopSelections } from "@/app/lib/controller/shopActions";
 import { SortSelector } from "./SortSelector";
 import SideBardSkeleton from "./SideBardSkeleton";
 

@@ -17,11 +17,12 @@ import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
-import { getCloudinarySignature } from "@/app/lib/services/Cloudinary";
-import { createNewProduct, createNewProductImages, deleteProductImages, updateProduct } from "@/app/lib/actions/newProduct.action";
-import {uploadToCloudinary} from '@/app/lib/services/UploadToCloudinary';
+import { getCloudinarySignature } from "@/app/hooks/Cloudinary";
+import { createNewProductImages, deleteProductImages, updateProduct } from "@/app/lib/controller/productActions";
+import {uploadToCloudinary} from '@/app/hooks/UploadToCloudinary';
 import { useParams, useRouter } from "next/navigation";
-import { getAdminProdById } from "@/app/lib/actions/getAdminProd";
+import { getAdminProdById } from "@/app/lib/controller/getAdminProd";
+import { exfn } from "@/app/hooks/extractActions";
 
 export default function EditProductPage() {
   const {id} = useParams();
@@ -106,12 +107,14 @@ export default function EditProductPage() {
       let product = null;
       
 
-      product = await updateProduct(id, {...data, images: []});
+      const update = await exfn(() => updateProduct(id, {...data, images: []}));
+      product = update.data;
+
       console.log("updated_product", product);
       setProuctId(id);
            
 
-      const { signature, timestamp } = await getCloudinarySignature();
+      const { signature, timestamp } = await exfn(() => getCloudinarySignature());
       if(!signature || !timestamp) { 
         toast.error("Signature not available, please try again.");
         return;
@@ -127,14 +130,14 @@ export default function EditProductPage() {
 
         let uploadedImage = isUploaded;
         if( !isUploaded ) {
-          let uploadedData = await uploadToCloudinary(element.file, signature, timestamp);
+          let uploadedData = await exfn(() => uploadToCloudinary(element.file, signature, timestamp));
           
           uploadedImage = {...element, uploadData: uploadedData, isJoined : false};
           setUploadedImages(prev => [...prev, uploadedImage]);
         }
 
         
-        await createNewProductImages(productId || product.id, {...uploadedImage, file: null,  displayOrder: element.displayOrder});
+        await exfn( () => createNewProductImages(productId || product.id, {...uploadedImage, file: null,  displayOrder: element.displayOrder})) ;
         setUploadedImages((prev) => {
           const newImages = prev.filter(img => img.file.name !== element.file.name);
           return [...newImages, {...uploadedImage, isJoined : true}];  
@@ -146,7 +149,7 @@ export default function EditProductPage() {
           toast.error("Signature not available, please try again.");
           return;
         }
-        await deleteProductImages({id:removedImages[i].id, publicId: removedImages[i].publicId});
+        await exfn(() => deleteProductImages({id:removedImages[i].id, publicId: removedImages[i].publicId}));
       }
       return router.push(`/admin/products`);
 
@@ -179,7 +182,7 @@ export default function EditProductPage() {
     const product = async() => {
       if(!id) return;
       try {
-        const product = await getAdminProdById(id);
+        const product = await exfn(() => getAdminProdById(id));
         console.log("product", product);
         setProduct(product);
         

@@ -1,6 +1,7 @@
-export const resError = (message) => ({
+export const resError = (message, data) => ({
   success: false,
-  message
+  message,
+  data
 });
 
 export const resSuccess = (data) => ({

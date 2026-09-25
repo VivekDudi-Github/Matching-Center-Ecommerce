@@ -4,11 +4,12 @@ import DiscoverTab from "../components/home/DiscoverTab";
 import TopBanner from "../components/home/TopBanner";
 import CardSlider from "../components/card/CardSlider";
 import HyderationWrapper from "../components/HyderationWrapper";
-import { getCategories, getProducts } from "../lib/actions/shopActions";
+import { getCategories, getProducts } from "../lib/controller/shopActions";
+import { exfn } from "../hooks/extractActions";
 
 export default async function Home() {
-  const {products, newCursor} = await getProducts({outOfStock: false, sort: "featured"});
-  const categories = await getCategories(); 
+  const {products, newCursor} = await exfn(() => getProducts({outOfStock: false, sort: "featured"}));
+  const categories = await exfn(() => getCategories());
 
 
   return (

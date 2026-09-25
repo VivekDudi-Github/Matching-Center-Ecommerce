@@ -3,8 +3,17 @@
 import { motion } from "framer-motion";
 import OrdersHeader from "@/app/components/orders/OrdersHeader";
 import OrdersList from "@/app/components/orders/OrderList";
+import { useSession } from "next-auth/react";
+import HeaderSkeleton from "@/app/components/orders/skeleton/HeaderSkeleton";
+import { useEffect, useState } from "react";
+import OrderCardSkeleton from "@/app/components/orders/skeleton/OrderCardSkeleton";
+import { fetchOrdersByCustomerId, fetchUserOrders } from "@/app/lib/controller/fetchOrder";
+import { toast } from "react-toastify";
+import { exfn } from "@/app/hooks/extractActions";
+import { fetchCustomerByEmail } from "@/app/lib/controller/fetchCustomer";
 
-const orders = [
+const ordersTest = {
+  orders: [
   {
     id: "ORD-2026-00124",
     createdAt: "September 22, 2026",
@@ -109,9 +118,9 @@ const orders = [
       },
     ],
   },
-];
+]};
 
-const customer = {
+const customerTest = {
   name: "Vivek Dudi",
   email: "vivek@example.com",
   number: "+91 98765 43210",
@@ -119,8 +128,35 @@ const customer = {
 };
 
 export default function OrdersPage() {
+  const [isLoading, setIsLoading] = useState(true);
+  const { data: session, status } = useSession();
+  const [customer, setCustomer] = useState(customerTest);
+  const [orders, setOrders] = useState(ordersTest);
+  console.log(orders);
+  
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.email) {
+      const fetch = async () => {
+        try {
+          const customer = await exfn(() => fetchCustomerByEmail(session?.user?.email));
+          const orders = await exfn(() => fetchUserOrders(null));
+
+          setCustomer(customer);
+          setOrders(orders);
+        } catch (error) {
+          console.log("error in fetching customer and orders", error);
+          toast.error(error?.message || "Something went wrong");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      fetch();
+    }
+  }, [session, status])
+
+
   return (
-    <main className="min-h-screen bg-zinc-50 px-4 py-8 text-zinc-900 dark:bg-black dark:text-white sm:px-6 lg:px-8">
+    <main className="min-h-screen -mt-12 bg-zinc-50 px-4 py-8 pt-12 text-zinc-900 dark:bg-black dark:text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         {/* Page Header */}
         <motion.div
@@ -139,7 +175,12 @@ export default function OrdersPage() {
         </motion.div>
 
         {/* Customer Profile */}
-        <OrdersHeader customer={customer} />
+        {status === "authenticated" && (
+          <OrdersHeader customer={customer} />
+        )}
+        {status === "loading" && (
+          <HeaderSkeleton customer={customer} />
+        )}
 
         {/* Orders */}
         <section className="mt-8">
@@ -153,7 +194,10 @@ export default function OrdersPage() {
             </div>
           </div>
 
-          <OrdersList orders={orders} />
+          {(isLoading && orders.length === 0) ?
+            Array(4).map( (_, i) => <OrderCardSkeleton key={i} />)
+            : <OrdersList orders={orders?.orders || []} cursor={orders?.cursor} />   
+          } 
         </section>
       </div>
     </main>

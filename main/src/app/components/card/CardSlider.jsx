@@ -4,9 +4,10 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Card from './Card';
-import { getProducts } from "../../lib/actions/shopActions";
+import { getProducts } from "../../lib/controller/shopActions";
 import { toast } from "react-toastify";
 import CardSkeleton from "./CardSkeleton";
+import { exfn } from "@/app/hooks/extractActions";
 
 // Mock list array of fabrics to populate our slider
 // export const products = [
@@ -32,13 +33,13 @@ import CardSkeleton from "./CardSkeleton";
 
 export default function CardSlider({prods = [], cursor : propCursor}) {
   const isFetchingRef = useRef(false);
-  
+
   const sliderRef = useRef(null);
   const [positionX, setPositionX] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const [productsList, setProductsList] = useState(prods);
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [cursor, setCursor] = useState(propCursor || null);
 
 
@@ -47,10 +48,10 @@ export default function CardSlider({prods = [], cursor : propCursor}) {
     setIsLoading(true);
     isFetchingRef.current = true;
     try {
-      
-      const {products, newCursor} = await getProducts({cursor: cursor, sort: "featured", outOfStock: false });
+      const {products, newCursor} = await exfn(() => getProducts({cursor: cursor, sort: "featured", outOfStock: false }));
+
       setCursor(newCursor);
-      setProductsList(prev => [...prev, ...products]);     
+      setProductsList(prev => [...prev, ...products]);
     } catch (error) {
       console.log("error in fetching product: ", error);
       toast.error(error?.message || "Something went wrong while fetching product");
@@ -58,7 +59,7 @@ export default function CardSlider({prods = [], cursor : propCursor}) {
       setIsLoading(false);
       isFetchingRef.current = false;
     }
-  }
+  };
    
 
   const slideLeft = () => {
@@ -78,7 +79,7 @@ export default function CardSlider({prods = [], cursor : propCursor}) {
       setMaxScroll(remainingDistance);
 
       if(resizedWindow) setPositionX((prev) => prev <= -remainingDistance ? -remainingDistance : prev === 0 ? 0 : prev- 150);
-    }}
+  }}
     
 
   
@@ -97,6 +98,10 @@ export default function CardSlider({prods = [], cursor : propCursor}) {
     if(productsList.length > 0) resetWidth(true);
   },[isLoading])
   
+  useEffect(() => {
+    setProductsList(prods);
+  }, [prods])
+
   // console.log(positionX, maxScroll)
 
   return (

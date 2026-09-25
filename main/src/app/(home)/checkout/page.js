@@ -9,10 +9,11 @@ import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import useCartStore from "@/app/store/CartStore";
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
-import { createorder } from "@/app/lib/actions/order.action";
+import { createorder } from "@/app/lib/controller/orderAction";
 import { useSession, signIn } from "next-auth/react";
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { exfn } from "@/app/hooks/extractActions";
 
 const CART = [
   {
@@ -104,22 +105,22 @@ export default function CheckoutPage() {
             })
           )
         }))
-        data.items = filteredCartData;
-        const response = await createorder(data);
-
-        if(!response?.success){
-          console.log("response" , response.message);
-          if(!Array.isArray(response.message)) return toast.error(response.message || "Something went wrong", {autoClose: 7000});
-          response.message.slice(0,4).forEach(message => toast.error(message));
-          return;
+        let isMissedLen = filteredCartData.filter(item => item.color.length > 0);
+        if(isMissedLen.length < filteredCartData.length) {
+          toast.error("Some products are missing color", {autoClose: 7000});
+          return toast.info("you can adjust quantity in cart (top right icon)", {autoClose: 10000});
         }
-        if(response.success) toast.success(response.message || "Order created successfully", {autoClose: 7000});
+
+        data.items = filteredCartData;
+        const response = await await exfn(() => createorder(data));
+
+        toast.success(response.message || "Order created successfully", {autoClose: 7000});
         router.push("/orders");
       } catch (error) {
-        console.log("error", error);      
-        toast.error(error?.message || "Something went wrong", {
-          autoClose: 10000
-        });
+        console.log("error", error);  
+        if(!Array.isArray(error.message)) return toast.error(error.message || "Something went wrong", {autoClose: 7000});
+          response.message.slice(0,4).forEach(message => toast.error(message));
+          return;    
       } finally {
         setIsLoading(false);
       }
@@ -169,7 +170,7 @@ export default function CheckoutPage() {
 
           </div>
 
-          <CheckoutSteps currentStep={3}/>
+          <CheckoutSteps currentStep={2}/>
 
           {/* Layout */}
 

@@ -7,7 +7,7 @@ import ProductRow from "./ProductRow";
 import ProductCard from "./ProductCard";
 import ProductToolbar from "./ProductToolbar";
 import { useEffect, useState } from "react";
-import { getFirstAdminProdList, getMoreAdminProdList } from "@/app/lib/actions/getAdminProd";
+import { getFirstAdminProdList, getMoreAdminProdList } from "@/app/lib/controller/getAdminProd";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import TableLoading from "./TrSkeleton";

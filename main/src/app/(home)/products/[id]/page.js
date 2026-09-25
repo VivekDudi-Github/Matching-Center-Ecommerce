@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { ShoppingCart, Zap, Star, Check, IndianRupeeIcon } from 'lucide-react';
+import { ShoppingCart, Star, Check, IndianRupeeIcon } from 'lucide-react';
 import ProductGallery from '@/app/components/product/ProductGallery';
 import ColorSelector from '@/app/components/product/ColorSelector';
 import useCartStore from '@/app/store/CartStore';
 import CardSlider from '@/app/components/card/CardSlider';
 import { AnimatePresence , motion} from 'framer-motion';
-import { useHydratedStore } from '@/app/hooks/useHyderatedStore';
 import Skeleton from '@/app/components/product/ProductPageSkeleton';
-import { getProduct } from '@/app/lib/actions/getProduct';
+import { getProductById } from '@/app/lib/controller/fetchProduct';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import Link from 'next/link';
+import { exfn } from '@/app/hooks/extractActions';
+import { getProducts } from '@/app/lib/controller/shopActions';
 
 // const PRODUCT_DATA = {
 //   title: 'Premium Handwoven Silk Blend Fabric - 1 Yard',
@@ -50,6 +50,10 @@ export default function ProductPage() {
   
   const [PRODUCT_DATA, setPRODUCT_DATA] = useState(null);
 
+  const [prods, setProducts] = useState([]);
+  const [cursor, setCursor] = useState(null);
+
+
   const handleColorSelect = (color) => {
     setSelectedColor(color);
   }
@@ -75,7 +79,7 @@ export default function ProductPage() {
     setIsLoading(true);
     const fetch = async () => {
       try {
-        const prod = await getProduct(id);
+        const prod = await exfn(() => getProductById(id));
         console.log("prod:", prod);
         if(prod) setPRODUCT_DATA(prod);
       } catch (error) {
@@ -83,6 +87,20 @@ export default function ProductPage() {
         toast.error(error?.message || "Something went wrong while fetching product");
       } finally {
         setIsLoading(false);
+      }
+    }
+    fetch();
+  }, [])
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const {products, newCursor} = await exfn(() => getProducts({cursor: cursor, sort: "featured", outOfStock: false }) );
+        setProducts(products);
+        setCursor(newCursor);
+      } catch (error) {
+        console.log("error in fetching product: ", error);
+        toast.error(error?.message || "Something went wrong while fetching product");
       }
     }
     fetch();
@@ -245,7 +263,7 @@ export default function ProductPage() {
 
         
       </main>
-      <CardSlider />
+      <CardSlider prods={prods} cursor={cursor} />
       
     </div>
   );

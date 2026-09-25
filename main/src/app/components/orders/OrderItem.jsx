@@ -29,7 +29,7 @@ export default function OrderItem({ item }) {
           <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <h4 className="truncate font-medium text-zinc-900 dark:text-white sm:text-base">
-                {item.name}
+                {item.title}
               </h4>
 
               <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">

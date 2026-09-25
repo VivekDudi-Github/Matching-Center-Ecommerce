@@ -1,5 +1,5 @@
 'use client';
-import {getCloudinaryDeletionSignature} from '@/app/lib/services/Cloudinary'; 
+import {getCloudinaryDeletionSignature} from '@/app/hooks/Cloudinary'; 
 import { deleteProductImages } from '../actions/newProduct.action';
 
 export const uploadToCloudinary = async (file, signature, timestamp) => {

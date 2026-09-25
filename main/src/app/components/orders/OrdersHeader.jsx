@@ -16,7 +16,7 @@ export default function OrdersHeader({ customer }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 sm:p-6"
+      className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-400 dark:shadow-none  dark:border-zinc-800 dark:bg-zinc-950 sm:p-6"
     >
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         {/* Avatar */}
@@ -28,7 +28,7 @@ export default function OrdersHeader({ customer }) {
               className="h-20 w-20 rounded-full object-cover ring-4 ring-zinc-100 dark:ring-zinc-900 sm:h-24 sm:w-24"
             />
           ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-100 text-xl font-semibold text-zinc-700 ring-4 ring-zinc-50 dark:bg-zinc-900 dark:text-zinc-200 dark:ring-zinc-950 sm:h-24 sm:w-24 sm:text-2xl">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-200 text-xl font-semibold text-zinc-700 ring-4 ring-zinc-50 dark:bg-zinc-900 dark:text-zinc-200 dark:ring-zinc-950 sm:h-24 sm:w-24 sm:text-2xl">
               {initials || <UserRound size={30} />}
             </div>
           )}
@@ -43,7 +43,7 @@ export default function OrdersHeader({ customer }) {
           <div className="mt-3 flex flex-col gap-2.5 text-sm text-zinc-500 dark:text-zinc-400 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-2">
             {/* Email */}
             {customer?.email && (
-              <div className="flex min-w-0 items-center gap-2">
+              <div className="flex min-w-0 p-1 bg-zinc-300/75 rounded-md dark:bg-zinc-900 dark:text-zinc-400  text-zinc-700 items-center gap-2">
                 <Mail
                   size={16}
                   className="shrink-0 text-zinc-400 dark:text-zinc-500"
@@ -55,7 +55,7 @@ export default function OrdersHeader({ customer }) {
 
             {/* Phone */}
             {customer?.number && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 p-1 bg-zinc-300/75 rounded-md dark:bg-zinc-900 dark:text-zinc-400  text-zinc-700">
                 <Phone
                   size={16}
                   className="shrink-0 text-zinc-400 dark:text-zinc-500"

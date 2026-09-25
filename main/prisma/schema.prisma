@@ -155,10 +155,11 @@ model StrandedImages {
 }
 
 model Category {
-    id       Int     @id @default(autoincrement())
-    name     String  @unique
+    id            Int     @id @default(autoincrement())
+    name          String  @unique
 
-    products Product[]
+    products      Product[]
+    orderItems    OrderItem[]
 }
 
 model Tag {
@@ -191,7 +192,9 @@ model Order {
 
   shipping      Decimal     @db.Decimal(10, 2)
 
-  products      OrderItem[]
+  notes         String?
+
+  orderItems    OrderItem[]
   updatedAt     DateTime    @updatedAt
   createdAt     DateTime    @default(now())
 
@@ -260,6 +263,7 @@ model OrderItem {
 
   width           Int   
   categoryId      Int
+  category        Category @relation(fields: [categoryId], references: [id])
 
   @@index([productId])
   @@index([orderId])
