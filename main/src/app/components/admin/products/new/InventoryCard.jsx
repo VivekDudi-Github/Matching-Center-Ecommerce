@@ -7,7 +7,7 @@ import ColorPickerRow from "./ColorPickerRow";
 export default function InventoryCard({isNewProduct = true}) {
   const {register, control} = useFormContext();
 
-  const { fld, append, remove } = useFieldArray({
+  const { fields : fld, append, remove } = useFieldArray({
     name: "colors" , control
   });
 
@@ -28,7 +28,7 @@ export default function InventoryCard({isNewProduct = true}) {
   }
   
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm shadow-black/30 dark:border-zinc-800 dark:bg-zinc-900">
+    <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm shadow-black/20 dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
 
       <div className="flex items-center gap-3 border-b border-zinc-200 p-6 dark:border-zinc-800">
@@ -60,7 +60,7 @@ export default function InventoryCard({isNewProduct = true}) {
         </div>
       
 
-      {fields.map((field, index) => (
+      {(isNewProduct ? fld : fields).map((field, index) => (
         <div key={index} className="rounded-2xl border border-zinc-200 p-5 dark:border-zinc-800">
           <div className="mb-5 flex items-center justify-between">
             <h3 className="font-semibold">Color #{index+1}</h3>

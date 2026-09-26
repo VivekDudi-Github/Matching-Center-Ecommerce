@@ -22,7 +22,7 @@ export const fetchCustomerById = async (id) => {
   return await TryCatch(async () => {
     const customer = await prisma.customer.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
       include: {
         orders: true,

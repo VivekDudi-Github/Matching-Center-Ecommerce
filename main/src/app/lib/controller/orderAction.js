@@ -23,14 +23,13 @@ export const createorder = async(data) => {
   }
   
   // data check //
-
+  console.log("data");
   const parsedData = newOrderFormSchemaServer.safeParse(data);
     if (!parsedData.success) {
       const {errors, properties} = z.treeifyError(parsedData.error);
-      
+      console.log(errors)      
       let parseError = [];
       if(errors.length) {
-        console.log("parseError", parseError);
         return resError("Something went wrong, please try again");
       }
       Object.keys(properties).forEach(key => {
@@ -46,8 +45,8 @@ export const createorder = async(data) => {
     const email = session.user.email;
     const name = session.user.name;
 
-    const orderid = await createorderService(parsedData.data, email, name, SHIPPING);
-
-    return resSuccess({orderId: orderid});
+    const orderId = await createorderService(parsedData.data, email, name, SHIPPING);
+    console.log(orderId, "orderId")
+    return resSuccess({orderId: orderId});
   })
 }

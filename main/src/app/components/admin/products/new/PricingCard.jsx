@@ -32,7 +32,7 @@ export default function PricingCard() {
   }, [SP, OP])
 
   return (
-    <section className="rounded-2xl bg-white shadow-sm shadow-black/30 border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800">
+    <section className="rounded-2xl bg-white shadow-sm shadow-black/20 border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800">
       <div className="flex items-center gap-3 border-b border-zinc-200 dark:border-zinc-800 p-6">
         <div className="rounded-xl bg-zinc-100 dark:bg-zinc-800 p-2">
           <IndianRupee className="h-5 w-5" />

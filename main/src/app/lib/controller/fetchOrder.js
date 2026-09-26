@@ -13,7 +13,7 @@ export const fetchOrderById = async (id) => {
   return await TryCatch(async () => {
     const order = await prisma.order.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
       include: {
         customer: true,

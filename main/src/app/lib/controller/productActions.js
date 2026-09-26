@@ -66,7 +66,7 @@ export const deleteProductAction = async(id) => {
   return await TryCatch( async () => {
     const product = await prisma.product.update({
       where: {
-        id: Number(id)
+        id: id
       }, 
       data: {
         deletedAt: new Date()
@@ -81,7 +81,7 @@ export const revertDeleteProductAction = async(id) => {
   return await TryCatch( async () => {
     const product = await prisma.product.update({
       where: {
-        id: Number(id)
+        id: id
       }, 
       data: {
         deletedAt: null

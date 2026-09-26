@@ -11,6 +11,7 @@ import { getFirstAdminProdList, getMoreAdminProdList } from "@/app/lib/controlle
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import TableLoading from "./TrSkeleton";
+import { exfn } from "@/app/hooks/extractActions";
 
 const columns = [
   "Product",
@@ -29,7 +30,7 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
   const [ isLoading, setIsLoading] = useState(false);
 
   const params = useSearchParams();
-
+  console.log("initalProducts", initalProducts);
   const loadMore = async() => {
     setIsLoading(true);
     try {
@@ -38,7 +39,7 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
       const status = params.get("status") ?? "";
 
 
-      const {list , newCursor} = await getMoreAdminProdList(cursor, search, category, status);
+      const {list , newCursor} = await exfn(() => getMoreAdminProdList(cursor, search, category, status));
       console.log("LIST:", list);
       setProducts(prev => [...prev, ...list]);
       setCursour(newCursor);
@@ -59,7 +60,7 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
       const category = params.get("category") ?? "";
       const status = params.get("status") ?? "";
 
-      const {list , newCursor} = await getFirstAdminProdList( search, category, status);
+      const {list , newCursor} = await exfn( () => getFirstAdminProdList( search, category, status));
       setProducts(list);
       setCursour(newCursor);
     } catch (error) {

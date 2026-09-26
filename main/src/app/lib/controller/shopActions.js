@@ -21,7 +21,7 @@ export const getProducts = async ({categoryId = '', outOfStock, minPrice, maxPri
 
     return await TryCatch(async () => {
         const {products, newCursor} = await getShopProductsService({categoryId, outOfStock, minPrice, maxPrice,sort, searchText, cursor});
-        
+
         return resSuccess({products : serializePrisma(products), newCursor});
     });
 };

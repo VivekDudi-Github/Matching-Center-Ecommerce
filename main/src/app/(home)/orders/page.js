@@ -23,23 +23,23 @@ const ordersTest = {
     shipping: 80,
     total: 2530,
 
-    items: [
+    orderItems: [
       {
         id: 1,
         name: "Premium Cotton Fabric",
         image: "/images/products/cotton.jpg",
         price: 650,
         category: "Cotton",
-        colors: [
+        color: [
           {
-            name: "Sky Blue",
+            colorName: "Sky Blue",
             hex: "#60A5FA",
-            meters: 2.5,
+            quantity: 2.5,
           },
           {
-            name: "White",
+            colorName: "White",
             hex: "#FFFFFF",
-            meters: 1.5,
+            quantity: 1.5,
           },
         ],
       },
@@ -49,11 +49,11 @@ const ordersTest = {
         image: "/images/products/rayon.jpg",
         price: 850,
         category: "Rayon",
-        colors: [
+        color: [
           {
-            name: "Maroon",
+            colorName: "Maroon",
             hex: "#7F1D1D",
-            meters: 1.5,
+            quantity: 1.5,
           },
         ],
       },
@@ -76,16 +76,16 @@ const ordersTest = {
         image: "/images/products/silk.jpg",
         price: 925,
         category: "Silk",
-        colors: [
+        color: [
           {
-            name: "Wine",
+            colorName: "Wine",
             hex: "#722F37",
-            meters: 1,
+            quantity: 1,
           },
           {
-            name: "Black",
+            namecolorName: "Black",
             hex: "#000000",
-            meters: 1,
+            quantity: 1,
           },
         ],
       },
@@ -196,8 +196,9 @@ export default function OrdersPage() {
 
           {(isLoading && orders.length === 0) ?
             Array(4).map( (_, i) => <OrderCardSkeleton key={i} />)
-            : <OrdersList orders={orders?.orders || []} cursor={orders?.cursor} />   
+            : <OrdersList orders={orders.orders} cursor={orders?.cursor} />   
           } 
+          <OrdersList orders={ordersTest.orders} cursor={orders?.cursor} />
         </section>
       </div>
     </main>

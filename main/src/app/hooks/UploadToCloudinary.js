@@ -1,6 +1,7 @@
 'use client';
 import {getCloudinaryDeletionSignature} from '@/app/hooks/Cloudinary'; 
-import { deleteProductImages } from '../actions/newProduct.action';
+import { deleteProductImages } from '@/app/lib/controller/productActions';
+import { resError, resSuccess } from './resObj';
 
 export const uploadToCloudinary = async (file, signature, timestamp) => {
   try {
@@ -34,10 +35,11 @@ export const uploadToCloudinary = async (file, signature, timestamp) => {
       throw Error(`Upload Failed for :${file.name}. Reason: ${data?.error?.message || 'unknown'}`);  
     }  
 
-    return {url : data.secure_url, publicId : data.public_id};
+    return resSuccess({url : data.secure_url, publicId : data.public_id});
 
   } catch (error) {
-    throw new Error(error || "Something went wrong");
+    console.log("error in uploadToCloudinary", error);
+    return resError(error?.message || "Something went wrong");
   }
   
 };
@@ -73,10 +75,11 @@ export const deleteCloudinaryImage = async (publicId) => {
     if(!cloudinaryResponse.ok){
       throw Error(`Delete Failed for :${publicId}. Reason: ${data?.error?.message || 'unknown'}`);  
     }  
-    return true;
+    return resSuccess(true);
 
   } catch (error) {
-    throw new Error(error || "Something went wrong");
+    console.log("error in deleteCloudinaryImage", error);
+    return resError(error?.message || "Something went wrong");
   }
   
 };

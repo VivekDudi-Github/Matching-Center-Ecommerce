@@ -3,13 +3,14 @@ import ProductTable from "@/app/components/admin/products/ProductTable";
 import {prisma} from "@/app/lib/prisma";
 import { serializePrisma } from "@/app/hooks/serializePrisma";
 import { getFirstAdminProdList } from "@/app/lib/controller/getAdminProd";
+import { exfn } from "@/app/hooks/extractActions";
 
 
 
 export default async function ProductsPage({searchParams}) {
   const query = await searchParams;
   
-  const {list, newCursor} = await getFirstAdminProdList(query?.search, query?.category, query?.status);
+  const {list, newCursor} = await exfn( () => getFirstAdminProdList(query?.search, query?.category, query?.status));
   const products = list;
   const cursor = newCursor;
 

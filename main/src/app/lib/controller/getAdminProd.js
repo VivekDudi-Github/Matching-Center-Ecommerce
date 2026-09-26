@@ -26,9 +26,9 @@ export const getFirstAdminProdList = async( search, category, status) => {
   return await TryCatch( async () => {
   
     if(status && status !== "All Status") {
-      return await getFirstAdminProdListStatusBased( search, category, status);
+      return resSuccess(await getFirstAdminProdListStatusBased( search, category, status));
     }else {
-      return await getFirstAdminProdListNotStatusBased( search, category);
+      return resSuccess(await getFirstAdminProdListNotStatusBased( search, category));
     }
   });
 }
@@ -40,7 +40,7 @@ export const getAdminProdById = async(id) => {
   return await TryCatch(async () => {
     const product = await prisma.product.findUnique({
       where: {
-        id: Number(id)
+        id: id
       },
       include: {
         color: true,

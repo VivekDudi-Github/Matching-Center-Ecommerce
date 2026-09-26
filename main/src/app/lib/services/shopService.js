@@ -99,7 +99,11 @@ export const getShopProductsService = async({categoryId, outOfStock, minPrice, m
             color: true,
             tags: true,
             category: true,
-            images: true,
+            images: {
+                where: {
+                    displayOrder: 0
+                }
+            },
         },
         take: 11,
         ...(cursor && {skip: 1}),
@@ -109,7 +113,7 @@ export const getShopProductsService = async({categoryId, outOfStock, minPrice, m
             } 
         }),
     });
-
+    console.log("products", products);
     let newCursor = null;
     if(products.length > 10) {
         newCursor = products.length > 10 ? products[9].id : null;

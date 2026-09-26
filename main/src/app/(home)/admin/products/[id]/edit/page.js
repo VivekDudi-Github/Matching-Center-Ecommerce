@@ -107,9 +107,8 @@ export default function EditProductPage() {
       let product = null;
       
 
-      const update = await exfn(() => updateProduct(id, {...data, images: []}));
-      product = update.data;
-
+      product = await exfn(() => updateProduct(id, {...data, images: []}));
+      
       console.log("updated_product", product);
       setProuctId(id);
            
@@ -222,6 +221,7 @@ export default function EditProductPage() {
           replaceImages(product.images);
         }
       } catch (error) {
+        console.log("error which fetching product", error);
         return toast.error(error?.message || "Something went wrong");
       } finally {
         setInititalLoading(false);

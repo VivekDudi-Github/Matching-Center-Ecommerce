@@ -1,10 +1,12 @@
 "use server";
 
 import { prisma } from '@/app/lib/prisma';
+import { Prisma } from '@/generated/prisma/client';
+import { hex } from 'zod';
 
 export const createNewProductService = async(data) => {
   const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = data;
-  
+
   const product = await prisma.product.create({
     data: {
       title,
@@ -42,13 +44,11 @@ export const createNewProductService = async(data) => {
       color :{
         create: colors.map((color) => {
           return {
-            create: {
-              name: color.name,
-              hex: color.hex,
-              availableMeters: color.availableMeters,
-              lowStockAlert: color.lowStockAlert, 
-              isLowStock: color.availableMeters <= color.lowStockAlert,
-            },
+            name: color.name,
+            hex: color.hex,
+            availableMeters: new Prisma.Decimal(color.availableMeters),
+            lowStockAlert: color.lowStockAlert, 
+            isLowStock: color.availableMeters <= color.lowStockAlert,          
           };
         })
       } ,

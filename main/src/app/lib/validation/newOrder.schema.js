@@ -43,11 +43,11 @@ export const newOrderFormSchemaServer =  z.object({
   landmark: z.string("Invalid landmark").trim().max(70, "Landmark word length is too long").optional(),
   
   items: z.array(z.object({
-    productId: z.coerce.number("invalid productId").min(1, "Product id is required"),
+    productId: z.cuid2("invalid productId").min(1, "Product id is required"),
     productName: z.string("invalid productName").trim().min(1, "Product name is required"),
     productPrice: z.coerce.number("invalid productPrice").positive("Product price must be greater than 0"),
     color: z.array(z.object({
-      colorId: z.coerce.number("invalid colorId").min(1, "Color id is required"),
+      colorId: z.cuid2("invalid colorId").min(1, "Color id is required"),
       colorName: z.string("invalid colorName").trim().min(1, "Color name is required"),
       quantity: z.coerce.number("invalid colorName").positive("Quantity must be greater than 0")
     }))

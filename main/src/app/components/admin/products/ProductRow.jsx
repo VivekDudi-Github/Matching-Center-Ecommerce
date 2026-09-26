@@ -15,6 +15,7 @@ import { array } from "zod";
 import {deleteProductAction, duplicateProductAction, revertDeleteProductAction} from '@/app/lib/controller/productActions';
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { exfn } from "@/app/hooks/extractActions";
 
 
 export default function ProductRow({ product }) {
@@ -38,10 +39,9 @@ export default function ProductRow({ product }) {
   const [duplicateLoading, setDuplicateLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-
   useEffect(() => {
     const colorArr = [...color];
-    colorArr.sort((a, b) => a.availableMeters - b.availableMeters);
+    colorArr.sort((a, b) => Number(a.availableMeters) - Number(b.availableMeters));
     setSortedColors(colorArr);
 
     if(images.length > 0) {
@@ -52,19 +52,21 @@ export default function ProductRow({ product }) {
   }, [color, images])
 
   const stockColor = () => {
-    const stock = sortedColors?.[0]?.availableMeters || 0;
+    const stock = Number(sortedColors?.[0]?.availableMeters) || 0;
+    const lowStockAlert = Number(sortedColors?.[0]?.lowStockAlert) || 0;
     return stock <= 0
           ? "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400"
-          : stock <= 20
+          : stock <= lowStockAlert
           ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-400"
           : "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400";
   }
 
   const stockLabel = () => {
-    const stock = sortedColors?.[0]?.availableMeters || 0;
+    const stock = Number(sortedColors?.[0]?.availableMeters) || 0;
+    const lowStockAlert = Number(sortedColors?.[0]?.lowStockAlert) || 0;
     return stock <= 0
           ? "Out of Stock"
-          : stock <= 20
+          : stock <= lowStockAlert
           ? "Low Stock"
           : "In Stock";
   }
@@ -72,7 +74,7 @@ export default function ProductRow({ product }) {
   const duplicateProduct = async(id) => {
     try {
       setDuplicateLoading(true);
-      const clonedProduct = await duplicateProductAction(id);
+      const clonedProduct = await exfn(() => duplicateProductAction(id));
       if(!clonedProduct) throw new Error("Failed to duplicate product");
 
 
@@ -86,7 +88,7 @@ export default function ProductRow({ product }) {
 
   const deleteProduct = async(id) => {
     try {
-      await deleteProductAction(id);
+      await exfn(() => deleteProductAction(id));
       setIsDeleted(true);
     }catch (error) {
       console.log("error in deleting the product");
@@ -97,7 +99,7 @@ export default function ProductRow({ product }) {
   const revertDelete = async(id) => {
     setDeleteLoading(true);
     try {
-      await revertDeleteProductAction(id);
+      await exfn(() => revertDeleteProductAction(id));
       setIsDeleted(false);
     }catch (error) {
       console.log("error in deleting the product");

@@ -11,7 +11,7 @@ export const getProductById = async (id) => {
   return await TryCatch(async () => {
     const product = await prisma.product.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
       include: {
         color: true,

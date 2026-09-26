@@ -25,7 +25,7 @@ export const updateProductService = async(id, data) => {
 
     product = await tx.product.update({
       where: {
-        id: Number(id)
+        id: id
       },
       data: {
         title,

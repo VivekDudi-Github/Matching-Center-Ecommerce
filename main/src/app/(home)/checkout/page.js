@@ -112,8 +112,9 @@ export default function CheckoutPage() {
         }
 
         data.items = filteredCartData;
-        const response = await await exfn(() => createorder(data));
-
+        console.log("data", data);
+        const response = await exfn(() => createorder(data));
+        
         toast.success(response.message || "Order created successfully", {autoClose: 7000});
         router.push("/orders");
       } catch (error) {

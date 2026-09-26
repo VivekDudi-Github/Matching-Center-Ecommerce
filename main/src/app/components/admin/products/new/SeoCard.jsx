@@ -36,7 +36,7 @@ export default function SEOCard() {
   });
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm shadow-black/20 dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
 
       <div className="flex items-center gap-3 border-b border-zinc-200 p-6 dark:border-zinc-800">

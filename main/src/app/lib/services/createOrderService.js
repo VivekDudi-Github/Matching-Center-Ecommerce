@@ -51,6 +51,11 @@ export const createorderService = async(data, email, name, SHIPPING) => {
         include: {
           color: true,
           category: true,
+          images: {
+            where: {
+              displayOrder: 0
+            }
+          }
         }
       }) ;
       
@@ -114,12 +119,14 @@ export const createorderService = async(data, email, name, SHIPPING) => {
         originalPrice: product.originalPrice,
         price: product.price,
         orderId: newOrder.id,
-        categoryId: product.categoryId,
+        categoryName: product.category.name,
+        imageId: product.images[0].id,
         width: product.width,
         color: item.color.map(color => ({
           colorId: findColor(color.colorId, product).id,
           colorName: findColor(color.colorId, product).name,
           quantity: color.quantity,
+          hex: findColor(color.colorId, product).hex,
           availableMeters: findColor(color.colorId, product).availableMeters
         }))
       }});

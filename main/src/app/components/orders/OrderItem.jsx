@@ -11,8 +11,8 @@ export default function OrderItem({ item }) {
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:h-24 sm:w-24">
           {item.image ? (
             <Image
-              src={item.image}
-              alt={item.name}
+              src={item.image.url}
+              alt={item.title}
               fill
               sizes="96px"
               className="object-cover"
@@ -50,7 +50,7 @@ export default function OrderItem({ item }) {
           </div>
 
           {/* Colors */}
-          {item.colors?.length > 0 && (
+          {item.color?.length > 0 && (
             <div className="mt-4">
               <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 <Palette size={14} />
@@ -58,9 +58,9 @@ export default function OrderItem({ item }) {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {item.colors.map((color, index) => (
+                {item.color.map((color, index) => (
                   <div
-                    key={`${color.name}-${index}`}
+                    key={`${color.colorName}-${index}`}
                     className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
                   >
                     {/* Color */}
@@ -73,13 +73,13 @@ export default function OrderItem({ item }) {
 
                     {/* Color name */}
                     <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                      {color.name}
+                      {color.colorName}
                     </span>
 
                     {/* Ordered meters */}
                     <span className="flex items-center gap-1 border-l border-zinc-200 pl-2 text-xs text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
                       <Ruler size={12} />
-                      {Number(color.meters).toFixed(2)} m
+                      {Number(color.quantity).toFixed(2)} m
                     </span>
                   </div>
                 ))}

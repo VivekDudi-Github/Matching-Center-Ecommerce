@@ -30,7 +30,7 @@ export default function PublishCard() {
   const toggleCollapse = () => setCollapsed( prev => !prev);
   
   return (
-    <section className="sticky block bottom-4 rounded-2xl border border-zinc-500 bg-white dark:border-zinc-600 dark:bg-zinc-950">
+    <section className="sticky block bottom-4 rounded-2xl  shadow-md shadow-black/20 bg-white dark:bg-zinc-950">
       <div className="flex flex-col gap-6 p-6">
         {/* Summary */}
 

@@ -28,7 +28,15 @@ export const fetchOrdersByCustomerIdService = async({customerId, email, cursor})
     take: 11,
     skip: cursor ? 1 : 0,
     include: {
-      orderItems: true,
+      orderItems: {
+        include: {
+          image: {
+            select: {
+              url: true
+            }
+          },
+        }
+      },
     }
   });
 
@@ -37,6 +45,7 @@ export const fetchOrdersByCustomerIdService = async({customerId, email, cursor})
   
   return {orders: serializePrisma(orders), cursor: newCursor};
 }
+
 
 export const fetchOrdersService = async(cursor) => {
   const cursorFilter = cursor ? {

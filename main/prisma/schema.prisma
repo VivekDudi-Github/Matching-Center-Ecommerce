@@ -14,7 +14,7 @@ datasource db {
 
 
 model Customer  {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid(2))
   
   name        String
   email       String   @unique
@@ -29,7 +29,7 @@ model Customer  {
 }
 
 model Admin{
-  id           Int        @id @default(autoincrement())
+  id           String     @id @default(cuid(2))
 
   password     String     
   name         String
@@ -40,7 +40,7 @@ model Admin{
 }
 
 model Banner{
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid(2))
   
   title     String
   subtitle  String
@@ -51,7 +51,7 @@ model Banner{
 }
 
 model Settings{
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid(2))
   number    String
   name      String
   email     String
@@ -70,7 +70,7 @@ model Settings{
 }
 
 model Product {
-  id              Int      @id @default(autoincrement())
+  id              String      @id @default(cuid(2))
   title           String
   slug            String   @unique
   sku             String   @unique
@@ -85,7 +85,7 @@ model Product {
   images          ProductImages[]
   tags            Tag[]
   orders          OrderItem[]
-  categoryId      Int
+  categoryId      String
   category        Category @relation(fields: [categoryId], references: [id])
 
   featured        Boolean  @default(false)
@@ -110,7 +110,7 @@ model Product {
 }
 
 model ProductVariant {
-  id              Int      @id @default(autoincrement())    
+  id              String   @id @default(cuid(2))   
   availableMeters Decimal  @db.Decimal(10, 2)
   lowStockAlert   Decimal  @db.Decimal(10, 2)
 
@@ -118,7 +118,7 @@ model ProductVariant {
 
   name            String
   hex             String   
-  productId       Int
+  productId       String
 
   product         Product  @relation(fields : [productId] , references: [id]) 
   
@@ -128,14 +128,15 @@ model ProductVariant {
 }
 
 model ProductImages {
-  id            Int              @id @default(autoincrement())
+  id            String           @id @default(cuid(2))
   publicId      String           
   url           String
-  productId     Int
+  productId     String
   product       Product          @relation(fields: [productId], references: [id])
-
+  
   displayOrder  Int              @default(0)
   
+  orderItem     OrderItem[]
 
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
@@ -144,7 +145,7 @@ model ProductImages {
 }
 
 model StrandedImages {
-  id            Int              @id @default(autoincrement())
+  id            String           @id @default(cuid(2))
   publicId      String           
   url           String
 
@@ -155,18 +156,17 @@ model StrandedImages {
 }
 
 model Category {
-    id            Int     @id @default(autoincrement())
-    name          String  @unique
+    id            String      @id @default(cuid(2))
+    name          String      @unique
 
     products      Product[]
-    orderItems    OrderItem[]
 }
 
 model Tag {
-  id       Int @id @default(autoincrement())
+  id       String      @id @default(cuid(2))
 
-  name     String  @unique
-  slug     String? @unique
+  name     String      @unique
+  slug     String?     @unique
 
   products Product[]
 }
@@ -181,8 +181,8 @@ enum Status {
 }
 
 model Order {
-  id            Int         @id @default(autoincrement())
-  customerId    Int
+  id            String      @id @default(cuid(2))
+  customerId    String
   customer      Customer    @relation(fields: [customerId], references: [id])
   payment       Payment?
 
@@ -217,13 +217,13 @@ enum Method {
 
 model Payment {
   id            Int           @id @default(autoincrement())
-  orderId       Int           @unique
+  orderId       String        @unique
   order         Order         @relation(fields: [orderId], references: [id])
   amount        Decimal       @db.Decimal(10, 2)
   status        PaymentStatus @default(Pending) 
   method        Method
   reference     String        @unique
-  customerId    Int
+  customerId    String
   customer      Customer      @relation(fields: [customerId], references: [id])
   number        String?
   
@@ -233,7 +233,7 @@ model Payment {
 
 model Address {
   id         Int        @id @default(autoincrement())
-  customerId Int
+  customerId String
   customer   Customer   @relation(fields: [customerId], references: [id])
   address    String
   city       String
@@ -247,24 +247,27 @@ model Address {
 }
 
 model OrderItem {
-  id              Int      @id @default(autoincrement())
-  orderId         Int
+  id              String   @id @default(cuid(2))
+  orderId         String
   order           Order    @relation(fields: [orderId], references: [id])
   
 
-  productId       Int
+  productId       String
   product         Product  @relation(fields: [productId], references: [id])
   
   title           String
   price           Decimal  @db.Decimal(10, 2)
   originalPrice   Decimal  @db.Decimal(10, 2)
   
+  imageId         String
+  image           ProductImages @relation(fields: [imageId], references: [id])
+
   color           Json     @db.JsonB   
 
   width           Int   
-  categoryId      Int
-  category        Category @relation(fields: [categoryId], references: [id])
+  categoryName    String
 
   @@index([productId])
   @@index([orderId])
 } 
+
