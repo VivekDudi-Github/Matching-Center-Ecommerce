@@ -33,7 +33,7 @@ export default function OrderItem({ item }) {
               </h4>
 
               <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                {item.category}
+                {item.categoryName}
               </p>
             </div>
 

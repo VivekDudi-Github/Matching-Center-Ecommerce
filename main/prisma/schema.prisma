@@ -180,23 +180,33 @@ enum Status {
   Cancelled
 }
 
+enum DeliveryStatus {
+  Pending
+  Confirmed
+  Packed
+  Shipped
+  Delivered
+  Cancelled
+}
+
 model Order {
-  id            String      @id @default(cuid(2))
-  customerId    String
-  customer      Customer    @relation(fields: [customerId], references: [id])
-  payment       Payment?
+  id              String      @id @default(cuid(2))
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  payment         Payment?
 
-  subtotal      Decimal     @db.Decimal(10, 2)
-  total         Decimal     @db.Decimal(10, 2)
-  status        Status      @default(Pending)
+  subtotal        Decimal     @db.Decimal(10, 2)
+  total           Decimal     @db.Decimal(10, 2)
+  status          Status      @default(Pending)
 
-  shipping      Decimal     @db.Decimal(10, 2)
+  shipping        Decimal     @db.Decimal(10, 2)
+  deliveryStatus  DeliveryStatus @default(Pending)
 
-  notes         String?
+  notes           String?
 
-  orderItems    OrderItem[]
-  updatedAt     DateTime    @updatedAt
-  createdAt     DateTime    @default(now())
+  orderItems      OrderItem[]
+  updatedAt       DateTime    @updatedAt
+  createdAt       DateTime    @default(now())
 
   @@index([customerId])
   @@index([status])
@@ -216,7 +226,7 @@ enum Method {
 }
 
 model Payment {
-  id            Int           @id @default(autoincrement())
+  id            String        @id @default(cuid(2))
   orderId       String        @unique
   order         Order         @relation(fields: [orderId], references: [id])
   amount        Decimal       @db.Decimal(10, 2)
@@ -232,7 +242,7 @@ model Payment {
 }
 
 model Address {
-  id         Int        @id @default(autoincrement())
+  id         String        @id @default(cuid(2))
   customerId String
   customer   Customer   @relation(fields: [customerId], references: [id])
   address    String
@@ -259,11 +269,13 @@ model OrderItem {
   price           Decimal  @db.Decimal(10, 2)
   originalPrice   Decimal  @db.Decimal(10, 2)
   
+  
   imageId         String
   image           ProductImages @relation(fields: [imageId], references: [id])
 
   color           Json     @db.JsonB   
 
+  Pattern         String
   width           Int   
   categoryName    String
 

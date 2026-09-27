@@ -7,6 +7,7 @@ import PriceSlider from "./PriceSlider";
 import { getShopSelections } from "@/app/lib/controller/shopActions";
 import { SortSelector } from "./SortSelector";
 import SideBardSkeleton from "./SideBardSkeleton";
+import { exfn } from "@/app/hooks/extractActions";
 
 
 const sortOptions = [
@@ -54,7 +55,7 @@ export default function Sidebar({ openSections, toggleSection, setCursor, setPar
   useEffect(() =>{
     const fetchSelections = async () => {
       setisLoading(true);
-      const res = await getShopSelections();
+      const res = await exfn(() => getShopSelections());
       setCategories(res.categories);
       setPriceLow(Number(res.priceRange.low));
       setPriceHigh(Number(res.priceRange.high));

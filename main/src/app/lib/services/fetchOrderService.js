@@ -37,6 +37,7 @@ export const fetchOrdersByCustomerIdService = async({customerId, email, cursor})
           },
         }
       },
+      payment: true
     }
   });
 

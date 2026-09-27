@@ -17,7 +17,7 @@ const shimmerVariants = {
 
 function SkeletonBlock({ className }) {
   return (
-    <div className={`relative overflow-hidden bg-zinc-300 dark:bg-zinc-800 rounded-lg ${className}`}>
+    <div className={`relative overflow-hidden bg-zinc-700 dark:bg-zinc-800 rounded-lg ${className}`}>
       <motion.div
         variants={shimmerVariants}
         initial="initial"
@@ -33,7 +33,7 @@ function OrderCardSkeleton() {
     
     <motion.article
       layout
-      className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm shadow-zinc-500 dark:shadow-none dark:border-zinc-800 dark:bg-zinc-950"
+      className="overflow-hidden mb-3 rounded-2xl border border-zinc-200 bg-white shadow-sm shadow-zinc-500 dark:shadow-none dark:border-zinc-800 dark:bg-zinc-950"
     >
       {/* Order Header */}
       <div className="p-4 sm:p-5">

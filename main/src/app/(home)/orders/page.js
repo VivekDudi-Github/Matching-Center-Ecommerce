@@ -131,8 +131,7 @@ export default function OrdersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { data: session, status } = useSession();
   const [customer, setCustomer] = useState(customerTest);
-  const [orders, setOrders] = useState(ordersTest);
-  console.log(orders);
+  const [orders, setOrders] = useState([]);
   
   useEffect(() => {
     if (status === "authenticated" && session?.user?.email) {
@@ -142,7 +141,7 @@ export default function OrdersPage() {
           const orders = await exfn(() => fetchUserOrders(null));
 
           setCustomer(customer);
-          setOrders(orders);
+          setOrders(orders?.orders || []);
         } catch (error) {
           console.log("error in fetching customer and orders", error);
           toast.error(error?.message || "Something went wrong");
@@ -194,11 +193,11 @@ export default function OrdersPage() {
             </div>
           </div>
 
-          {(isLoading && orders.length === 0) ?
-            Array(4).map( (_, i) => <OrderCardSkeleton key={i} />)
-            : <OrdersList orders={orders.orders} cursor={orders?.cursor} />   
+          {(isLoading && orders?.length === 0) ?
+            Array.from({length: 4}, (_, i) => <OrderCardSkeleton key={i} />)
+            : <OrdersList orders={orders} cursor={orders?.cursor} />
           } 
-          <OrdersList orders={ordersTest.orders} cursor={orders?.cursor} />
+
         </section>
       </div>
     </main>

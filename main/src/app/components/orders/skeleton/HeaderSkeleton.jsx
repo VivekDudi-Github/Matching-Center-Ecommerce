@@ -19,7 +19,7 @@ const shimmerVariants = {
 
 function SkeletonBlock({ className }) {
   return (
-    <div className={`relative overflow-hidden bg-zinc-300 dark:bg-zinc-800 rounded-lg ${className}`}>
+    <div className={`relative overflow-hidden bg-zinc-700 dark:bg-zinc-800 rounded-lg ${className}`}>
       <motion.div
         variants={shimmerVariants}
         initial="initial"
