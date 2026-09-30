@@ -1,35 +1,6 @@
 "use client";
-import React from 'react'
-
-import { motion } from "framer-motion";
-
-// 1. Smooth continuous shimmer animation configuration
-const shimmerVariants = {
-  initial: { x: "-100%" },
-  animate: {
-    x: "100%",
-    transition: {
-      repeat: Infinity,
-      repeatType: "loop",
-      duration: 1.5,
-      ease: "easeInOut",
-    },
-  },
-};
-
-// 2. Reusable Skeleton Block component
-function SkeletonBlock({ className }) {
-  return (
-    <div className={`relative overflow-hidden bg-zinc-200 dark:bg-zinc-800 rounded-lg ${className}`}>
-      <motion.div
-        variants={shimmerVariants}
-        initial="initial"
-        animate="animate"
-        className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 dark:via-white/10 to-transparent"
-      />
-    </div>
-  );
-}
+import React from 'react';
+import { SkeletonBlock } from '@/app/hooks/SkeletonComp';
 
 // 3. Main Product Page Skeleton Component
 export default function ProductPageSkeleton() {

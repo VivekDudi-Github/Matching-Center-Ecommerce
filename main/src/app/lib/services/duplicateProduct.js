@@ -70,5 +70,5 @@ export const duplicateproductService = async(id) => {
         category: true,
       }
     });
-    console.log("DUPLICATE_PRODUCT:", newProduct);
+    return newProduct;
 }

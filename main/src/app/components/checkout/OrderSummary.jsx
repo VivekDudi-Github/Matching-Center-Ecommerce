@@ -5,25 +5,25 @@ import OrderItem from "./OrderItem";
 import useCartStore, { selectDiscount, selectShipping, selectSubtotal, selectTotal } from "@/app/store/CartStore";
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 
-export default function OrderSummary({isLoading, status , session}) {
+export default function OrderSummary({isLoading, status , session, order}) {
   const isHyderated = useHydratedStore();
-  const items = useCartStore(s => s.items);
+  const cartItems = useCartStore(s => s.items);
+  const cartSubtotal = useCartStore(selectSubtotal);
+  const cartShipping = useCartStore(selectShipping);
+  const cartTotal = useCartStore(selectTotal);
+
+  const cartTotalDiscount = useCartStore(selectDiscount);
   
-  const subtotal = useCartStore(selectSubtotal);
-  const shipping = useCartStore(selectShipping);
-  const total = useCartStore(selectTotal);
-
-  const totalDiscount = useCartStore(selectDiscount);
-  
-  function getGstTotal(){
-    let sum = total+ shipping;
-
-    return sum + (sum*5/100) ;
-  };
-
   if(!isHyderated) return null;
   
-  
+  const total = order?.total || cartTotal;
+  const subtotal = order?.subtotal || cartSubtotal;
+  const shipping = order?.shipping || cartShipping;
+  const items = order?.orderItems || cartItems;
+
+  const totalDiscount = order ? (order.subtotal - order.total) : cartTotalDiscount;
+
+  console.log("items", items);
   return (
     <div className="rounded-2xl border border-zinc-300 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
@@ -40,9 +40,10 @@ export default function OrderSummary({isLoading, status , session}) {
 
       <div className="divide-y divide-zinc-200 dark:divide-zinc-800">
         {items.length ? (
-          items.map((item) => (
+          items.map((item,i) => (
             <OrderItem
-              key={item.id}
+              isCart={false}
+              key={i}
               item={item}
             />
           ))
@@ -95,11 +96,11 @@ export default function OrderSummary({isLoading, status , session}) {
 
           <div className="flex justify-between border-t border-dashed border-zinc-300 pt-4 text-lg font-semibold dark:border-zinc-700">
             <span className="flex items-baseline gap-1">Total 
-              <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ 5% GST</p>
+              <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ No GST</p>
             </span>
 
             <span className="text-zinc-900 dark:text-white">
-              ₹{ Math.floor(getGstTotal()) }
+              ₹{ Math.floor(Number(total) + Number(shipping)) }
             </span>
           </div>
         </div>

@@ -16,7 +16,7 @@ const paymentConfig = {
     label: "Payment Pending",
     icon: Clock3,
     className:
-      "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-400",
+      "border-amber-900 bg-amber-900 text-amber-200 dark:border-amber-400/50 dark:bg-amber-950/30 dark:text-amber-400",
   },
 
   Paid: {
@@ -86,7 +86,7 @@ const deliveryConfig = {
 };
 
 export default function OrderStatus({ type, status }) {
-  const config =
+  const config = 
     type === "payment"
       ? paymentConfig[status]
       : deliveryConfig[status];

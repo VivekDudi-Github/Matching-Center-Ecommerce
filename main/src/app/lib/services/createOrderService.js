@@ -94,7 +94,7 @@ export const createorderService = async(data, email, name, SHIPPING) => {
           pincode: pincode,
           area: area,
           landmark: landmark,
-          customerId: customer.id
+          customerId: customer.id,
         }
       });
 
@@ -105,7 +105,8 @@ export const createorderService = async(data, email, name, SHIPPING) => {
           subtotal: subtotal,
           total: total,
           shipping: total > SHIPPING ? SHIPPING : 0,
-          notes: notes
+          notes: notes,
+          addressId: newAddress.id,
         }
       });
 
@@ -121,6 +122,7 @@ export const createorderService = async(data, email, name, SHIPPING) => {
         orderId: newOrder.id,
         categoryName: product.category.name,
         imageId: product.images[0].id,
+        pattern: product.pattern ,
         width: product.width,
         color: item.color.map(color => ({
           colorId: findColor(color.colorId, product).id,
@@ -136,6 +138,8 @@ export const createorderService = async(data, email, name, SHIPPING) => {
       })
 
       return newOrder;
+    }, {
+      timeout: 15000
     })    
     return res.id;
   } catch (error) {

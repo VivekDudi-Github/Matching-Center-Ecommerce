@@ -22,9 +22,6 @@ export default function CartFooter({closeCart}) {
 
   const totalDiscount = useCartStore(selectDiscount);
   
-  function getGstTotal(){
-    return total + (total*5/100) ;
-  }
 
   if(!isHyderated) return null;
 
@@ -38,6 +35,14 @@ export default function CartFooter({closeCart}) {
         </div>
 
         <div className="flex justify-between">
+          <span>Discount</span>
+
+          <span>
+            -₹{totalDiscount.toLocaleString()}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
           <span>Shipping</span>
 
           <span>
@@ -45,20 +50,14 @@ export default function CartFooter({closeCart}) {
           </span>
         </div>
 
-        <div className="flex justify-between">
-          <span>Discount</span>
-
-          <span>
-            ₹{totalDiscount.toLocaleString()}
-          </span>
-        </div>
+        
 
         <div className="flex justify-between border-t border-dashed border-zinc-300 pt-3 text-lg font-semibold dark:border-zinc-700">
           <span className="flex items-baseline gap-1">Total 
-            <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ 5% GST</p>
+            {/* <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ 5% GST</p> */}
           </span>
 
-          <span>₹{getGstTotal() + shipping}</span>
+          <span>₹{Number(total) + Number(shipping)}</span>
         </div>
       </div>
 

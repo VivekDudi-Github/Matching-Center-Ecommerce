@@ -6,18 +6,33 @@ import { fetchOrdersByCustomerIdService } from "../services/fetchOrderService";
 import { resError, resSuccess } from "@/app/hooks/resObj";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { serializePrisma } from "@/app/hooks/serializePrisma";
 
 export const fetchOrderById = async (id) => {
   if (!id) return resError("Order Id is missing");
 
   return await TryCatch(async () => {
+    const session = await getServerSession(authOptions);
+    if(!session || !session?.user) return resError("Please login to place order");
+
+    
     const order = await prisma.order.findUnique({
       where: {
         id: id,
       },
       include: {
         customer: true,
-        items: true,
+        orderItems: {
+          include:{
+            image: {
+              select: {
+                url: true
+              }
+            }
+          }
+        },
+        payment: true,
+        address: true,
       },
     });
     return resSuccess(serializePrisma(order));
@@ -25,15 +40,10 @@ export const fetchOrderById = async (id) => {
 };
 
 export const fetchUserOrders = async (cursor) => {
-  let session = null;
-  try {
-    session = await getServerSession(authOptions);
-    if(!session || !session?.user) return resError("Please login to place order");
-  } catch (error) {
-    return resError("Something went wrong, please relogin and try again");
-  }
-
   return await TryCatch(async () => {
+    const session = await getServerSession(authOptions);
+    if(!session || !session?.user) return resError("Please login to place order");
+
     const email = session?.user?.email;
     return resSuccess(await fetchOrdersByCustomerIdService({email, cursor}));
   });

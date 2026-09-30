@@ -18,7 +18,7 @@ const ordersTest = {
     id: "ORD-2026-00124",
     createdAt: "September 22, 2026",
     paymentStatus: "Paid",
-    deliveryStatus: "Shipped",
+    status: "Shipped",
     subtotal: 2450,
     shipping: 80,
     total: 2530,
@@ -64,7 +64,7 @@ const ordersTest = {
     id: "ORD-2026-00108",
     createdAt: "September 15, 2026",
     paymentStatus: "Paid",
-    deliveryStatus: "Delivered",
+    status: "Delivered",
     subtotal: 1850,
     shipping: 0,
     total: 1850,
@@ -96,7 +96,7 @@ const ordersTest = {
     id: "ORD-2026-00091",
     createdAt: "September 5, 2026",
     paymentStatus: "Pending",
-    deliveryStatus: "Pending",
+    status: "Pending",
     subtotal: 1200,
     shipping: 80,
     total: 1280,
@@ -130,7 +130,7 @@ const customerTest = {
 export default function OrdersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { data: session, status } = useSession();
-  const [customer, setCustomer] = useState(customerTest);
+  const [customer, setCustomer] = useState({});
   const [orders, setOrders] = useState([]);
   
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function OrdersPage() {
       }
       fetch();
     }
-  }, [session, status])
+  }, [status])
 
 
   return (
@@ -175,7 +175,7 @@ export default function OrdersPage() {
 
         {/* Customer Profile */}
         {status === "authenticated" && (
-          <OrdersHeader customer={customer} />
+          <OrdersHeader customer={customer} session={session} />
         )}
         {status === "loading" && (
           <HeaderSkeleton customer={customer} />

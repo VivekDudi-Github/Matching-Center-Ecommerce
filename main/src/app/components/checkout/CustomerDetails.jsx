@@ -1,8 +1,7 @@
 "use client";
 
 import { User, MapPin, CreditCard, FileText } from "lucide-react";
-import { FormProvider, useFormContext, useWatch } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
 
 const StateList = [
   "Andaman and Nicobar Islands" ,
@@ -62,7 +61,7 @@ export default function CustomerDetailsCard({session, status}) {
       className={`${session ? "" : "hidden lg:block relative h-150 overflow-hidden blur-[1px] shadow shadow-zinc-500  rounded-xl "}`}
     >
       {!session && <div className="absolute inset-0 bg-linear-to-b from-transparent to-white black dark:to-black" /> }
-      <div className="rounded-2xl border border-zinc-300 bg-white sm:p-6 p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="rounded-2xl border border-zinc-400/50 bg-white sm:p-6 p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
 
         {/* Customer Details */}
 
@@ -84,7 +83,7 @@ export default function CustomerDetailsCard({session, status}) {
               type="text"
               disabled={status === "authenticated"}
               placeholder="Enter your name"
-              className="w-full rounded-xl border disabled:opacity-50 border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl  border disabled:opacity-50 border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             />
           </div>
 
@@ -98,7 +97,7 @@ export default function CustomerDetailsCard({session, status}) {
               type="number"
               onBlur={() => setLoacalStorage() }
               placeholder="9876543210"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             />
           </div>
 
@@ -112,7 +111,7 @@ export default function CustomerDetailsCard({session, status}) {
               type="email"
               disabled={status === "authenticated"}
               placeholder="example@gmail.com"
-              className="w-full rounded-xl border disabled:opacity-50 border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border disabled:opacity-50 border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             />
           </div>
         </div>
@@ -139,7 +138,7 @@ export default function CustomerDetailsCard({session, status}) {
               type="text"
               onBlur={() => setLoacalStorage() }
               placeholder="House No, Street"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             />
           </div>
 
@@ -154,7 +153,7 @@ export default function CustomerDetailsCard({session, status}) {
               onBlur={() => setLoacalStorage() }
               minLength={2}
               placeholder="Area"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             />
           </div>
 
@@ -168,7 +167,7 @@ export default function CustomerDetailsCard({session, status}) {
               type="text"
               onBlur={() => setLoacalStorage() }
               placeholder="Optional"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             />
           </div>
 
@@ -183,7 +182,7 @@ export default function CustomerDetailsCard({session, status}) {
               onBlur={() => setLoacalStorage() }
               minLength={2}
               placeholder="City"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             />
           </div>
 
@@ -196,7 +195,7 @@ export default function CustomerDetailsCard({session, status}) {
               {...register("state")}
               type="text"
               placeholder="State"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             >
               {HrList.map(state => (
                 <option key={state} value={state}>
@@ -218,7 +217,7 @@ export default function CustomerDetailsCard({session, status}) {
               maxLength={6}
               minLength={6}
               placeholder="Pincode"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+              className="w-full rounded-xl border border-zinc-400/50 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
             />
           </div>
         </div>
@@ -232,7 +231,7 @@ export default function CustomerDetailsCard({session, status}) {
           </h2>
         </div>
 
-        <div className="mt-5 rounded-xl border border-zinc-200 p-4 space-y-2 dark:border-zinc-700">
+        <div className="mt-5 rounded-xl border border-zinc-200 p-4 space-y-2 dark:border-zinc-700 disabled:border-0">
           <label className="flex cursor-pointer items-center gap-3">
             <input
               required
@@ -271,7 +270,7 @@ export default function CustomerDetailsCard({session, status}) {
           rows={5}
           maxLength={350}
           placeholder="Any special instructions for this order..."
-          className="mt-5 w-full rounded-xl border border-zinc-300 bg-white p-4 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+          className="mt-5 w-full rounded-xl border border-zinc-400/50 bg-white p-4 outline-none transition focus:border-zinc-900 dark:border-zinc-700 disabled:border-0 dark:bg-zinc-950 dark:text-white"
         />
           <p className={`text-xs text-right ${orderNotes.length >= 350 ? "text-red-500" : "text-zinc-500"}`}>
             {orderNotes.length}/350 characters max

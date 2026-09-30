@@ -1,13 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   CalendarDays,
   Check,
   ChevronDown,
   ChevronUp,
   Copy,
+  LinkIcon,
   Package,
+  PackageOpen,
   Receipt,
 } from "lucide-react";
 import { useState } from "react";
@@ -44,17 +47,17 @@ export default function OrderCard({ order }) {
   return (
     <motion.article
       layout
-      className="overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-md shadow-zinc-400/50 dark:shadow-none dark:border-zinc-800 dark:bg-zinc-950"
+      className="overflow-hidden rounded-lg border border-zinc-800 bg-white shadow-md shadow-zinc-400/50 dark:shadow-none dark:border-zinc-800 dark:bg-zinc-950"
     >
       {/* Order Header */}
       <div className="p-4 sm:p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           {/* Order information */}
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <div className="flex flex-wrap sm:justify-start justify-between items-center gap-x-3 gap-y-1">
    
               <div className="flex items-center gap-2 min-w-0 max-w-full">
-                <h3 title={order?.id} className="font-semibold text-zinc-300 dark:text-white truncate dark:bg-zinc-950 border border-amber-700 dark:hover:border-amber-200/50 bg-zinc-950 p-2 rounded-xs   group relative w-full overflow-hidden   px-4 py-2.5 text-sm tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300 cursor-pointer">
+                <h3 title={order?.id} className="font-semibold text-zinc-300 dark:text-white truncate dark:bg-zinc-950 border border-amber-700/50 dark:hover:border-amber-200/50 bg-zinc-950 p-2 rounded-xs   group relative w-full overflow-hidden   px-4 py-2.5 text-sm tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300 cursor-pointer">
                   Order ID: {order?.id.slice(0, 10)}...
                   <button
                     type="button"
@@ -72,9 +75,10 @@ export default function OrderCard({ order }) {
                 </h3>
               </div>
 
-              <span className="text-xs text-zinc-400 dark:text-zinc-500">
-                {itemCount} {itemCount === 1 ? "item" : "items"}
-              </span>
+              <Link href={"/checkout/"+ order?.id} className="text-xs flex text-amber-600 " >
+                
+                <LinkIcon />
+              </Link>
             </div>
 
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-500 dark:text-zinc-400">
@@ -85,8 +89,13 @@ export default function OrderCard({ order }) {
 
               <div className="flex items-center gap-1.5">
                 <Receipt size={15} />
-                <span>₹{order.total.toLocaleString("en-IN")}</span>
+                <span>₹{Number(order.total) + Number(order.shipping)}</span>
               </div>
+              {(!order?.payment?.status || order?.payment?.status === "Pending")  && 
+                <OrderStatus
+                  type="payment"
+                  status={order?.payment?.status || "Pending"}
+                />}
             </div>
           </div>
 
@@ -95,7 +104,7 @@ export default function OrderCard({ order }) {
             
             {(!order?.payment?.status || order?.payment?.status === "Pending")  ?
             <button
-              className={` group relative w-full overflow-hidden border border-zinc-700/80 bg-zinc-950  px-4 py-2.5 text-sm font-medium tracking-wide text-white shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300  hover:border-amber-700  dark:hover:border-amber-200/50 hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)]  active:translate-y-px  cursor-pointer`}
+              className={` group relative w-full overflow-hidden border border-amber-800 bg-zinc-950  px-4 py-2.5 text-sm font-medium tracking-wide text-white shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300  hover:border-amber-200  dark:hover:border-amber-200 hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)]  active:translate-y-px  cursor-pointer`}
             >
               <span
                 className={` absolute inset-0 -translate-x-full  bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full `}
@@ -116,7 +125,7 @@ export default function OrderCard({ order }) {
 
             {order?.payment?.status === "Paid" && <OrderStatus
               type="delivery"
-              status={order.deliveryStatus || "Pending"}
+              status={order.status || "Pending"}
             />}
           </div>
         </div>
@@ -130,7 +139,7 @@ export default function OrderCard({ order }) {
           className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900/60 sm:px-5"
         >
           <div className="flex items-center gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            <Package size={16} />
+            {isOpen ? <PackageOpen size={16} /> : <Package size={16} />}
 
             <span>
               Order items
@@ -174,8 +183,8 @@ export default function OrderCard({ order }) {
       <div className="border-t border-zinc-400 bg-zinc-50/70 px-4 py-4 dark:border-zinc-700 dark:bg-zinc-900/40 sm:px-5">
         <div className="ml-auto w-full space-y-2 sm:max-w-xs">
           <div className="flex justify-between text-sm text-zinc-500 dark:text-zinc-400">
-            <span>Subtotal</span>
-            <span>₹{order.subtotal.toLocaleString("en-IN")}</span>
+            <span>Total</span>
+            <span>₹{order.total}</span>
           </div>
 
           <div className="flex justify-between text-sm text-zinc-500 dark:text-zinc-400">
@@ -193,7 +202,7 @@ export default function OrderCard({ order }) {
             </span>
 
             <span className="text-lg font-semibold text-zinc-900 dark:text-white">
-              ₹{order.total.toLocaleString("en-IN")}
+              ₹{Number(order.total) + Number(order.shipping)}
             </span>
           </div>
         </div>

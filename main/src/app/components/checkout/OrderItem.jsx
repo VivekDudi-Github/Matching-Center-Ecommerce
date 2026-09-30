@@ -4,17 +4,27 @@ import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 import useCartStore, { getCartItem, getTotalQuantity, selectColors, selectTotal } from "@/app/store/CartStore";
 import { TriangleAlertIcon } from "lucide-react";
 import Image from "next/image"; 
+import CartItem from "../cart/CartItem";
 
 
-export default function OrderItem({ item : propItem  }) {
+export default function OrderItem({ item : propItem , isCart = true }) {
   const isHyderated = useHydratedStore(); 
 
-  const item = useCartStore((s) => getCartItem(s,propItem.id));   
+  const cartTtem = useCartStore((s) => !isCart ? {} : getCartItem(s,propItem?.id));   
 
-  const total = item.price * useCartStore(s => getTotalQuantity(s, item.id));
-  const totalQuantity = useCartStore(s => getTotalQuantity(s,item.id));
+  const cartTotal = CartItem?.price * useCartStore(s => !isCart ? 0 : getTotalQuantity(s, CartItem?.id));
+  const cartTotalQuantity = useCartStore(s => !isCart ? 0 : getTotalQuantity(s,CartItem?.id));
 
   if(!isHyderated) return null;
+
+  
+
+  const item = isCart ? cartTtem : propItem;
+  const itemQuantity = item?.color?.reduce((sum, color) => sum + (Number(color.quantity)|| 0), 0);
+  const totalQuantity = isCart ? cartTotalQuantity : itemQuantity;
+  const total = isCart ? cartTotal : item.price * totalQuantity;
+
+
   return (
     <div className="p-5">
       <div className="flex gap-4 ">
@@ -22,7 +32,7 @@ export default function OrderItem({ item : propItem  }) {
 
         <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
           <Image
-            src={item?.images?.[0]?.url}
+            src={isCart ? item?.images?.[0]?.url : item?.image?.url}
             alt={item?.title}
             fill
             sizes="96px"

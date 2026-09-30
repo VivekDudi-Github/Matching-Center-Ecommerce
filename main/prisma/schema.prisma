@@ -180,33 +180,27 @@ enum Status {
   Cancelled
 }
 
-enum DeliveryStatus {
-  Pending
-  Confirmed
-  Packed
-  Shipped
-  Delivered
-  Cancelled
-}
 
 model Order {
-  id              String      @id @default(cuid(2))
+  id              String            @id @default(cuid(2))
   customerId      String
-  customer        Customer    @relation(fields: [customerId], references: [id])
+  customer        Customer          @relation(fields: [customerId], references: [id])
   payment         Payment?
 
-  subtotal        Decimal     @db.Decimal(10, 2)
-  total           Decimal     @db.Decimal(10, 2)
-  status          Status      @default(Pending)
+  subtotal        Decimal           @db.Decimal(10, 2)
+  total           Decimal           @db.Decimal(10, 2)
+  status          Status            @default(Pending)
 
-  shipping        Decimal     @db.Decimal(10, 2)
-  deliveryStatus  DeliveryStatus @default(Pending)
+  addressId       String      
+  address         Address           @relation(fields: [addressId], references: [id])
+
+  shipping        Decimal           @db.Decimal(10, 2)
 
   notes           String?
 
   orderItems      OrderItem[]
-  updatedAt       DateTime    @updatedAt
-  createdAt       DateTime    @default(now())
+  updatedAt       DateTime          @updatedAt
+  createdAt       DateTime          @default(now())
 
   @@index([customerId])
   @@index([status])
@@ -245,10 +239,13 @@ model Address {
   id         String        @id @default(cuid(2))
   customerId String
   customer   Customer   @relation(fields: [customerId], references: [id])
+  
+  order      Order[]
+
   address    String
   city       String
   state      String
-  pincode    String  
+  pincode    String
   area       String
   landmark   String?
 
@@ -275,8 +272,8 @@ model OrderItem {
 
   color           Json     @db.JsonB   
 
-  Pattern         String
-  width           Int   
+  pattern         String   @default("")
+  width           Int     
   categoryName    String
 
   @@index([productId])

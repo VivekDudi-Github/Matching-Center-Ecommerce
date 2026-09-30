@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion";
 import { Mail, Phone, UserRound } from "lucide-react";
+import Image from "next/image";
 
-export default function OrdersHeader({ customer }) {
+export default function OrdersHeader({ customer, session }) {
   const initials = customer?.name
     ?.split(" ")
     .map((word) => word[0])
@@ -20,12 +21,15 @@ export default function OrdersHeader({ customer }) {
     >
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         {/* Avatar */}
-        <div className="flex shrink-0 items-center">
-          {customer?.avatar ? (
-            <img
-              src={customer.avatar}
+        <div className="flex shrink-0 items-center sm:justify-start justify-center sm:w-fit w-full size-20 rounded-full">
+          {session?.user?.image ? (
+            <Image
+              width={80}
+              height={80}
+              referrerPolicy="no-referrer"
+              src={session.user.image}
               alt={`${customer.name}'s avatar`}
-              className="h-20 w-20 rounded-full object-cover ring-4 ring-zinc-100 dark:ring-zinc-900 sm:h-24 sm:w-24"
+              className="ring-4 ring-zinc-100 dark:ring-zinc-900 rounded-full "
             />
           ) : (
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-200 text-xl font-semibold text-zinc-700 ring-4 ring-zinc-50 dark:bg-zinc-900 dark:text-zinc-200 dark:ring-zinc-950 sm:h-24 sm:w-24 sm:text-2xl">

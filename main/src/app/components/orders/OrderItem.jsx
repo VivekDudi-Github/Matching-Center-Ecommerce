@@ -1,9 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { Palette, Ruler } from "lucide-react";
+import { ArrowUpLeft, ArrowUpRightFromSquareIcon, LoaderPinwheelIcon, LucideFileChartColumnIncreasing,LucideLoaderPinwheel, Palette, Ruler, Shirt } from "lucide-react";
+import Link from "next/link";
+import ColorPalette from "./ColorPalette";
 
 export default function OrderItem({ item }) {
+  const totalQuantity = item.color.reduce((acc, color) => 
+    acc + color.quantity, 0);
+
   return (
     <div className="p-4 sm:p-5">
       <div className="flex gap-4">
@@ -27,25 +32,38 @@ export default function OrderItem({ item }) {
         {/* Product Information */}
         <div className="min-w-0 flex-1">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <h4 className="truncate font-medium text-zinc-900 dark:text-white sm:text-base">
-                {item.title}
-              </h4>
-
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                {item.categoryName}
-              </p>
+            <div className="flex gap-2 sm:justify-start justify-between mb-2">
+              <div className="min-w-0">
+                <h4 className="truncate font-medium text-zinc-900 dark:text-white sm:text-base">
+                  {item.title}
+                </h4>
+                <div className="flex gap-1">
+                  <div className=" flex items-center gap-1.5 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                    <Shirt size={14} />
+                    <p>{item.categoryName}</p>
+                  </div>
+                  <div className=" flex items-center gap-1.5 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                    <LoaderPinwheelIcon size={14} />
+                    <p>{item.pattern}</p>
+                  </div>
+                </div>
+              </div>
+              <Link
+              href={"/products/"+item.productId}
+              className="flex items-start cursor-pointer">
+                <ArrowUpRightFromSquareIcon size={25} className=" text-amber-400 dark:text-amber-300" />
+              </Link>
             </div>
 
             {/* Price */}
             <div className="shrink-0 text-left sm:text-right">
-              <p className="font-semibold text-zinc-900 dark:text-white">
-                ₹{item.price.toLocaleString("en-IN")}
-              </p>
+                <p className="font-semibold text-zinc-900 dark:text-white">
+                  ₹{Number(item.price) * Number(totalQuantity)}
+                </p>
 
-              <p className="text-xs text-zinc-400 dark:text-zinc-500">
-                per meter
-              </p>
+              <span className="sm:text-sm text-xs text-zinc-500 dark:text-zinc-500">
+                 ₹{item.price} × {totalQuantity}m
+              </span>
             </div>
           </div>
 
@@ -59,29 +77,7 @@ export default function OrderItem({ item }) {
 
               <div className="flex flex-wrap gap-2">
                 {item.color.map((color, index) => (
-                  <div
-                    key={`${color.colorName}-${index}`}
-                    className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
-                  >
-                    {/* Color */}
-                    <span
-                      className="h-4 w-4 shrink-0 rounded-full border border-zinc-300 dark:border-zinc-600"
-                      style={{
-                        backgroundColor: color.hex || "#e4e4e7",
-                      }}
-                    />
-
-                    {/* Color name */}
-                    <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                      {color.colorName}
-                    </span>
-
-                    {/* Ordered meters */}
-                    <span className="flex items-center gap-1 border-l border-zinc-200 pl-2 text-xs text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-                      <Ruler size={12} />
-                      {Number(color.quantity).toFixed(2)} m
-                    </span>
-                  </div>
+                  <ColorPalette color={color} key={color.colorId} />
                 ))}
               </div>
             </div>
