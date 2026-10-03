@@ -113,7 +113,7 @@ export const getShopProductsService = async({categoryId, outOfStock, minPrice, m
             } 
         }),
     });
-    console.log("products", products);
+
     let newCursor = null;
     if(products.length > 10) {
         newCursor = products.length > 10 ? products[9].id : null;

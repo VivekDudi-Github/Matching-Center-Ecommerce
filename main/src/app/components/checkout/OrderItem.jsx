@@ -5,26 +5,33 @@ import useCartStore, { getCartItem, getTotalQuantity, selectColors, selectTotal 
 import { TriangleAlertIcon } from "lucide-react";
 import Image from "next/image"; 
 import CartItem from "../cart/CartItem";
+import { useMemo } from "react";
 
 
 export default function OrderItem({ item : propItem , isCart = true }) {
   const isHyderated = useHydratedStore(); 
 
-  const cartTtem = useCartStore((s) => !isCart ? {} : getCartItem(s,propItem?.id));   
+  const CartItem = useCartStore((s) => !isCart ? null : getCartItem(s,propItem?.id));   
+  
+  const cartTotal = useCartStore(s => !isCart ? 0 : selectTotal(s));
+  const cartTotalQuantity = useCartStore(s => !isCart ? 0 : getTotalQuantity(s, CartItem?.id));
+ 
 
-  const cartTotal = CartItem?.price * useCartStore(s => !isCart ? 0 : getTotalQuantity(s, CartItem?.id));
-  const cartTotalQuantity = useCartStore(s => !isCart ? 0 : getTotalQuantity(s,CartItem?.id));
+  const item = isCart ? CartItem : propItem;
 
-  if(!isHyderated) return null;
+  const totalQuantity = useMemo(() => {
+    if(isCart) return cartTotalQuantity ;
+    
+    let itemQuantity = item?.color?.reduce((sum, color) => sum + (Number(color.quantity)|| 0), 0);
+    return itemQuantity;
+
+  }, [isCart, CartItem, cartTotalQuantity]) ;
+
+  const total = isCart ? cartTotal : Number(item.price * totalQuantity);
+
 
   
-
-  const item = isCart ? cartTtem : propItem;
-  const itemQuantity = item?.color?.reduce((sum, color) => sum + (Number(color.quantity)|| 0), 0);
-  const totalQuantity = isCart ? cartTotalQuantity : itemQuantity;
-  const total = isCart ? cartTotal : item.price * totalQuantity;
-
-
+  if(!isHyderated) return null;
   return (
     <div className="p-5">
       <div className="flex gap-4 ">
@@ -52,9 +59,10 @@ export default function OrderItem({ item : propItem , isCart = true }) {
                 <span
                   hidden={c.quantity === 0}
                   key={i}
-                  className={`inline-flex items-center mr-1 gap-1 rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-900 ring-1 ring-zinc-400 dark:ring-zinc-800 dark:bg-violet-800 dark:text-white `}
+                  className={`inline-flex items-center mr-1 gap-1 rounded-full bg-zinc-200 px-2 pl-1 py-0.5 text-xs font-medium text-zinc-900 ring-1 ring-zinc-400 dark:ring-zinc-800 dark:bg-violet-800 dark:text-white `}
                 >
-                  {c.name}
+                  <span className={` rounded-full size-3`} style={{background : c.hex}}></span>
+                  {c?.name ?? c?.colorName}
                 </span>
               ))
             }

@@ -8,7 +8,7 @@ import {
   ChevronDown,
   ChevronUp,
   Copy,
-  LinkIcon,
+  MenuIcon,
   Package,
   PackageOpen,
   Receipt,
@@ -34,6 +34,7 @@ export default function OrderCard({ order }) {
 
   const date = new Date(order.createdAt).toLocaleString("en-IN", dateOptions);
 
+  const isExpired = new Date(order.expireAt) < new Date();
 
   const handleCopy = async () => {
     try {
@@ -77,7 +78,7 @@ export default function OrderCard({ order }) {
 
               <Link href={"/checkout/"+ order?.id} className="text-xs flex text-amber-600 " >
                 
-                <LinkIcon />
+                <MenuIcon />
               </Link>
             </div>
 
@@ -102,7 +103,7 @@ export default function OrderCard({ order }) {
           {/* Statuses */}
           <div className="flex flex-wrap items-center gap-2">
             
-            {(!order?.payment?.status || order?.payment?.status === "Pending")  ?
+            {((!order?.payment?.status || order?.payment?.status === "Pending") && !isExpired )  ?
             <button
               className={` group relative w-full overflow-hidden border border-amber-800 bg-zinc-950  px-4 py-2.5 text-sm font-medium tracking-wide text-white shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300  hover:border-amber-200  dark:hover:border-amber-200 hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)]  active:translate-y-px  cursor-pointer`}
             >
@@ -121,12 +122,19 @@ export default function OrderCard({ order }) {
             <OrderStatus
               type="payment"
               status={order?.payment?.status || "Pending"}
-            />}
+            />
+            }
 
-            {order?.payment?.status === "Paid" && <OrderStatus
-              type="delivery"
-              status={order.status || "Pending"}
-            />}
+            {order?.payment?.status === "Paid" ?
+              <OrderStatus
+                type="delivery"
+                status={order.status || "Pending"}
+              /> : 
+              <OrderStatus
+                type="delivery"
+                status={isExpired ? "Expired" : "Pending"}
+              />
+            }
           </div>
         </div>
       </div>

@@ -199,6 +199,10 @@ model Order {
   notes           String?
 
   orderItems      OrderItem[]
+
+  expireAt        DateTime          @default(dbgenerated("(( NOW() + '300 seconds' ::INTERVAL))")) 
+  reverseAt       DateTime          @default(dbgenerated("(( NOW() + '330 seconds' ::INTERVAL))"))
+
   updatedAt       DateTime          @updatedAt
   createdAt       DateTime          @default(now())
 

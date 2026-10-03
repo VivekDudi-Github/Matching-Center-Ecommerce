@@ -54,7 +54,7 @@ export default function CartFooter({closeCart}) {
 
         <div className="flex justify-between border-t border-dashed border-zinc-300 pt-3 text-lg font-semibold dark:border-zinc-700">
           <span className="flex items-baseline gap-1">Total 
-            {/* <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ 5% GST</p> */}
+            <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ No GST</p>
           </span>
 
           <span>₹{Number(total) + Number(shipping)}</span>

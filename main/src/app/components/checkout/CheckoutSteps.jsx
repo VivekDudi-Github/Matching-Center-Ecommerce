@@ -36,7 +36,7 @@ export default function CheckoutSteps({currentStep}) {
 
         {/* Line */}
 
-        <div className={`mx-3 h-0.5 flex-1  ${currentStep > 2 ? "bg-green-600" : "bg-zinc-300 dark:bg-zinc-700"} `} />
+        <div className={`mx-3 h-0.5 flex-1  ${currentStep > 3 ? "bg-green-600" : "bg-zinc-300 dark:bg-zinc-700"} `} />
 
         {/* Confirmation */}
 

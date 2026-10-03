@@ -116,7 +116,7 @@ export default function CheckoutPage() {
         const response = await exfn(() => createorder(data));
         
         toast.success(response.message || "Order created successfully", {autoClose: 7000});
-        router.push("/orders");
+        router.push("/checkout/"+response.orderId);
       } catch (error) {
         console.log("error", error);  
         if(!Array.isArray(error.message)) return toast.error(error.message || "Something went wrong", {autoClose: 7000});
@@ -204,7 +204,7 @@ export default function CheckoutPage() {
 
             <div className="lg:col-span-5">
               <div className="lg:sticky lg:top-24">
-                <OrderSummary isLoading={isLoading} session={session} status={status}/>
+                <OrderSummary isLoading={isLoading} order={null} session={session} status={status}/>
               </div>
             </div>
           </div>

@@ -4,6 +4,7 @@ import { Loader2Icon, ShoppingBag } from "lucide-react";
 import OrderItem from "./OrderItem";
 import useCartStore, { selectDiscount, selectShipping, selectSubtotal, selectTotal } from "@/app/store/CartStore";
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
+import OrderStatus from "../orders/OrderStatus";
 
 export default function OrderSummary({isLoading, status , session, order}) {
   const isHyderated = useHydratedStore();
@@ -14,27 +15,38 @@ export default function OrderSummary({isLoading, status , session, order}) {
 
   const cartTotalDiscount = useCartStore(selectDiscount);
   
-  if(!isHyderated) return null;
   
   const total = order?.total || cartTotal;
   const subtotal = order?.subtotal || cartSubtotal;
   const shipping = order?.shipping || cartShipping;
-  const items = order?.orderItems || cartItems;
-
+  const items = order?.orderItems || cartItems; 
+  
   const totalDiscount = order ? (order.subtotal - order.total) : cartTotalDiscount;
 
-  console.log("items", items);
+  
+  if(!isHyderated) return null;
   return (
     <div className="rounded-2xl border border-zinc-300 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
 
-      <div className="flex items-center gap-2 border-b border-zinc-200 p-6 dark:border-zinc-800">
-        <ShoppingBag size={20} />
+      <div className=" gap-2 border-b border-zinc-300 p-6 pb-4 dark:border-zinc-700">
+        <div className="flex items-center gap-2 mb-3">
+          <ShoppingBag size={20} />
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">
+            Order Summary
+          </h2>
+        </div>
+          
+        {order && (
+          <>
+            <OrderStatus type={"payment"} status={order?.payment?.status || "Pending"} />
+            <OrderStatus type={"delivery"} status={order?.status || "Pending"} />
+          </>
+        )}
 
-        <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">
-          Order Summary
-        </h2>
+
       </div>
+      
 
       {/* Products */}
 
@@ -42,7 +54,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
         {items.length ? (
           items.map((item,i) => (
             <OrderItem
-              isCart={false}
+              isCart={order ? false : true}
               key={i}
               item={item}
             />
@@ -107,15 +119,29 @@ export default function OrderSummary({isLoading, status , session, order}) {
 
         {/* Place Order */}
 
-        <button type="submit" 
-          disabled={total == 0 || isLoading || status !== "authenticated"} 
-          className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
-            {(isLoading || status === "loading") ?
-            <Loader2Icon className="animate-spin"/> 
-            : 
-            "Place Order"
-            }  
-        </button>  
+        {!order && (
+          <button type="submit" 
+            disabled={total == 0 || isLoading || status !== "authenticated"} 
+            className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
+              {(isLoading || status === "loading") ?
+              <Loader2Icon className="animate-spin"/> 
+              : 
+              "Place Order"
+              }  
+          </button>  
+        )}
+
+        {order && (
+          <button type="submit" 
+            disabled={total == 0 || isLoading || status !== "authenticated"} 
+            className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
+              {(isLoading || status === "loading") ?
+              <Loader2Icon className="animate-spin"/> 
+              : 
+              order?.payment?.status === "Paid" ? "Paid" : "Pay Now"
+              }  
+          </button>  
+        )}
 
 
         <p className="mt-4 text-center text-xs text-zinc-500">

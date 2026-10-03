@@ -14,11 +14,11 @@ import { toast } from 'react-toastify';
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 import { SkeletonBlock } from '@/app/hooks/SkeletonComp';
 import CheckSumSkeleton from '@/app/components/checkout/CheckSumSkeleton';
+import OrderStatus from '@/app/components/orders/OrderStatus';
 
 
 export default function page() {
   const {id} = useParams();
-  console.log("id", id);
   
   const {data : session, status} = useSession();
 
@@ -95,6 +95,8 @@ export default function page() {
           </div>
 
           <CheckoutSteps currentStep={3}/>
+
+          
 
           {/* Layout */}
 

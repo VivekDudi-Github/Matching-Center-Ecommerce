@@ -16,31 +16,20 @@ export const createorderService = async(data, email, name, SHIPPING) => {
   try {
     const res = await prisma.$transaction(async( tx) => {
         
-      const fetchedVariants = await prisma.productVariant.findMany({
+      const updatePromises = colors.map(color => tx.productVariant.update({
         where: {
-          OR: colors.map((color) => ({
-            id: color.colorId,
-            availableMeters: {
-              gte: color.quantity
-            }}
-          ))
+          id: color.colorId,
+          availableMeters: {
+            gte: color.quantity
+          }
+        },
+        data: {
+          availableMeters: {
+            decrement: color.quantity
+          }
         }
-      });
-      console.log("fetchedVariants", fetchedVariants);
-      
-      const errorMessages = [];
-      for (let color of colors) {
-        const isMatch = fetchedVariants.find(variant => variant.id === color.colorId);
-
-        if(!isMatch) {
-          errorMessages.push(`Stock not available for ${color.colorName}, selected ${color.quantity}  `);
-        }
-      }
-
-      if(errorMessages.length > 0) 
-        return new Error(errorMessages.join("\n"));
-    
-
+      })) ;
+          
       const products = await tx.product.findMany({
         where: {
           id: {
@@ -137,9 +126,10 @@ export const createorderService = async(data, email, name, SHIPPING) => {
         data: newOrderItems,
       })
 
+
       return newOrder;
     }, {
-      timeout: 15000
+      timeout: 20000
     })    
     return res.id;
   } catch (error) {

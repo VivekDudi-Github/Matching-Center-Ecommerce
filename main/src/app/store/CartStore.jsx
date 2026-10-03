@@ -67,20 +67,22 @@ export default useCartStore;
 
 export const getTotalQuantity = (state, itemId) => {
   const item = state.items.find((i) => i.id === itemId);
+  if(!item) return 0;
   return item.color.reduce((sum, color) => sum + (Number(color.quantity)|| 0), 0);
 };
 
 export const selectTotal = (state) =>
   state.items.reduce(
-    (sum, item) => sum + item.price * getTotalQuantity(state, item.id),
+    (sum, item) => Number(sum) + Number(item.price) * Number(getTotalQuantity(state, item.id)),
     0
   );
 
 export const selectSubtotal = (state) =>
   state.items.reduce(
-    (sum, item) => sum + item.originalPrice * getTotalQuantity(state, item.id),
+    (sum, item) => Number(sum) + Number(item.originalPrice) * Number(getTotalQuantity(state, item.id)),
     0
   );
+
 
 export const selectShipping = (state) => {
   const total = selectTotal(state);
