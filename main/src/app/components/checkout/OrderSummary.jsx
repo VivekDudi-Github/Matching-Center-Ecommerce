@@ -5,8 +5,14 @@ import OrderItem from "./OrderItem";
 import useCartStore, { selectDiscount, selectShipping, selectSubtotal, selectTotal } from "@/app/store/CartStore";
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 import OrderStatus from "../orders/OrderStatus";
+import { useEffect, useRef, useState } from "react";
+import { time } from "framer-motion";
 
 export default function OrderSummary({isLoading, status , session, order}) {
+  const timeOut = useRef(null); 
+  const [timeLeft, setLeftTime] = useState(0);
+
+
   const isHyderated = useHydratedStore();
   const cartItems = useCartStore(s => s.items);
   const cartSubtotal = useCartStore(selectSubtotal);
@@ -23,7 +29,34 @@ export default function OrderSummary({isLoading, status , session, order}) {
   
   const totalDiscount = order ? (order.subtotal - order.total) : cartTotalDiscount;
 
-  
+  const paymentStatus = order?.payment?.status || "Pending";
+
+  const isExpired = () => {
+    if(!order) return false;
+    if(order.payment?.status === "Paid") return false;
+    return new Date(order?.expireAt) <= new Date();
+  }
+
+  useEffect(() => {
+    if(order && order?.expireAt) {
+      const diff = () => {
+        return Math.floor((new Date(order.expireAt) - new Date()) / 1000) ;
+      }
+      setLeftTime(diff());
+
+      const interval = setInterval(() => {
+        diff() >= 0 ? setLeftTime(diff()) : clearInterval(interval);
+      }, 1000);
+
+      timeOut.current = interval;
+    }
+
+    return () =>{
+      timeOut?.current && clearInterval(timeOut.current);
+    }
+  }, [order])
+  console.log("timeLeft", timeLeft);
+
   if(!isHyderated) return null;
   return (
     <div className="rounded-2xl border border-zinc-300 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -33,13 +66,15 @@ export default function OrderSummary({isLoading, status , session, order}) {
         <div className="flex items-center gap-2 mb-3">
           <ShoppingBag size={20} />
           <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">
-            Order Summary
+            Order Summary 
           </h2>
         </div>
-          
+        
+        {timeLeft > 1 && paymentStatus !== "Paid" ? <div className="text-red-500 text-sm mb-3 ml-1">Expires in {timeLeft} seconds</div> : null}
+        
         {order && (
           <>
-            <OrderStatus type={"payment"} status={order?.payment?.status || "Pending"} />
+            <OrderStatus type={"payment"} status={paymentStatus || "Pending"} />
             <OrderStatus type={"delivery"} status={order?.status || "Pending"} />
           </>
         )}
@@ -119,7 +154,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
 
         {/* Place Order */}
 
-        {!order && (
+        {!order && ( // shows the cart element order placement
           <button type="submit" 
             disabled={total == 0 || isLoading || status !== "authenticated"} 
             className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
@@ -131,16 +166,16 @@ export default function OrderSummary({isLoading, status , session, order}) {
           </button>  
         )}
 
-        {order && (
+        {order && ( // shows real order final placement
           <button type="submit" 
-            disabled={total == 0 || isLoading || status !== "authenticated"} 
+            disabled={total == 0 || isLoading || status !== "authenticated" || timeLeft < 1 || paymentStatus === "Paid"} 
             className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
               {(isLoading || status === "loading") ?
               <Loader2Icon className="animate-spin"/> 
               : 
-              order?.payment?.status === "Paid" ? "Paid" : "Pay Now"
+              timeLeft <= 1 ? "Order Expired" : paymentStatus === "Paid" ? "Paid" : "Pay Now"
               }  
-          </button>  
+          </button>
         )}
 
 

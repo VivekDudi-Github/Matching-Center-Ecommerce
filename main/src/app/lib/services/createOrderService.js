@@ -29,6 +29,8 @@ export const createorderService = async(data, email, name, SHIPPING) => {
           }
         }
       })) ;
+
+      await Promise.all(updatePromises);
           
       const products = await tx.product.findMany({
         where: {

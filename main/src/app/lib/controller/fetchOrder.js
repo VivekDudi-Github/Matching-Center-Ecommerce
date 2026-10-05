@@ -15,10 +15,13 @@ export const fetchOrderById = async (id) => {
     const session = await getServerSession(authOptions);
     if(!session || !session?.user) return resError("Please login to place order");
 
-    
+    const userId = session?.user?.id; 
+    if(!userId) return resError("Something went wrong please logIn again.");
+
     const order = await prisma.order.findUnique({
       where: {
         id: id,
+        customerId: userId
       },
       include: {
         customer: true,
@@ -35,6 +38,8 @@ export const fetchOrderById = async (id) => {
         address: true,
       },
     });
+    if(!order) return resError("Order not found");
+
     return resSuccess(serializePrisma(order));
   });
 };
@@ -44,8 +49,12 @@ export const fetchUserOrders = async (cursor) => {
     const session = await getServerSession(authOptions);
     if(!session || !session?.user) return resError("Please login to place order");
 
-    const email = session?.user?.email;
-    return resSuccess(await fetchOrdersByCustomerIdService({email, cursor}));
+    const userId = session?.user?.id;
+    if(!userId) return resError("User credential is missing");
+
+    console.log("userId", userId);
+
+    return resSuccess(await fetchOrdersByCustomerIdService({customerId: userId, cursor}));
   });
 }
 

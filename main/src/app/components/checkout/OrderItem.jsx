@@ -13,7 +13,7 @@ export default function OrderItem({ item : propItem , isCart = true }) {
 
   const CartItem = useCartStore((s) => !isCart ? null : getCartItem(s,propItem?.id));   
   
-  const cartTotal = useCartStore(s => !isCart ? 0 : selectTotal(s));
+  const cartTotal = CartItem?.price * useCartStore((s) => !isCart ? 0 : getTotalQuantity(s, CartItem?.id));
   const cartTotalQuantity = useCartStore(s => !isCart ? 0 : getTotalQuantity(s, CartItem?.id));
  
 

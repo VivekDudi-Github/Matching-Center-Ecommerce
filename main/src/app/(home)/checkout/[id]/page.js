@@ -129,10 +129,10 @@ export default function page() {
 
             <div className="lg:col-span-5">
               <div className="lg:sticky lg:top-24">
-                {isLoading ? 
+                {(isLoading || status !== "authenticated" || !order) ? 
                   <CheckSumSkeleton />
                     : 
-                  <OrderSummary isLoading={isLoading} order={order} session={session} status={status}/>  
+                  <OrderSummary isLoading={isLoading} order={order ?? []} session={session} status={status}/>  
                 }
                 
               </div>

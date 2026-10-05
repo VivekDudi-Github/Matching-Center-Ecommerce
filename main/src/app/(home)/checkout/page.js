@@ -14,6 +14,7 @@ import { useSession, signIn } from "next-auth/react";
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { exfn } from "@/app/hooks/extractActions";
+import CheckSumSkeleton from "@/app/components/checkout/CheckSumSkeleton";
 
 const CART = [
   {
@@ -81,7 +82,6 @@ export default function CheckoutPage() {
       }
     });
      
-  
     
    const [isLoading, setIsLoading] = useState(false);
 
@@ -204,7 +204,11 @@ export default function CheckoutPage() {
 
             <div className="lg:col-span-5">
               <div className="lg:sticky lg:top-24">
-                <OrderSummary isLoading={isLoading} order={null} session={session} status={status}/>
+                {status === "loading" ? (
+                  <CheckSumSkeleton />
+                ) : (
+                  <OrderSummary isLoading={isLoading} order={null} session={session} status={status}/>
+                )}
               </div>
             </div>
           </div>

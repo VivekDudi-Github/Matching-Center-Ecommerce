@@ -3,23 +3,16 @@ import { serializePrisma } from '@/app/hooks/serializePrisma';
 import { prisma } from '@/app/lib/prisma';
 
 
-export const fetchOrdersByCustomerIdService = async({customerId, email, cursor}) => {
+export const fetchOrdersByCustomerIdService = async({customerId, cursor}) => {
   const cursorFilter = cursor ? {
     cursor: {
       id: cursor
     }
   } : {};
-  const where = customerId ? {
-    id: customerId
-  } : email ? {
-    customer: {
-      email: email
-    }
-  } : {};
-
+  
   const orders = await prisma.order.findMany({
     where: {
-      ...where
+      customerId : customerId
     },
     orderBy: {
       id: "desc",
