@@ -201,7 +201,7 @@ model Order {
   orderItems      OrderItem[]
 
   expireAt        DateTime          @default(dbgenerated("(( NOW() + '420 seconds' ::INTERVAL))")) 
-  reverseAt       DateTime          @default(dbgenerated("(( NOW() + '450 seconds' ::INTERVAL))"))
+  reverseAt       DateTime?          @default(dbgenerated("(( NOW() + '450 seconds' ::INTERVAL))"))
 
   updatedAt       DateTime          @updatedAt
   createdAt       DateTime          @default(now())
@@ -283,4 +283,5 @@ model OrderItem {
   @@index([productId])
   @@index([orderId])
 } 
+
 

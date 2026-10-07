@@ -55,7 +55,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
       timeOut?.current && clearInterval(timeOut.current);
     }
   }, [order])
-  console.log("timeLeft", timeLeft);
+
 
   if(!isHyderated) return null;
   return (

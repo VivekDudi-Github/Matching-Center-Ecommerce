@@ -7,6 +7,7 @@ import {useTheme} from 'next-themes';
 import Link from 'next/link';
 import CartSideBar from '@/app/components/cart/CartSidebar';
 import HyderationWrapper from '../components/HyderationWrapper';
+import { updateCartStore } from '../hooks/UpdateCart';
 
 function Header() {
   const {theme, setTheme} = useTheme();
@@ -25,6 +26,7 @@ function Header() {
 
     handleResize();
     window.addEventListener('resize', handleResize);
+    updateCartStore(); 
 
     return () => {
       window.removeEventListener('resize', handleResize);

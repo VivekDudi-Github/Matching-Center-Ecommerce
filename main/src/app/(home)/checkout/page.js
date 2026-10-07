@@ -15,6 +15,7 @@ import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { exfn } from "@/app/hooks/extractActions";
 import CheckSumSkeleton from "@/app/components/checkout/CheckSumSkeleton";
+import { updateCartStore } from "@/app/hooks/UpdateCart";
 
 const CART = [
   {
@@ -119,6 +120,7 @@ export default function CheckoutPage() {
         router.push("/checkout/"+response.orderId);
       } catch (error) {
         console.log("error", error);  
+        updateCartStore();
         if(!Array.isArray(error.message)) return toast.error(error.message || "Something went wrong", {autoClose: 7000});
           response.message.slice(0,4).forEach(message => toast.error(message));
           return;    
@@ -150,6 +152,11 @@ export default function CheckoutPage() {
         methods.setValue("email", session.user.email);
       }
     }, [session])
+
+    useEffect(() => {
+      fetch("/api/restock", {method: "POST"}).then(res => res.json()).then(data => console.log(data));
+      updateCartStore();
+    }, [])
 
   if(!isHyderated) return null;
   return (

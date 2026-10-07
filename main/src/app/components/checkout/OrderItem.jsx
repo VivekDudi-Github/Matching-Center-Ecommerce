@@ -1,10 +1,9 @@
 "use client";
 
 import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
-import useCartStore, { getCartItem, getTotalQuantity, selectColors, selectTotal } from "@/app/store/CartStore";
+import useCartStore, { getCartItem, getTotalQuantity } from "@/app/store/CartStore";
 import { TriangleAlertIcon } from "lucide-react";
 import Image from "next/image"; 
-import CartItem from "../cart/CartItem";
 import { useMemo } from "react";
 
 
@@ -29,8 +28,8 @@ export default function OrderItem({ item : propItem , isCart = true }) {
 
   const total = isCart ? cartTotal : Number(item.price * totalQuantity);
 
+  const isExceeded = CartItem?.color?.some(c => Number(c.quantity) > Number(c.availableMeters));
 
-  
   if(!isHyderated) return null;
   return (
     <div className="p-5">
@@ -102,6 +101,12 @@ export default function OrderItem({ item : propItem , isCart = true }) {
         <div className=" flex text-sm text-red-600 font-medium mt-2">
           <TriangleAlertIcon className="mr-2 h-4 w-4" />
           Quantity is zero. No order will be created for this item.
+        </div>
+      )}
+      {isExceeded && (
+        <div className=" flex text-sm text-red-600 font-medium mt-2">
+          <TriangleAlertIcon className="mr-2 h-4 w-4" />
+          Quantity exceeds available stock. No order will be created for this item.
         </div>
       )}
     </div>

@@ -15,7 +15,7 @@ export const fetchOrdersByCustomerIdService = async({customerId, cursor}) => {
       customerId : customerId
     },
     orderBy: {
-      id: "desc",
+      createdAt: "desc",
     },
     ...cursorFilter,
     take: 11,
