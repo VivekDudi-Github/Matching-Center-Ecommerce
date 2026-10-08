@@ -207,8 +207,10 @@ model Order {
   createdAt       DateTime          @default(now())
 
   @@index([customerId])
+  
   @@index([status])
   @@index([createdAt])
+  @@index([expireAt])
 }
 
 enum PaymentStatus {
@@ -224,19 +226,29 @@ enum Method {
 }
 
 model Payment {
-  id            String        @id @default(cuid(2))
-  orderId       String        @unique
-  order         Order         @relation(fields: [orderId], references: [id])
-  amount        Decimal       @db.Decimal(10, 2)
-  status        PaymentStatus @default(Pending) 
-  method        Method
-  reference     String        @unique
-  customerId    String
-  customer      Customer      @relation(fields: [customerId], references: [id])
-  number        String?
+  id                  String              @id @default(cuid(2))
+
+  orderId             String              @unique
+  order               Order               @relation(fields: [orderId], references: [id])
   
-  updatedAt  DateTime         @updatedAt
-  createdAt  DateTime         @default(now())
+  amount              Decimal             @db.Decimal(10, 2)
+  status              PaymentStatus       @default(Pending) 
+  method              Method
+  
+  razorpayOrderId     String              @unique
+  razorpayPaymentId   String              @unique
+
+  customerId          String
+  customer            Customer            @relation(fields: [customerId], references: [id])
+  
+  number              String?
+  
+  updatedAt           DateTime            @updatedAt
+  createdAt           DateTime            @default(now())
+
+  @@index([status])
+  @@index([customerId])
+  @@index([orderId])
 }
 
 model Address {
