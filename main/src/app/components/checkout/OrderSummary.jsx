@@ -7,6 +7,7 @@ import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
 import OrderStatus from "../orders/OrderStatus";
 import { useEffect, useRef, useState } from "react";
 import { time } from "framer-motion";
+import RazorPayCheckout from "./RazorPayCheckout";
 
 export default function OrderSummary({isLoading, status , session, order}) {
   const timeOut = useRef(null); 
@@ -177,6 +178,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
               }  
           </button>
         )}
+        <RazorPayCheckout order={order} />
 
 
         <p className="mt-4 text-center text-xs text-zinc-500">

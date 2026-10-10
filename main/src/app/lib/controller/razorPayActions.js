@@ -1,8 +1,9 @@
 "use server";
 import { resError, resSuccess } from "@/app/hooks/resObj";
 import Razorpay from "razorpay";
+import { TryCatch } from "@/app/hooks/TryCatch";
 
-const razorpayAction = async (orderId) => {
+const getRazorpayOrder = async (orderId) => {
   return await TryCatch(async () => {
     if(!orderId) return resError("Order id not found");
 
@@ -51,8 +52,16 @@ const razorpayAction = async (orderId) => {
           amount: totalInPaise,
           status: "Pending",
           method: "UPI",
-          orderId: order.id,
-          customerId: order.customerId
+          order: {
+            connect: {
+              id : order.id
+            }
+          },
+          customer: {
+            connect: {
+              id : order.customerId
+            }
+          },
       }
     })
 
@@ -61,3 +70,41 @@ const razorpayAction = async (orderId) => {
   })
 }
 
+
+const verifYRazorPay = async ({orderId, singature, paymentId}) => {
+  return await TryCatch(async () => {
+    if(!orderId) return resError("Order id not found");
+    if(!singature) return resError("Signature not found");
+    if(!paymentId) return resError("Payment id not found");
+
+    const order = await prisma.payment.findUnique({
+      where: {
+        razorpayOrderId: orderId,
+      }
+    });
+
+    if(!order) return resError("Order not found");
+
+    const isValid = verifyPaymentSignature(orderId, paymentId, singature, process.env.RAZORPAY_KEY_SECRET);
+
+    if(!isValid) return resError("Signature not valid");
+
+    return resSuccess(true);
+
+
+    function verifyPaymentSignature(orderId, paymentId, receivedSig, keySecret) {
+      const body = orderId + '|' + paymentId;
+      const expectedSig = crypto
+      .createHmac('sha256', keySecret)
+      .update(body)
+      .digest('hex');
+      // timing-safe comparison to prevent timing attacks
+      return crypto.timingSafeEqual(
+      Buffer.from(expectedSig, 'hex'),
+      Buffer.from(receivedSig, 'hex')
+      );
+    }
+  })
+}
+
+export { getRazorpayOrder, verifYRazorPay };
