@@ -9,10 +9,7 @@ import { toast } from 'react-toastify';
 
 function RazorPayCheckout({order}) {
   const {data : session, status} = useSession();
-  console.log(session)
-  console.log(order.id);
   
-      console.log("env", process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
   async function triggerRZP1(){
     try {
       const orderId = await exfn(() => getRazorpayOrder(order.id));
@@ -66,7 +63,7 @@ function RazorPayCheckout({order}) {
   return (
     <>
     <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-    <button type='button' onClick={() => triggerRZP1() } className="px-4 py-2 bg-blue-600 text-white rounded font-medium" >
+    <button type='button' onClick={() => triggerRZP1() } className="w-full h-full" >
       Pay
     </button>
     </>

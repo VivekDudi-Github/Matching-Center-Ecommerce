@@ -168,17 +168,17 @@ export default function OrderSummary({isLoading, status , session, order}) {
         )}
 
         {order && ( // shows real order final placement
-          <button type="submit" 
-            disabled={total == 0 || isLoading || status !== "authenticated" || timeLeft < 1 || paymentStatus === "Paid"} 
-            className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
+          <div  
+            disabled={total == 0 || isLoading || status !== "authenticated" || timeLeft <= 1 || paymentStatus === "Paid"} 
+            className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-black text-sm font-semibold disabled:cursor-not-allowed text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
               {(isLoading || status === "loading") ?
               <Loader2Icon className="animate-spin"/> 
               : 
-              timeLeft <= 1 ? "Order Expired" : paymentStatus === "Paid" ? "Paid" : "Pay Now"
+              timeLeft >= 1 ? "Order Expired" : paymentStatus === "Paid" ? "Paid" :  <RazorPayCheckout order={order} />
               }  
-          </button>
+          </div>
         )}
-        <RazorPayCheckout order={order} />
+       
 
 
         <p className="mt-4 text-center text-xs text-zinc-500">

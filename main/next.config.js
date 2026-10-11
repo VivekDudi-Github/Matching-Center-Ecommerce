@@ -14,7 +14,9 @@ const nextConfig = {
       hostname: '**'
     }] ,
     // domains: ['localhost']
+   
   }
 };
+
 
 export default nextConfig;
