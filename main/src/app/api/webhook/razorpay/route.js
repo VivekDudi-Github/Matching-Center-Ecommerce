@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import Razorpay from "razorpay"
 
 export async function POST(request) {
   try {
-    console.log(request, "jhgkjvhsjehvwlkjhevjwhvjhwbej");
+    console.log("event ", request, );
     const rawBody = await request.text();
     const signature = request.headers.get("x-razorpay-signature");
 
@@ -25,21 +26,77 @@ export async function POST(request) {
 
     const eventData = JSON.parse(rawBody);
     const event = eventData.event;
+    const entity = eventData.payload.payment.entity;
+
+    NextResponse.json({ received: true }, { status: 200 });
+
+    console.log("event data", eventData.payload.payment.entity);
+
+    const order = await prisma.order.findUnique({
+      where : {
+        id: entity.notes.orderId,
+        payment: {
+          razorpayOrderId: entity.order_id,
+        }
+      },
+      include: {
+        payment: true,
+        }
+    })
+    const payment = order?.payment;
 
     // 4. Handle events based on type
     switch (event) {
-      case "payment.captured":
-        const paymentEntity = eventData.payload.payment.entity;
-        const orderId = paymentEntity.order_id;
+      case "payment.authorized":
+        if(!order) break;
         
-        console.log(`Payment captured for Order: ${orderId}`);
-        // TODO: Database updates here (e.g., set order status to "PAID")
+        const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID , key_secret: process.env.RAZORPAY_KEY_SECRET })
+
+        // if(order.expireAt < new Date()) break;      
+        if(!payment || payment.status === "Paid") break;
+        if(payment.razorpayOrderId !== entity.order_id) break;
+        
+        await prisma.order.update({
+          where: {
+            id : entity.notes.orderId,
+            payment: {
+              razorpayOrderId: entity.order_id,
+            }
+          },
+          data: {
+            reverseAt: null,
+            payment: {
+              update: {
+                status: "Processing",
+              }
+            }
+          }
+        })
+        instance.payments.capture(entity?.id, payment.amount , "INR") ;  
+        
         break;
 
       case "payment.failed":
-        const failedPayment = eventData.payload.payment.entity;
-        console.log(`Payment failed for Order: ${failedPayment.order_id}`);
-        // TODO: Update database status to "FAILED"
+        
+        await prisma.payment.update({
+          where: {
+            razorpayOrderId: entity.order_id,
+          }, 
+          data: {
+            status: "Failed",
+          }
+        })
+        break;
+
+      case "payment.captured":
+        await prisma.payment.update({
+          where: {
+            razorpayOrderId: entity.order_id,
+          }, 
+          data: {
+            status: "Paid",
+          }
+        })
         break;
 
       default:
