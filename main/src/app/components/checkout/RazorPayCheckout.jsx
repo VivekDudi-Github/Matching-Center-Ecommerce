@@ -28,6 +28,7 @@ function RazorPayCheckout({order}) {
           "email": session.user.email,
           "contact": session.user.number
         },
+        
         "theme": { "color": "#3399cc" },
         "modal": {
           "confirm_close": true,

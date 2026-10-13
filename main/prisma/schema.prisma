@@ -250,6 +250,8 @@ model Payment {
   @@index([status])
   @@index([customerId])
   @@index([orderId])
+  @@index([razorpayOrderId])
+  @@index([razorpayPaymentId])
 }
 
 model Address {
