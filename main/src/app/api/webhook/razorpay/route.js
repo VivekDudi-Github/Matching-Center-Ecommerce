@@ -1,10 +1,15 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import crypto from "crypto";
 import Razorpay from "razorpay"
 
 export async function POST(request) {
   try {
-    console.log("event ", request, );
+    // we check the signature
+    // we put data in after callback
+    // we send 200 response back 
+    
+    // after callback runs
+
     const rawBody = await request.text();
     const signature = request.headers.get("x-razorpay-signature");
 
@@ -12,12 +17,15 @@ export async function POST(request) {
       return NextResponse.json({ error: "Missing signature" }, { status: 400 });
     }
 
-
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET)
       .update(rawBody)
       .digest("hex");
 
+    if(expectedSignature?.length !== signature?.length){
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+    }
+    // time-safe check
     const signCheck = crypto.timingSafeEqual(Buffer.from(signature, "hex"), Buffer.from(expectedSignature, "hex"));
 
     if (!signCheck) {
@@ -26,7 +34,7 @@ export async function POST(request) {
 
     const eventData = JSON.parse(rawBody);
 
-    request.waitUntil(bgOps(eventData));
+    after(bgOps(eventData));
 
     return NextResponse.json({ received: true }, { status: 200 });
 
@@ -38,10 +46,11 @@ export async function POST(request) {
 
 
 async function bgOps(eventData) {
-  try {
     const event = eventData.event;
     const entity = eventData.payload.payment.entity;
-    console.log("event data", eventData.payload.payment.entity);
+    console.log("event data", event.event, eventData.payload.payment.entity);
+
+
 
     const order = await prisma.order.findUnique({
       where : {
@@ -55,14 +64,35 @@ async function bgOps(eventData) {
         }
     });
     const payment = order?.payment;
+    const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID , key_secret: process.env.RAZORPAY_KEY_SECRET });
+
+
+    if(payment?.status === "Paid") {
+      instance.payments.refund(entity?.id, payment.amount , "INR") ;
+      await prisma.order.update({
+        where: {
+          id: order.id,
+          payment: {
+            razorpayOrderId: entity.order_id,
+          }
+        },
+        data: {
+          payment: {
+            update: {
+              status: "Paid",
+            }
+          }
+        }
+      })
+    }
+
+    
 
     // 4. Handle events based on type
     switch (event) {
       case "payment.authorized":
         if(!order) break;
         
-        const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID , key_secret: process.env.RAZORPAY_KEY_SECRET })
-
         if(order.expireAt < new Date()) {
           await prisma.order.update({
             where: {
@@ -72,7 +102,6 @@ async function bgOps(eventData) {
               }
             },
             data: {
-              expireAt: new Date(),
               payment: {
                 update: {
                   status: "Failed",
@@ -80,11 +109,15 @@ async function bgOps(eventData) {
               }
             }
           })
+
+          // todo - provide user notification regarding expiry
+          // add - way to create order even if payment is expired
           break;
-        };      
+        };  
         if(!payment || payment.status === "Paid") break;
         if(payment.razorpayOrderId !== entity.order_id) break;
         
+        instance.payments.capture(entity?.id, payment.amount , "INR") ;  
         await prisma.order.update({
           where: {
             id : entity.notes.orderId,
@@ -93,6 +126,7 @@ async function bgOps(eventData) {
             }
           },
           data: {
+            isLocked: true,
             reverseAt: null,
             payment: {
               update: {
@@ -101,37 +135,48 @@ async function bgOps(eventData) {
             }
           }
         })
-        instance.payments.capture(entity?.id, payment.amount , "INR") ;  
         
         break;
 
       case "payment.failed":
+        if(payment.status === "Processing") break;
         
-        await prisma.payment.update({
+        await prisma.order.update({
           where: {
-            razorpayOrderId: entity.order_id,
-          }, 
+            id: order.id ,
+          },
           data: {
-            status: "Failed",
+            isLocked: false,
+            payment: {
+              update: {
+                status: "Failed",
+              }
+            }
           }
-        })
+        });
+
         break;
 
       case "payment.captured":
-        await prisma.payment.update({
+       const order = await prisma.order.update({
           where: {
-            razorpayOrderId: entity.order_id,
-          }, 
+            id: order.id ,
+          },
           data: {
-            status: "Paid",
+            reverseAt: null,
+            isLocked: true,
+            payment: {
+              update: {
+                status: "Paid",
+              }
+            }
           }
-        })
+        });
+
+        if(!order) console.log("order not found");
         break;
 
       default:
         console.log(`Unhandled webhook event: ${event}`);
     }
-  } catch (error) {
-    
-  }
 }

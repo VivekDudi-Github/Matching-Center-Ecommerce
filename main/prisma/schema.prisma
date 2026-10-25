@@ -182,29 +182,31 @@ enum Status {
 
 
 model Order {
-  id              String            @id @default(cuid(2))
-  customerId      String
-  customer        Customer          @relation(fields: [customerId], references: [id])
-  payment         Payment?
+  id                    String            @id @default(cuid(2))
+  customerId            String
+  customer              Customer          @relation(fields: [customerId], references: [id])
+  payment               Payment?
 
-  subtotal        Decimal           @db.Decimal(10, 2)
-  total           Decimal           @db.Decimal(10, 2)
-  status          Status            @default(Pending)
+  subtotal              Decimal           @db.Decimal(10, 2)
+  total                 Decimal           @db.Decimal(10, 2)
+  status                Status            @default(Pending)
 
-  addressId       String      
-  address         Address           @relation(fields: [addressId], references: [id])
+  addressId             String      
+  address               Address           @relation(fields: [addressId], references: [id])
 
-  shipping        Decimal           @db.Decimal(10, 2)
+  shipping              Decimal           @db.Decimal(10, 2)
 
-  notes           String?
+  notes                 String?
 
-  orderItems      OrderItem[]
+  orderItems            OrderItem[]
 
-  expireAt        DateTime          @default(dbgenerated("(( NOW() + '420 seconds' ::INTERVAL))")) 
-  reverseAt       DateTime?          @default(dbgenerated("(( NOW() + '450 seconds' ::INTERVAL))"))
+  isLocked              Boolean           @default(false) // serves when user create authorize payment at last moment and capturing needs more than 30seconds.
 
-  updatedAt       DateTime          @updatedAt
-  createdAt       DateTime          @default(now())
+  expireAt              DateTime          @default(dbgenerated("(( NOW() + '420 seconds' ::INTERVAL))")) 
+  reverseAt             DateTime?          @default(dbgenerated("(( NOW() + '450 seconds' ::INTERVAL))"))
+
+  updatedAt             DateTime          @updatedAt
+  createdAt             DateTime          @default(now())
 
   @@index([customerId])
   
@@ -238,6 +240,7 @@ model Payment {
   
   razorpayOrderId     String?             @unique
   razorpayPaymentId   String?             @unique
+  raorPayEventId      String?             @unique
 
   customerId          String
   customer            Customer            @relation(fields: [customerId], references: [id])

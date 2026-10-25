@@ -1,5 +1,5 @@
-'use server';
 
+import "server-only";
 import { serializePrisma } from "@/app/hooks/serializePrisma";
 import { TryCatch } from "@/app/hooks/TryCatch";
 
