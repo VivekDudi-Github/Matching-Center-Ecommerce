@@ -4,7 +4,7 @@ import {motion, AnimatePresence} from 'framer-motion';
 import {XIcon} from 'lucide-react';
 import CartItem from './CartItem';
 import CartFooter from './CartFooter';
-import { useHydratedStore } from '@/app/hooks/useHyderatedStore';
+import { useHydratedStore } from '@/app/helpers/useHyderatedStore';
 import useCartStore from '@/app/store/CartStore';
 
 

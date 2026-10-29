@@ -1,7 +1,7 @@
 "use server";
 
-import { resSuccess } from '@/app/hooks/resObj';
-import { serializePrisma } from '@/app/hooks/serializePrisma';
+import { resSuccess } from '@/app/helpers/resObj';
+import { serializePrisma } from '@/app/helpers/serializePrisma';
 import { prisma } from '@/app/lib/prisma';
 
 export const getShopSelectionService = async() => {

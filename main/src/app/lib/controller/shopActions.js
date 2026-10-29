@@ -1,10 +1,10 @@
 "use server";
 
-import { serializePrisma } from "@/app/hooks/serializePrisma";
-import { TryCatch } from "@/app/hooks/TryCatch";
+import { serializePrisma } from "@/app/helpers/serializePrisma";
+import { TryCatch } from "@/app/helpers/TryCatch";
 import { prisma } from "@/app/lib/prisma";
 import { getShopProductsService, getShopSelectionService } from "../services/shopService";
-import { resError, resSuccess } from "@/app/hooks/resObj";
+import { resError, resSuccess } from "@/app/helpers/resObj";
 
 export const getShopSelections = async () => {
   return await TryCatch(async () => {

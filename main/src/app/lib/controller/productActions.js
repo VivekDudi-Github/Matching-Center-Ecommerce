@@ -1,13 +1,13 @@
 'use server';
 
-import { serializePrisma } from '@/app/hooks/serializePrisma';
-import { TryCatch } from '@/app/hooks/TryCatch';
+import { serializePrisma } from '@/app/helpers/serializePrisma';
+import { TryCatch } from '@/app/helpers/TryCatch';
 import { prisma } from '@/app/lib/prisma';
 import {newProductFormSchema} from '@/app/lib/validation/product.schema';
 import { updateProductService } from '../services/UpdateProd';
 import { duplicateproductService } from '../services/duplicateProduct';
 import { deleteProductImagesService } from '../services/deleteImages';
-import { resError, resSuccess } from '@/app/hooks/resObj';
+import { resError, resSuccess } from '@/app/helpers/resObj';
 import { createNewProductService } from '../services/createNewProd';
 
 

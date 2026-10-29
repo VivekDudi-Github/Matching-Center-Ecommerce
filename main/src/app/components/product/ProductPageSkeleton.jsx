@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { SkeletonBlock } from '@/app/hooks/SkeletonComp';
+import { SkeletonBlock } from '@/app/helpers/SkeletonComp';
 
 // 3. Main Product Page Skeleton Component
 export default function ProductPageSkeleton() {

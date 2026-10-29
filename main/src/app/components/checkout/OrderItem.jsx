@@ -1,6 +1,6 @@
 "use client";
 
-import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
+import { useHydratedStore } from "@/app/helpers/useHyderatedStore";
 import useCartStore, { getCartItem, getTotalQuantity } from "@/app/store/CartStore";
 import { TriangleAlertIcon } from "lucide-react";
 import Image from "next/image"; 

@@ -11,7 +11,7 @@ import MobileDrawer from "@/app/components/shop/MobileDrawer";
 import {getProducts} from '@/app/lib/controller/shopActions';
 import { toast } from "react-toastify";
 import CardSkeleton from "@/app/components/card/CardSkeleton";
-import { exfn } from "@/app/hooks/extractActions";
+import { exfn } from "@/app/helpers/extractActions";
 
 export default function ShopLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

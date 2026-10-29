@@ -1,8 +1,8 @@
 "use server";
 
-import { resError, resSuccess } from "@/app/hooks/resObj";
-import { serializePrisma } from "@/app/hooks/serializePrisma";
-import { TryCatch } from "@/app/hooks/TryCatch";
+import { resError, resSuccess } from "@/app/helpers/resObj";
+import { serializePrisma } from "@/app/helpers/serializePrisma";
+import { TryCatch } from "@/app/helpers/TryCatch";
 import { prisma } from "@/app/lib/prisma";
 
 export const getProductById = async (id) => {

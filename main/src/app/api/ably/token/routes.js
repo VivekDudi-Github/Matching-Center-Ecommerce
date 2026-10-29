@@ -20,6 +20,22 @@ export async function GET() {
       );
     }
 
+    const isEligible = await prisma.order.findFirst({
+      where: {
+        customerId,
+        reverseAt: {
+          lte: new Date(),
+        }
+      }
+    })
+
+    if(!isEligible){
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const channelName = `customer:${customerId}:notifications`;
 
     const tokenRequest = await ably.auth.createTokenRequest({

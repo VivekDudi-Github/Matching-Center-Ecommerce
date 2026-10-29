@@ -5,7 +5,7 @@ import TopBanner from "../components/home/TopBanner";
 import CardSlider from "../components/card/CardSlider";
 import HyderationWrapper from "../components/HyderationWrapper";
 import { getCategories, getProducts } from "../lib/controller/shopActions";
-import { exfn } from "../hooks/extractActions";
+import { exfn } from "../helpers/extractActions";
 
 export default async function Home() {
   const {products, newCursor} = await exfn(() => getProducts({outOfStock: false, sort: "featured"}));

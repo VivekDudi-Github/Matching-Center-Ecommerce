@@ -189,7 +189,7 @@ model Order {
 
   subtotal              Decimal           @db.Decimal(10, 2)
   total                 Decimal           @db.Decimal(10, 2)
-  status                Status            @default(Pending)
+  status                Status            @default(Pending) // relates to delivery
 
   addressId             String      
   address               Address           @relation(fields: [addressId], references: [id])
@@ -240,7 +240,8 @@ model Payment {
   
   razorpayOrderId     String?             @unique
   razorpayPaymentId   String?             @unique
-  raorPayEventId      String?             @unique
+  razorpayEventId     String?            @unique
+   
 
   customerId          String
   customer            Customer            @relation(fields: [customerId], references: [id])

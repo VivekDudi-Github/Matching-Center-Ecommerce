@@ -16,11 +16,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
-import { getCloudinarySignature } from "@/app/hooks/Cloudinary";
+import { getCloudinarySignature } from "@/app/helpers/Cloudinary";
 import { createNewProduct, createNewProductImages } from "@/app/lib/controller/productActions";
-import {uploadToCloudinary} from '@/app/hooks/UploadToCloudinary';
+import {uploadToCloudinary} from '@/app/helpers/UploadToCloudinary';
 import { useRouter } from "next/navigation";
-import { exfn } from "@/app/hooks/extractActions";
+import { exfn } from "@/app/helpers/extractActions";
 
 
 export default function NewProductPage() {

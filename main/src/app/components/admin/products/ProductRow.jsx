@@ -15,7 +15,7 @@ import { array } from "zod";
 import {deleteProductAction, duplicateProductAction, revertDeleteProductAction} from '@/app/lib/controller/productActions';
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { exfn } from "@/app/hooks/extractActions";
+import { exfn } from "@/app/helpers/extractActions";
 
 
 export default function ProductRow({ product }) {

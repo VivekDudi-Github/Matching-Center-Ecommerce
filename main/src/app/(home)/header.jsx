@@ -7,7 +7,7 @@ import {useTheme} from 'next-themes';
 import Link from 'next/link';
 import CartSideBar from '@/app/components/cart/CartSidebar';
 import HyderationWrapper from '../components/HyderationWrapper';
-import { updateCartStore } from '../hooks/UpdateCart';
+import { updateCartStore } from '../helpers/UpdateCart';
 
 function Header() {
   const {theme, setTheme} = useTheme();

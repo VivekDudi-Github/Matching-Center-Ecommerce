@@ -7,7 +7,7 @@ import Card from './Card';
 import { getProducts } from "../../lib/controller/shopActions";
 import { toast } from "react-toastify";
 import CardSkeleton from "./CardSkeleton";
-import { exfn } from "@/app/hooks/extractActions";
+import { exfn } from "@/app/helpers/extractActions";
 
 // Mock list array of fabrics to populate our slider
 // export const products = [

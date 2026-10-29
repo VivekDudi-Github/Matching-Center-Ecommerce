@@ -7,7 +7,7 @@ import useCartStore, {
   selectTotal,
   selectDiscount,
 } from "@/app/store/CartStore";
-import {useHydratedStore} from '@/app/hooks/useHyderatedStore';
+import {useHydratedStore} from '@/app/helpers/useHyderatedStore';
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 

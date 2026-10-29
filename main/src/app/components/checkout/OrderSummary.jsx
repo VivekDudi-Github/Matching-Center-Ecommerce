@@ -3,7 +3,7 @@
 import { Loader2Icon, ShoppingBag } from "lucide-react";
 import OrderItem from "./OrderItem";
 import useCartStore, { selectDiscount, selectShipping, selectSubtotal, selectTotal } from "@/app/store/CartStore";
-import { useHydratedStore } from "@/app/hooks/useHyderatedStore";
+import { useHydratedStore } from "@/app/helpers/useHyderatedStore";
 import OrderStatus from "../orders/OrderStatus";
 import { useEffect, useRef, useState } from "react";
 import { time } from "framer-motion";
@@ -31,7 +31,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
   const totalDiscount = order ? (order.subtotal - order.total) : cartTotalDiscount;
 
   const paymentStatus = order?.payment?.status || "Pending";
-
+  
   const isExpired = () => {
     if(!order) return false;
     if(order.payment?.status === "Paid") return false;
@@ -40,7 +40,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
 
   useEffect(() => {
     if(order && order?.expireAt) {
-      const diff = () => {
+      const diff = async () => {
         return Math.floor((new Date(order.expireAt) - new Date()) / 1000) ;
       }
       setLeftTime(diff());
@@ -52,7 +52,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
       timeOut.current = interval;
     }
 
-    return () =>{
+    return () => {
       timeOut?.current && clearInterval(timeOut.current);
     }
   }, [order])

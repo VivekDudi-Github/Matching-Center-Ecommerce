@@ -7,7 +7,7 @@ import PriceSlider from "./PriceSlider";
 import { getShopSelections } from "@/app/lib/controller/shopActions";
 import { SortSelector } from "./SortSelector";
 import SideBardSkeleton from "./SideBardSkeleton";
-import { exfn } from "@/app/hooks/extractActions";
+import { exfn } from "@/app/helpers/extractActions";
 
 
 const sortOptions = [

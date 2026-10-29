@@ -1,6 +1,6 @@
 "use client";
 import {motion} from "framer-motion";
-import {SkeletonBlock} from "@/app/hooks/SkeletonComp";
+import {SkeletonBlock} from "@/app/helpers/SkeletonComp";
 
 // 1. Smooth continuous shimmer animation configuration
 

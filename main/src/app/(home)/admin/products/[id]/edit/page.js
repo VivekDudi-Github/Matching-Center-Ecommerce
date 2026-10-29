@@ -17,12 +17,12 @@ import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
-import { getCloudinarySignature } from "@/app/hooks/Cloudinary";
+import { getCloudinarySignature } from "@/app/helpers/Cloudinary";
 import { createNewProductImages, deleteProductImages, updateProduct } from "@/app/lib/controller/productActions";
-import {uploadToCloudinary} from '@/app/hooks/UploadToCloudinary';
+import {uploadToCloudinary} from '@/app/helpers/UploadToCloudinary';
 import { useParams, useRouter } from "next/navigation";
 import { getAdminProdById } from "@/app/lib/controller/getAdminProd";
-import { exfn } from "@/app/hooks/extractActions";
+import { exfn } from "@/app/helpers/extractActions";
 
 export default function EditProductPage() {
   const {id} = useParams();

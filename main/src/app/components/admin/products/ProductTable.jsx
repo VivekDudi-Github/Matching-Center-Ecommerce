@@ -11,7 +11,7 @@ import { getFirstAdminProdList, getMoreAdminProdList } from "@/app/lib/controlle
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import TableLoading from "./TrSkeleton";
-import { exfn } from "@/app/hooks/extractActions";
+import { exfn } from "@/app/helpers/extractActions";
 
 const columns = [
   "Product",

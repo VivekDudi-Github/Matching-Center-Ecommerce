@@ -1,5 +1,5 @@
 "use client";
-import { SkeletonBlock } from "@/app/hooks/SkeletonComp";
+import { SkeletonBlock } from "@/app/helpers/SkeletonComp";
 import { ShoppingBag } from "lucide-react";
 
 function CheckSumSkeleton() {

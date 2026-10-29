@@ -1,5 +1,5 @@
 "use server";
-import { serializePrisma } from '@/app/hooks/serializePrisma';
+import { serializePrisma } from '@/app/helpers/serializePrisma';
 import { prisma } from '@/app/lib/prisma';
 
 

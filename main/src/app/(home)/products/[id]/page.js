@@ -11,7 +11,7 @@ import Skeleton from '@/app/components/product/ProductPageSkeleton';
 import { getProductById } from '@/app/lib/controller/fetchProduct';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { exfn } from '@/app/hooks/extractActions';
+import { exfn } from '@/app/helpers/extractActions';
 import { getProducts } from '@/app/lib/controller/shopActions';
 
 // const PRODUCT_DATA = {

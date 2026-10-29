@@ -1,7 +1,7 @@
 "use server";
-import { resError, resSuccess } from "@/app/hooks/resObj";
+import { resError, resSuccess } from "@/app/helpers/resObj";
 import Razorpay from "razorpay";
-import { TryCatch } from "@/app/hooks/TryCatch";
+import { TryCatch } from "@/app/helpers/TryCatch";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { razorPayOrderService } from "../services/razorPayOrder";
@@ -14,9 +14,10 @@ const getRazorpayOrder = async (orderId) => {
 
     if(!session || !session.user) return resError("Please Login.")
 
-    const razorpayId = await razorPayOrderService(orderId);
+    const razorpayId = await razorPayOrderService(orderId, session);
 
-    return resSuccess(razorpayId);
+    console.log("razorpay-orderId", razorpayId);
+    return razorpayId;
   })
 }
 
@@ -58,3 +59,5 @@ const verifYRazorPay = async ({orderId, singature, paymentId}) => {
 }
 
 export { getRazorpayOrder, verifYRazorPay };
+
+

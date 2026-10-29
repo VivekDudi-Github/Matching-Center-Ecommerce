@@ -1,5 +1,5 @@
 'use client';
-import {getCloudinaryDeletionSignature} from '@/app/hooks/Cloudinary'; 
+import {getCloudinaryDeletionSignature} from '@/app/helpers/Cloudinary'; 
 import { deleteProductImages } from '@/app/lib/controller/productActions';
 import { resError, resSuccess } from './resObj';
 

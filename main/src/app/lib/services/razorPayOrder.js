@@ -1,9 +1,10 @@
 import "server-only";
-import { resError, resSuccess } from "@/app/hooks/resObj";
+import { resError, resSuccess } from "@/app/helpers/resObj";
 import Razorpay from "razorpay";
 
-export const razorPayOrderService = async(orderId) => {
+export const razorPayOrderService = async(orderId, session) => {
     // find old order
+    
     const order = await prisma.order.findUnique({
       where: {
         id: orderId,
@@ -19,7 +20,7 @@ export const razorPayOrderService = async(orderId) => {
 
     if(order?.payment?.razorpayOrderId) return resSuccess(order.payment.razorpayOrderId);
 
-    const totalInPaise = order.total * 100;
+    const totalInPaise = order.total * 100 + order.shipping * 100;
 
     // create instance
     const razorpay = new Razorpay({
@@ -65,6 +66,6 @@ export const razorPayOrderService = async(orderId) => {
       }
     )
 
-    return razorpayOrder.id;
+    return resSuccess(razorpayOrder.id);
 
 }
