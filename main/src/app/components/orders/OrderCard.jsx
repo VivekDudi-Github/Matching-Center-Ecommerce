@@ -35,7 +35,7 @@ export default function OrderCard({ order }) {
   const date = new Date(order.createdAt).toLocaleString("en-IN", dateOptions);
 
   const isExpired = new Date(order.expireAt) < new Date();
-  const isPending = !order?.payment?.status || order?.payment?.status === "Pending";
+  const isPending = !order?.payment?.status || order?.payment?.status !== "Paid" || order?.payment?.status !== "Processing";
 
   const handleCopy = async () => {
     try {
@@ -106,7 +106,7 @@ export default function OrderCard({ order }) {
             
             {/* Pay Now Button */}
             {(isPending && !isExpired) ?
-            <button
+            <Link href={"/checkout/"+ order?.id}
               className={` group relative w-full overflow-hidden border border-amber-800 bg-zinc-950  px-4 py-2.5 text-sm font-medium tracking-wide text-white shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300  hover:border-amber-200  dark:hover:border-amber-200 hover:shadow-[0_6px_28px_rgba(0,0,0,0.35)]  active:translate-y-px  cursor-pointer`}
             >
               <span
@@ -119,7 +119,7 @@ export default function OrderCard({ order }) {
                   →
                 </span>
               </span>
-            </button>
+            </Link>
 
             :
             <OrderStatus

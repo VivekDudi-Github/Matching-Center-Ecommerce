@@ -1,18 +1,22 @@
 import { NextResponse } from "next/server";
 import * as Ably from "ably";
-import { auth } from "@/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 export const runtime = "nodejs";
 
-const ably = new Ably.Rest({
-  key: process.env.ABLY_ROOT_KEY,
-});
 
 export async function GET() {
   try {
-    const session = await auth();
+    console.log("ably token get hit!");
+        
+    const session = await getServerSession(authOptions);
     const customerId = session?.user?.id;
 
+    const ably = new Ably.Rest({
+      key: process.env.ABLY_ROOT_KEY,
+    });
+    
     if (!customerId) {
       return NextResponse.json(
         { error: "Unauthorized" },

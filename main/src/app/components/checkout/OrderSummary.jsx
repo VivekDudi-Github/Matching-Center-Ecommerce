@@ -6,7 +6,6 @@ import useCartStore, { selectDiscount, selectShipping, selectSubtotal, selectTot
 import { useHydratedStore } from "@/app/helpers/useHyderatedStore";
 import OrderStatus from "../orders/OrderStatus";
 import { useEffect, useRef, useState } from "react";
-import { time } from "framer-motion";
 import RazorPayCheckout from "./RazorPayCheckout";
 
 export default function OrderSummary({isLoading, status , session, order}) {
@@ -40,7 +39,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
 
   useEffect(() => {
     if(order && order?.expireAt) {
-      const diff = async () => {
+      const diff =  () => {
         return Math.floor((new Date(order.expireAt) - new Date()) / 1000) ;
       }
       setLeftTime(diff());
@@ -56,7 +55,6 @@ export default function OrderSummary({isLoading, status , session, order}) {
       timeOut?.current && clearInterval(timeOut.current);
     }
   }, [order])
-
 
   if(!isHyderated) return null;
   return (
@@ -79,8 +77,6 @@ export default function OrderSummary({isLoading, status , session, order}) {
             <OrderStatus type={"delivery"} status={order?.status || "Pending"} />
           </>
         )}
-
-
       </div>
       
 
@@ -122,7 +118,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
           <div className="flex justify-between">
             <span className="text-zinc-500">Shipping</span>
 
-            {shipping === 0 ? (
+            {shipping === 0 || Number(total) === 0 ? (
               <span className="font-medium text-green-600">
                 FREE
               </span>
@@ -174,7 +170,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
               {(isLoading || status === "loading") ?
               <Loader2Icon className="animate-spin"/> 
               : 
-              timeLeft >= 1 ? "Order Expired" : paymentStatus === "Paid" ? "Paid" :  <RazorPayCheckout order={order} />
+              timeLeft <= 1 ? "Order Expired" : paymentStatus === "Paid" ? "Paid" :  <RazorPayCheckout order={order} />
               }  
           </div>
         )}

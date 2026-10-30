@@ -31,14 +31,14 @@ const paymentConfig = {
     label: "Payment Failed",
     icon: XCircle,
     className:
-      "border-red-200 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400",
+      "border-red-300 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400",
   },
   
   Processing: {
     label: "Processing",
     icon: HourglassIcon,
     className:
-      "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-400",
+      "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-400",
   },
 
   Refunded: {
@@ -96,7 +96,7 @@ const deliveryConfig = {
     label: "Expired",
     icon: XCircle,
     className:
-      "border-red-200 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400",
+      "border-red-300 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400",
   }
 };
 

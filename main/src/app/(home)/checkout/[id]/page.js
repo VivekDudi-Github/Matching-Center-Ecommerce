@@ -12,10 +12,9 @@ import { exfn } from '@/app/helpers/extractActions';
 import { fetchOrderById } from '@/app/lib/controller/fetchOrder';
 import { toast } from 'react-toastify';
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
-import { SkeletonBlock } from '@/app/helpers/SkeletonComp';
 import CheckSumSkeleton from '@/app/components/checkout/CheckSumSkeleton';
-import OrderStatus from '@/app/components/orders/OrderStatus';
-
+import { getTimeClient } from '@/app/helpers/getTimeClient';
+import CustomerNotifications from '@/app/helpers/AblyClient';
 
 export default function page() {
   const {id} = useParams();
@@ -49,6 +48,14 @@ export default function page() {
     if(status === "authenticated" && id){
       const fetch = async () => {
         try {
+          const time = await getTimeClient();
+          const timeSec = time/1000;
+
+          if( Date.now()/1000 >= timeSec + 5 && Date.now()/1000 <= timeSec-5){
+            toast.error("Device clock is wrong, Please correct it");
+            return;
+          }
+
           const order = await exfn(() => fetchOrderById(id));
           const setValue = methods.setValue;
 
@@ -84,9 +91,16 @@ export default function page() {
           {/* Heading */}
 
           <div className="mb-4">
-            <h1 className="sm:text-3xl text-2xl font-bold text-zinc-900 dark:text-white">
-              Checkout
-            </h1>
+            <div className='flex justify-between'>
+              <h1 className="sm:text-3xl text-2xl font-bold text-zinc-900 dark:text-white">
+                Checkout
+              </h1>
+
+              
+              <CustomerNotifications customerId={session?.user?.id} orderId={id} />
+
+            </div>
+           
 
             <p className="mt-1 sm:text-base text-sm text-zinc-500 dark:text-zinc-400">
               Fill in your details and review your order before placing it.

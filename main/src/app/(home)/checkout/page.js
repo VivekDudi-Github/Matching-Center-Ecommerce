@@ -108,7 +108,7 @@ export default function CheckoutPage() {
         }))
         let isMissedLen = filteredCartData.filter(item => item.color.length > 0);
         if(isMissedLen.length < filteredCartData.length) {
-          toast.error("Some products are missing color", {autoClose: 7000});
+          toast.error("Some products are missing color quantity", {autoClose: 10000});
           return toast.info("you can adjust quantity in cart (top right icon)", {autoClose: 10000});
         }
 

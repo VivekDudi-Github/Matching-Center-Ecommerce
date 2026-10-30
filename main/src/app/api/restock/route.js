@@ -66,7 +66,7 @@ async function handler(req, res) {
     }
   )
 
-    return NextResponse.json({message:colors}, {status: 200})
+    return NextResponse.json({status: 200})
   } catch (error) {
     console.log("restock error", error);
     return NextResponse.json("error", {status: 500})

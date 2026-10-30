@@ -1,31 +1,11 @@
-// import "server-only";
+// "use server";
 // import { NextResponse } from "next/server";
 // import * as Ably from "ably";
 // import { getServerSession } from "next-auth";
 
 
-// export async function GET(request) {
+// export async function getAblyToken() {
 //   const user = await getServerSession();
-
-//   const { searchParams } = new URL(request.url);
-//   const attemptId = searchParams.get("attemptId");
-
-//   if (!attemptId) {
-//     return NextResponse.json(
-//       { error: "Missing attemptId" },
-//       { status: 400 }
-//     );
-//   }
-
-//   // Verify this user owns or is authorized to view the attempt.
-//   const attempt = await getPaymentAttempt(attemptId, user.id);
-
-//   if (!attempt) {
-//     return NextResponse.json(
-//       { error: "Payment attempt not found" },
-//       { status: 404 }
-//     );
-//   }
 
 //   const channel = `payment-attempt:${attempt.id}`;
 
