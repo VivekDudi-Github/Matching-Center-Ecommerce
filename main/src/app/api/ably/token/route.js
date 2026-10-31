@@ -24,21 +24,21 @@ export async function GET() {
       );
     }
 
-    const isEligible = await prisma.order.findFirst({
-      where: {
-        customerId,
-        reverseAt: {
-          lte: new Date(),
-        }
-      }
-    })
+    // const isEligible = await prisma.order.findFirst({
+    //   where: {
+    //     customerId,
+    //     reverseAt: {
+    //       lte: new Date(),
+    //     }
+    //   }
+    // })
 
-    if(!isEligible){
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    // if(!isEligible){
+    //   return NextResponse.json(
+    //     { error: "Unauthorized" },
+    //     { status: 401 }
+    //   );
+    // }
 
     const channelName = `customer:${customerId}:notifications`;
 
@@ -49,7 +49,9 @@ export async function GET() {
       }),
     });
 
-    return NextResponse.json(tokenRequest);
+    const token = await ably.auth.requestToken(tokenRequest);
+
+    return NextResponse.json(token);
   } catch (error) {
     console.error("Ably token generation failed:", error);
 

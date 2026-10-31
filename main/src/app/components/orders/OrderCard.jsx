@@ -35,7 +35,7 @@ export default function OrderCard({ order }) {
   const date = new Date(order.createdAt).toLocaleString("en-IN", dateOptions);
 
   const isExpired = new Date(order.expireAt) < new Date();
-  const isPending = !order?.payment?.status || order?.payment?.status !== "Paid" || order?.payment?.status !== "Processing";
+  const isPending = !order?.payment?.status || (order?.payment?.status !== "Paid" && order?.payment?.status !== "Processing");
 
   const handleCopy = async () => {
     try {
@@ -46,6 +46,9 @@ export default function OrderCard({ order }) {
       console.error("Failed to copy ID: ", err);
     }
   };
+  if(order.id === "vktqtgdrria4chuf599tchks"){
+    console.log(isExpired , isPending, order);
+  }
   return (
     <motion.article
       layout
@@ -77,10 +80,11 @@ export default function OrderCard({ order }) {
                 </h3>
               </div>
 
-              <Link href={"/checkout/"+ order?.id} className="text-xs flex text-amber-600 " >
-                
-                <MenuIcon />
-              </Link>
+              {isExpired && 
+                <Link href={"/checkout/"+ order?.id} className="text-xs flex text-amber-600 " >    
+                  <MenuIcon />
+                </Link>
+              }
             </div>
 
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-500 dark:text-zinc-400">

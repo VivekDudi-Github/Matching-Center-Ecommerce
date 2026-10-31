@@ -42,7 +42,6 @@ export async function publishCustomerNotification({
       name: "notification",
       data: {
         code,
-        message,
         storeOrderId: storeOrderId ?? null,
         createdAt: new Date().toISOString(),
       },

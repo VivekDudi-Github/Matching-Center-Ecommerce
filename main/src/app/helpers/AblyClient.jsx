@@ -8,6 +8,44 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bell, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const orderCodes = {
+  OUT_OF_STOCK: {
+    message: "Unfortunately, we are out of stock for this product. Please try again later.",
+    status: "Stock Out",
+  },
+
+  PAYMENT_SUCCESSFUL: {
+    message: "Your payment has been successfully completed. We will notify you once your order is ready for pickup.",
+    status: "Paymesnt Successfull",
+  },
+
+  PAYMENT_FAILED: {
+    message: "Your payment could not be completed. Please check your order status.",
+    status: "Payment Failed",
+  },
+
+  PAYMENT_REVIEW_REQUIRED: {
+    message: "We are still verifying your payment. Please check your order status shortly.",
+    status: "Payment Review",
+  },
+
+  ORDER_EXPIRED: {
+    message: "Your order reservation has expired. Please try placing your order again.",
+    status: "Expired",
+  },
+
+  ORDER_FAILED: {
+    message: "We couldn't process your order. Please try again.",
+    status: "Failed",
+  },
+
+  INTERNAL_SERVER_ERROR: {
+    message: "Internal server error, please try again",
+    status: "Error",
+  }
+};
+
+
 
 export default function CustomerNotifications({ customerId, orderId }) {
   const [showMessages, setShowMessages] = useState(false);
@@ -33,7 +71,7 @@ export default function CustomerNotifications({ customerId, orderId }) {
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
-
+  console.log(notifications);
 
   useEffect(() => {
     if (!customerId) return;
@@ -41,29 +79,34 @@ export default function CustomerNotifications({ customerId, orderId }) {
     const handleMessage = (message) => {
       if (message.name !== "notification") return;
       toast.info(message.data.message);
-      if(message.data.orderId !== orderId) return;
-
+      // if(message.data.orderId !== orderId) return;
+      console.log(message);
       setNotifications((previous) => [
         {
           id: message.id ?? `${Date.now()}-${Math.random()}`,
-          ...message.data.message,
+          ...message.data,
         },
         ...previous,
       ]);
+      setShowMessages(true);
     };
     let channel;
     const buildConnection = async () => {
       try {
-        const res = await fetch("/api/ably/token");
-         if (!res.ok) {
-          throw new Error(`Failed to fetch Ably token: ${response.statusText}`);
-        }
-        const tokenData = await res.json();
-        
         const client = new Ably.Realtime({
-          tokenDetails: tokenData, 
-          clientId: tokenData.clientId,
-        });
+          authCallback: async(params, cb) => {
+            try {
+              const res = await fetch("/api/ably/token");
+              if (!res.ok) {
+                throw new Error(`Failed to fetch Ably token: ${res.statusText}`);
+              }
+              const tokenData = await res.json();
+              cb(null, tokenData);
+            } catch (error) {
+              console.log("error from ably client", error)
+            }
+          }
+        }); 
     
         channel = client.channels.get(
           `customer:${customerId}:notifications`
@@ -80,7 +123,7 @@ export default function CustomerNotifications({ customerId, orderId }) {
     buildConnection();
     return () => {
       if(channel) channel.unsubscribe("notification", handleMessage);
-      if(clientRef.current) client.close();
+      if(clientRef.current) clientRef.current.close();
     };
   }, [customerId]);
 
@@ -134,7 +177,11 @@ export default function CustomerNotifications({ customerId, orderId }) {
                     All caught up!
                   </motion.p>
                 ) : (
-                  notifications.map((notification) => (
+                  notifications.map((notification) => {
+                    if(!orderCodes[notification.code]) return ;
+                    const notif = orderCodes[notification.code];
+
+                    return (
                     <motion.div
                       key={notification?.id}
                       layout
@@ -147,16 +194,16 @@ export default function CustomerNotifications({ customerId, orderId }) {
                                  dark:border-slate-800/40 dark:bg-slate-800/30 dark:hover:bg-slate-800/60 dark:hover:border-slate-700"
                     >
                       <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400">
-                        Order Status
+                        {notif.status}
                       </h4>
                       <p className="text-xs text-zinc-600 dark:text-slate-300 mt-0.5 leading-normal">
-                        {notification?.message}
+                        {notif.message} 
                       </p>
 
                       {/* Inline Dismiss Cross Button */}
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevents clicking the item from triggering other actions
+                          e.stopPropagation(); 
                           removeNotification(notification.id);
                         }}
                         className="absolute right-1.5 top-1.5 p-0.5 rounded text-zinc-400 
@@ -167,7 +214,7 @@ export default function CustomerNotifications({ customerId, orderId }) {
                         <X className="w-3 h-3" />
                       </button>
                     </motion.div>
-                  ))
+                  )})
                 )}
               </AnimatePresence>
             </div>

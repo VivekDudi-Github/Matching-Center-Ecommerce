@@ -129,7 +129,7 @@ async function bgOps(eventData, eventId) {
         }
        
         console.log("capturing the payment");
-        
+  
         instance.payments.capture(entity?.id, payment.amount , "INR") ;  
 
         // after initating the payment capture  
@@ -195,6 +195,13 @@ async function bgOps(eventData, eventId) {
             }
           }
         });
+            
+        await publishCustomerNotification({
+          customerId: order.customerId,
+          code: "PAYMENT_SUCCESSFUL",
+          orderId: order.id
+        })
+        
         break;
 
       default:
