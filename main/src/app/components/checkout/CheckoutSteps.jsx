@@ -41,7 +41,7 @@ export default function CheckoutSteps({currentStep}) {
         {/* Confirmation */}
 
         <div className="flex flex-col items-center">
-          <div className={`flex sm:size-11 ${currentStep === 3 ? "dark:bg-white dark:text-black bg-black text-white " : "text-gray-400"}  size-6 items-center p-1 justify-center rounded-full border border-zinc-300  dark:border-zinc-700`}>
+          <div className={`flex sm:size-11 ${currentStep === 4 ? "bg-green-600" : currentStep === 3 ? "dark:bg-white dark:text-black bg-black text-white " : "text-gray-400"}  size-6 items-center p-1 justify-center rounded-full border border-zinc-300  dark:border-zinc-700`}>
             <CircleCheckBig  />
           </div>
 

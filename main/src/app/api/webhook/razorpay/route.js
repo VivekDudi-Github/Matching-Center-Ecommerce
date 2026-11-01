@@ -2,6 +2,7 @@ import { after, NextResponse } from "next/server";
 import crypto from "crypto";
 import Razorpay from "razorpay"
 import { publishCustomerNotification } from "@/app/lib/services/Ably/publishNotif";
+import { sendPaySuccessMail } from "@/app/helpers/mail/SendSuccessMail";
 
 export async function POST(request) {
   try {
@@ -67,7 +68,9 @@ async function bgOps(eventData, eventId) {
       },
       include: {
         payment: true,
-        }
+        orderItems: true,
+        customer: true
+      }
     });
     if(!order){
       return;
@@ -195,6 +198,7 @@ async function bgOps(eventData, eventId) {
             }
           }
         });
+        await sendPaySuccessMail(order, order.customerId , entity.id);
             
         await publishCustomerNotification({
           customerId: order.customerId,
@@ -209,7 +213,6 @@ async function bgOps(eventData, eventId) {
     }
   } catch (error) {
     const customerId = eventData?.payload?.payment?.entity?.notes?.customerId ;
-
 
     if(customerId){
       await publishCustomerNotification({

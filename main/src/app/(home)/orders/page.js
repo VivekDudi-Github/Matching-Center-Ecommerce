@@ -137,6 +137,7 @@ export default function OrdersPage() {
     if (status === "authenticated" && session?.user?.email) {
       const fetch = async () => {
         try {
+          
           const customer = await exfn(() => fetchCustomerByEmail(session?.user?.email));
           const orders = await exfn(() => fetchUserOrders(null));
 

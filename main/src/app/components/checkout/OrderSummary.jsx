@@ -170,7 +170,7 @@ export default function OrderSummary({isLoading, status , session, order}) {
               {(isLoading || status === "loading") ?
               <Loader2Icon className="animate-spin"/> 
               : 
-              timeLeft <= 1 ? "Order Expired" : paymentStatus === "Paid" ? "Paid" :  <RazorPayCheckout order={order} />
+              paymentStatus === "Paid" ? "Paid"  : timeLeft <= 1 ? "Order Expired" : <RazorPayCheckout order={order} />
               }  
           </div>
         )}

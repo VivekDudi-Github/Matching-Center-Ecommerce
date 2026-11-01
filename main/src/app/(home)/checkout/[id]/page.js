@@ -57,6 +57,7 @@ export default function page() {
           }
 
           const order = await exfn(() => fetchOrderById(id));
+
           const setValue = methods.setValue;
 
           setValue("name", order.customer.name);
@@ -95,20 +96,16 @@ export default function page() {
               <h1 className="sm:text-3xl text-2xl font-bold text-zinc-900 dark:text-white">
                 Checkout
               </h1>
-
-              
               <CustomerNotifications customerId={session?.user?.id} orderId={id} />
-
             </div>
            
 
             <p className="mt-1 sm:text-base text-sm text-zinc-500 dark:text-zinc-400">
               Fill in your details and review your order before placing it.
             </p>
-
           </div>
 
-          <CheckoutSteps currentStep={3}/>
+          <CheckoutSteps currentStep={order?.payment?.status === "Paid" ? 4 : 3 }/>
 
           
 

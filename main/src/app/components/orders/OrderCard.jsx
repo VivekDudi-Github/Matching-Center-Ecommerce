@@ -46,9 +46,6 @@ export default function OrderCard({ order }) {
       console.error("Failed to copy ID: ", err);
     }
   };
-  if(order.id === "vktqtgdrria4chuf599tchks"){
-    console.log(isExpired , isPending, order);
-  }
   return (
     <motion.article
       layout
