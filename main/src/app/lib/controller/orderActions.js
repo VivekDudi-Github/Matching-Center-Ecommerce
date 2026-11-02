@@ -23,7 +23,6 @@ export const createorder = async(data) => {
   }
   
   // data check //
-  console.log("data");
   const parsedData = newOrderFormSchemaServer.safeParse(data);
     if (!parsedData.success) {
       const {errors, properties} = z.treeifyError(parsedData.error);
@@ -48,5 +47,27 @@ export const createorder = async(data) => {
     const orderId = await createorderService(parsedData.data, email, name, SHIPPING);
     console.log(orderId, "orderId")
     return resSuccess({orderId: orderId});
+  })
+}
+
+export const cancelRequest = async(orderId) => {
+  return await TryCatch(async () => {
+    if(!orderId) return resError("No order ID was provided");
+    
+    const session = await getServerSession(authOptions);
+    if(!session || !session?.user) return resError("Please login to place order");
+
+    const order = await prisma.order.update({
+      where: {
+        id : orderId,
+        customerId: session.user.id
+      },
+      data: {
+        status: "CancelRequested"
+      }
+    });
+
+    if(!order) return resError("Unauthorized request or order not found.")
+    return resSuccess("Order cancel initated.")
   })
 }

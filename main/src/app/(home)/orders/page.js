@@ -132,7 +132,8 @@ export default function OrdersPage() {
   const { data: session, status } = useSession();
   const [customer, setCustomer] = useState({});
   const [orders, setOrders] = useState([]);
-  
+  const [cursor, setCursor] = useState(null);
+
   useEffect(() => {
     if (status === "authenticated" && session?.user?.email) {
       const fetch = async () => {
@@ -140,9 +141,11 @@ export default function OrdersPage() {
           
           const customer = await exfn(() => fetchCustomerByEmail(session?.user?.email));
           const orders = await exfn(() => fetchUserOrders(null));
-
+          
           setCustomer(customer);
+          setCursor(orders?.cursor);
           setOrders(orders?.orders || []);
+          
         } catch (error) {
           console.log("error in fetching customer and orders", error);
           toast.error(error?.message || "Something went wrong");
@@ -196,7 +199,7 @@ export default function OrdersPage() {
 
           {(isLoading && orders?.length === 0) ?
             Array.from({length: 4}, (_, i) => <OrderCardSkeleton key={i} />)
-            : <OrdersList orders={orders} cursor={orders?.cursor} />
+            : <OrdersList orders={orders} cursor={cursor} setOrders={setOrders} />
           } 
 
         </section>

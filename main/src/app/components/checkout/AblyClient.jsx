@@ -47,7 +47,7 @@ const orderCodes = {
 
 
 
-export default function CustomerNotifications({ customerId, orderId }) {
+export default function CustomerNotifications({ customerId, order }) {
   const [showMessages, setShowMessages] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const containerRef = useRef(null);
@@ -71,11 +71,11 @@ export default function CustomerNotifications({ customerId, orderId }) {
   const removeNotification = (id) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
   };
-  console.log(notifications);
-
+  
   useEffect(() => {
-    if (!customerId) return;
-    
+    if (!customerId || !order) return;
+    if(order.payment.status === "Paid") return;
+
     const handleMessage = (message) => {
       if (message.name !== "notification") return;
       toast.info(message.data.message);
@@ -125,7 +125,7 @@ export default function CustomerNotifications({ customerId, orderId }) {
       if(channel) channel.unsubscribe("notification", handleMessage);
       if(clientRef.current) clientRef.current.close();
     };
-  }, [customerId]);
+  }, [customerId, order]);
 
   return (
     // Relative wrapper guarantees the absolute dialog positions perfectly near the icon

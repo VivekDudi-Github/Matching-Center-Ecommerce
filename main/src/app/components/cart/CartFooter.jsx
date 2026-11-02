@@ -57,7 +57,7 @@ export default function CartFooter({closeCart}) {
             <p className="text-zinc-900 dark:text-zinc-200 font-extralight text-xs">+ No GST</p>
           </span>
 
-          <span>₹{Number(total) + Number(shipping)}</span>
+          <span>₹{(Number(total) + Number(shipping)).toLocaleString()}</span>
         </div>
       </div>
 

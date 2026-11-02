@@ -3,8 +3,11 @@
 import { motion } from "framer-motion";
 import { PackageOpen } from "lucide-react";
 import OrderCard from "./OrderCard";
+import { useEffect, useRef, useState } from "react";
+import { exfn } from "@/app/helpers/extractActions";
+import { fetchUserOrders } from "@/app/lib/controller/fetchOrder";
 
-export default function OrdersList({ orders = [] , curosr }) {
+export default function OrdersList({ orders = [] , curosr, setOrders }) {
   if (!orders.length) {
     return (
       <motion.div
@@ -27,6 +30,19 @@ export default function OrdersList({ orders = [] , curosr }) {
       </motion.div>
     );
   }
+  const [cursorState, setCurserState] = useState(curosr);
+  console.log("cursorState", cursorState);
+  
+
+  const fetchMore = async(idx) => {
+    if(cursorState === null) return;
+    const orders = await exfn(() => fetchUserOrders(cursorState));
+    setCurserState(orders?.cursor);
+
+    setOrders(prev => [
+      ...prev, ...orders.orders
+    ])
+  }
 
   return (
     <motion.div
@@ -42,8 +58,9 @@ export default function OrdersList({ orders = [] , curosr }) {
       }}
       className="space-y-4"
     >
-      {orders.map((order) => (
+      {orders.map((order, idx) => (
         <motion.div
+          onViewportEnter={ idx === orders.length-4 ? () => fetchMore(idx) : null }
           key={order.id}
           variants={{
             hidden: {

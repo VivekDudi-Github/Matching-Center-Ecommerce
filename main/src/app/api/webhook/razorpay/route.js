@@ -2,7 +2,7 @@ import { after, NextResponse } from "next/server";
 import crypto from "crypto";
 import Razorpay from "razorpay"
 import { publishCustomerNotification } from "@/app/lib/services/Ably/publishNotif";
-import { sendPaySuccessMail } from "@/app/helpers/mail/SendSuccessMail";
+import { sendPaySuccessMail } from "@/app/helpers/mail/SendMail";
 
 export async function POST(request) {
   try {

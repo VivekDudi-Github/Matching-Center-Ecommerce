@@ -17,6 +17,7 @@ import { useState } from "react";
 
 import OrderItem from "./OrderItem";
 import OrderStatus from "./OrderStatus";
+import OrderActionMenu from "./OrderActionMenu";
 
 export default function OrderCard({ order }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -73,14 +74,11 @@ export default function OrderCard({ order }) {
                       <Copy size={14} />
                     )}
                   </button>
-
                 </h3>
               </div>
 
               {isExpired && 
-                <Link href={"/checkout/"+ order?.id} className="text-xs flex text-amber-600 " >    
-                  <MenuIcon />
-                </Link>
+                <OrderActionMenu order={order} />
               }
             </div>
 

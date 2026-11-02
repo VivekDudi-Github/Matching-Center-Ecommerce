@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 import CheckSumSkeleton from '@/app/components/checkout/CheckSumSkeleton';
 import { getTimeClient } from '@/app/helpers/getTimeClient';
-import CustomerNotifications from '@/app/helpers/AblyClient';
+import CustomerNotifications from '@/app/components/checkout/AblyClient';
 
 export default function page() {
   const {id} = useParams();
@@ -96,7 +96,7 @@ export default function page() {
               <h1 className="sm:text-3xl text-2xl font-bold text-zinc-900 dark:text-white">
                 Checkout
               </h1>
-              <CustomerNotifications customerId={session?.user?.id} orderId={id} />
+              <CustomerNotifications customerId={session?.user?.id} order={order} />
             </div>
            
 

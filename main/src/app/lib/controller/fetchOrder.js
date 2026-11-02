@@ -52,8 +52,6 @@ export const fetchUserOrders = async (cursor) => {
     const userId = session?.user?.id;
     if(!userId) return resError("User credential is missing");
 
-    console.log("userId", userId);
-
     return resSuccess(await fetchOrdersByCustomerIdService({customerId: userId, cursor}));
   });
 }
