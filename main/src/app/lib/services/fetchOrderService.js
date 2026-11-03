@@ -2,6 +2,7 @@
 import { serializePrisma } from '@/app/helpers/serializePrisma';
 import { prisma } from '@/app/lib/prisma';
 
+const LIMIT = 10;
 
 export const fetchOrdersByCustomerIdService = async({customerId, cursor}) => {
   const cursorFilter = cursor ? {
@@ -18,7 +19,7 @@ export const fetchOrdersByCustomerIdService = async({customerId, cursor}) => {
       id: "desc"
     },
     ...cursorFilter,
-    take: 11,
+    take: LIMIT,
     skip: cursor ? 1 : 0,
     include: {
       orderItems: {
@@ -34,8 +35,7 @@ export const fetchOrdersByCustomerIdService = async({customerId, cursor}) => {
     }
   });
 
-  let newCursor = orders.length > 10 ? orders[orders.length - 1].id : null;
-  if(newCursor) orders.pop();
+  let newCursor = orders.length === LIMIT ? orders[orders.length - 1].id : null;
   
   return {orders: serializePrisma(orders), cursor: newCursor};
 }

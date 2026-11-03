@@ -35,7 +35,7 @@ export const authOptions = {
           })
         }
         token.user.id = customer.id;
-        token.user.number = customer.number;
+        token.user.number = customer?.number;
       }
       return token;
     },

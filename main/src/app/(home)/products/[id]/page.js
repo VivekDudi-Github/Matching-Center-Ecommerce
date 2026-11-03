@@ -14,29 +14,6 @@ import { toast } from 'react-toastify';
 import { exfn } from '@/app/helpers/extractActions';
 import { getProducts } from '@/app/lib/controller/shopActions';
 
-// const PRODUCT_DATA = {
-//   title: 'Premium Handwoven Silk Blend Fabric - 1 Yard',
-//   id: 'fab-91',
-//   price: '₹35.00',
-//   originalPrice: '₹50.00',
-//   rating: 4.8,
-//   reviews: 124,
-//   description: 'Elevate your tailoring with our premium silk blend. Woven for durability while maintaining a luxurious sheen, this fabric is ideal for festive wear, evening gowns, and high-end upholstery.',
-//   quantity: 1,
-//   images: [
-//     '/dis_1.webp',
-//     '/dis_2.webp',
-//     '/fabrics_1.webp',
-//     '/fabrics_2.jpg',
-//     '/fabrics_3.webp',
-//   ],
-//   color: [
-//     { name: 'Sunset Orange', hex: '#f05f19' },
-//     { name: 'Crimson Red', hex: '#e20000' },
-//     { name: 'Midnight Black', hex: '#000000' },
-//   ],
-// };
-
 export default function ProductPage() {
   const {id} = useParams();
   const router = useRouter();

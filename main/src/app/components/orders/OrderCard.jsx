@@ -47,6 +47,13 @@ export default function OrderCard({ order }) {
       console.error("Failed to copy ID: ", err);
     }
   };
+  const cancelPendingOrder = async () => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
   return (
     <motion.article
       layout
@@ -77,8 +84,15 @@ export default function OrderCard({ order }) {
                 </h3>
               </div>
 
-              {isExpired && 
+              {!isExpired ? 
                 <OrderActionMenu order={order} />
+              : 
+              <button
+                onClick={cancelPendingOrder}
+                className="h-full text-amber-600 border border-amber-200 dark:border-amber-800  hover:text-amber-700 transition-colors p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                >
+                  Cancel
+               </button>
               }
             </div>
 

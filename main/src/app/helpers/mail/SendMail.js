@@ -45,7 +45,7 @@ export const sendPaySuccessMail = async (order, custumer) => {
             "items": items,
             "Amount": order.amount+order.shipping,
             "Order_Date": order.payment.updatedAt,
-            "Payment_ID": order.payment.razorpayPaymentId,
+            "Payment_ID": order.payment.gatewayPaymentId,
             "customer_name": custumer.name,
             "order_ID": order.id
           }

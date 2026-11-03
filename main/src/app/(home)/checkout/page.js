@@ -121,9 +121,7 @@ export default function CheckoutPage() {
       } catch (error) {
         console.log("error", error);  
         updateCartStore();
-        if(!Array.isArray(error.message)) return toast.error(error.message || "Something went wrong", {autoClose: 7000});
-          response.message.slice(0,4).forEach(message => toast.error(message));
-          return;    
+        return toast.error(error.message || "Something went wrong", {autoClose: 7000})
       } finally {
         setIsLoading(false);
       }

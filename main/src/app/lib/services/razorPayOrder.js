@@ -18,7 +18,7 @@ export const razorPayOrderService = async(orderId, session) => {
     if(!order) return resError("Order not found");
     if(order?.payment?.status === "Paid") return resError("Order already paid");
 
-    if(order?.payment?.razorpayOrderId) return resSuccess(order.payment.razorpayOrderId);
+    if(order?.payment?.gatewayOrderId) return resSuccess(order.payment.gatewayOrderId);
 
     const totalInPaise = order.total * 100 + order.shipping * 100;
 
@@ -48,7 +48,7 @@ export const razorPayOrderService = async(orderId, session) => {
 
     const payment = await prisma.payment.create({
       data: {
-          razorpayOrderId: razorpayOrder.id,
+          gatewayOrderId: razorpayOrder.id,
           amount: totalInPaise,
           status: "Pending",
           method: "UPI",

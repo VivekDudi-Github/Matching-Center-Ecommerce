@@ -135,13 +135,13 @@ export default function NewProductPage() {
     console.log("onErrors", errors);
     
     if(keys.length > 0) {
-      const isArray = Array.isArray(errors[keys[0]]);
+      const isArray = Array.isArray(errors?.[keys?.[0]]);
       if(isArray) {
-        toast.error(errors[keys[0]][0].message || "Please fill all required color fields");  
-      } else if(errors[keys[0]].root) {
-        toast.error(errors[keys[0]].root.message || "Please fill all required fields");  
+        toast.error(errors?.[keys[0]][0]?.message || "Please fill all required color fields");  
+      } else if(errors[keys[0]]?.root) {
+        toast.error(errors?.[keys?.[0]]?.root?.message || "Please fill all required fields");  
       } else {
-        toast.error(errors[keys[0]].message || "Please fill all required fields");
+        toast.error(errors?.[keys?.[0]]?.message || "Please fill all required fields");
       }
       return;
     }

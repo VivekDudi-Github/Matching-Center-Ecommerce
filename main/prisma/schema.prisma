@@ -18,7 +18,7 @@ model Customer  {
   
   name        String
   email       String   @unique
-  number      String   @unique
+  number      String?  @unique
   verified    Boolean  @default(false)
   
   orders      Order[]
@@ -239,9 +239,9 @@ model Payment {
   status              PaymentStatus       @default(Pending) 
   method              Method
   
-  razorpayOrderId     String?             @unique
-  razorpayPaymentId   String?             @unique
-  razorpayEventId     String?            @unique
+  gatewayOrderId     String?             @unique
+  gatewayPaymentId   String?             @unique
+  gatewayEventId     String?            @unique
    
 
   customerId          String
@@ -255,8 +255,8 @@ model Payment {
   @@index([status])
   @@index([customerId])
   @@index([orderId])
-  @@index([razorpayOrderId])
-  @@index([razorpayPaymentId])
+  @@index([gatewayOrderId])
+  @@index([gatewayPaymentId])
 }
 
 model Address {

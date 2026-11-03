@@ -74,7 +74,7 @@ export default function CustomerNotifications({ customerId, order }) {
   
   useEffect(() => {
     if (!customerId || !order) return;
-    if(order.payment.status === "Paid") return;
+    if(order?.payment?.status === "Paid") return;
 
     const handleMessage = (message) => {
       if (message.name !== "notification") return;

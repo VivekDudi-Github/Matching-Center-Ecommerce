@@ -6,8 +6,10 @@ import OrderCard from "./OrderCard";
 import { useEffect, useRef, useState } from "react";
 import { exfn } from "@/app/helpers/extractActions";
 import { fetchUserOrders } from "@/app/lib/controller/fetchOrder";
+import { toast } from "react-toastify";
+import OrderCardSkeleton from "./skeleton/OrderCardSkeleton";
 
-export default function OrdersList({ orders = [] , curosr, setOrders }) {
+export default function OrdersList({ orders = [] , cursor, setOrders }) {
   if (!orders.length) {
     return (
       <motion.div
@@ -30,18 +32,26 @@ export default function OrdersList({ orders = [] , curosr, setOrders }) {
       </motion.div>
     );
   }
-  const [cursorState, setCurserState] = useState(curosr);
-  console.log("cursorState", cursorState);
+  const [cursorState, setCurserState] = useState(cursor);
+  const [isLoading, setIsLoading] = useState(false);
   
 
   const fetchMore = async(idx) => {
-    if(cursorState === null) return;
-    const orders = await exfn(() => fetchUserOrders(cursorState));
-    setCurserState(orders?.cursor);
-
-    setOrders(prev => [
-      ...prev, ...orders.orders
-    ])
+    try {
+      if(!cursorState || isLoading ) return;
+      setIsLoading(true);
+      const orders = await exfn(() => fetchUserOrders(cursorState));
+      setCurserState(orders?.cursor);
+  
+      setOrders(prev => [
+        ...prev, ...orders.orders
+      ])
+    } catch (error) {
+      console.log("error in fetching orders", error);
+      toast.error(error.message || "Something went wrong while fetching more orders")
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -60,7 +70,7 @@ export default function OrdersList({ orders = [] , curosr, setOrders }) {
     >
       {orders.map((order, idx) => (
         <motion.div
-          onViewportEnter={ idx === orders.length-4 ? () => fetchMore(idx) : null }
+          onViewportEnter={ idx === orders.length-1 ? () => fetchMore(idx) : null }
           key={order.id}
           variants={{
             hidden: {
@@ -79,6 +89,8 @@ export default function OrdersList({ orders = [] , curosr, setOrders }) {
           <OrderCard order={order} />
         </motion.div>
       ))}
+      {isLoading ? Array.from({length: 4}, (_, i) => <OrderCardSkeleton key={i} />) : null   }
+      
     </motion.div>
   );
 }

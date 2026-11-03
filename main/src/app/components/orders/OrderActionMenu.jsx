@@ -65,19 +65,21 @@ export default function OrderActionMenu({ order }) {
               >
                 Details
               </Link>
-
+              
               {/* Cancel Option */}
-              <button
-                onClick={() => {
-                  setIsMenuOpen(false); // Close dropdown
-                  setIsConfirmOpen(true); // Open confirm modal
-                }}
-                className="w-full text-left px-3 py-2 text-xs rounded-md font-medium transition-colors
-                           text-rose-600 dark:text-rose-400
-                           hover:bg-rose-50 dark:hover:bg-rose-950/30"
-              >
-                Cancel
-              </button>
+              {(order?.payment?.status === "Paid" && order.status === "Pending" ) &&
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false); // Close dropdown
+                    setIsConfirmOpen(true); // Open confirm modal
+                  }}
+                  className="w-full text-left px-3 py-2 text-xs rounded-md font-medium transition-colors
+                            text-rose-600 dark:text-rose-400
+                            hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                >
+                  Cancel
+                </button>
+              }
             </div>
           </motion.div>
         )}

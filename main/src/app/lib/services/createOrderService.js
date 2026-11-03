@@ -1,4 +1,5 @@
 "use server";
+import { resError } from '@/app/helpers/resObj';
 import { prisma } from '@/app/lib/prisma';
 
 
@@ -10,6 +11,22 @@ export const createorderService = async(data, email, name, SHIPPING) => {
 
   const colors = items.map(item => item.color).flat();
 
+  const isPendingOrder = await prisma.order.findFirst({
+    where: {
+      customer: {
+        email: email
+      },
+      expireAt : {
+        gt : new Date()
+      }
+    },
+    select: {
+      id: true
+    }
+  })
+
+  if(isPendingOrder) throw new Error("There is alreadya pending order by you, please pay or cancel it.");
+  
 
   // $ transaction $ //
 
@@ -68,7 +85,9 @@ export const createorderService = async(data, email, name, SHIPPING) => {
         where: {
           email: email,
         }, 
-        update: {} ,
+        update: {
+          number: phone
+        } ,
         create: {
           name: name,
           number: phone,
@@ -138,4 +157,18 @@ export const createorderService = async(data, email, name, SHIPPING) => {
     console.log("error in create order transaction::", error);
     throw new Error(error?.message ?? "Something went wrong, please try again");
   }
+}
+
+export const orderCancelService = async (order,session) => {
+  const orderExpiry = Date.parse(order.expireAt);
+  if(order.payment.status === "Paid" || order.payment.status === "Processing"){
+    
+  }
+
+  if(orderExpiry  <= Date.now){
+
+  }else {
+
+  }
+  
 }

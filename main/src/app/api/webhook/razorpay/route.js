@@ -63,7 +63,7 @@ async function bgOps(eventData, eventId) {
       where : {
         id: entity.notes.orderId,
         payment: {
-          razorpayOrderId: entity.order_id,
+          gatewayOrderId: entity.order_id,
         }
       },
       include: {
@@ -84,7 +84,7 @@ async function bgOps(eventData, eventId) {
     switch (event) {
       case "payment.authorized":
         if(!order) break;
-        if(payment.razorpayOrderId !== entity.order_id) break;
+        if(payment.gatewayOrderId !== entity.order_id) break;
 
         
         if(order.expireAt < new Date()) {
@@ -94,7 +94,7 @@ async function bgOps(eventData, eventId) {
             where: {
               id : entity.notes.orderId,
               payment: {
-                razorpayOrderId: entity.order_id,
+                gatewayOrderId: entity.order_id,
               }
             },
             data: {
@@ -120,7 +120,7 @@ async function bgOps(eventData, eventId) {
           // prevents the double payment by customer 
           // this happens when accidently user paid twice in succession or due to delay
 
-          if(payment?.razorpayEventId !== eventId){
+          if(payment?.gatewayEventId !== eventId){
             
             await publishCustomerNotification({
               customerId: order.customerId,
@@ -144,7 +144,7 @@ async function bgOps(eventData, eventId) {
           where: {
             id : entity.notes.orderId,
             payment: {
-              razorpayOrderId: entity.order_id,
+              gatewayOrderId: entity.order_id,
             }
           },
           data: {
@@ -152,14 +152,13 @@ async function bgOps(eventData, eventId) {
             reverseAt: null,
             payment: {
               update: {
-                razorpayEventId: eventId,
-                razorpayPaymentId: entity.id,
+                gatewayEventId: eventId,
+                gatewayPaymentId: entity.id,
                 status: "Processing",
               }
             }
           }
         })
-        
         break;
 
       case "payment.failed":

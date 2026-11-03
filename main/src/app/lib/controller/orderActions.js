@@ -7,7 +7,7 @@ import { resError, resSuccess } from "@/app/helpers/resObj";
 import z from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { createorderService } from "../services/createOrderService";
+import { createorderService, orderCancelService } from "../services/createOrderService";
 
 const SHIPPING = 80;
 
@@ -25,17 +25,7 @@ export const createorder = async(data) => {
   // data check //
   const parsedData = newOrderFormSchemaServer.safeParse(data);
     if (!parsedData.success) {
-      const {errors, properties} = z.treeifyError(parsedData.error);
-      console.log(errors)      
-      let parseError = [];
-      if(errors.length) {
-        return resError("Something went wrong, please try again");
-      }
-      Object.keys(properties).forEach(key => {
-        if(properties[key]?.errors?.length) {
-          parseError.push(properties[key].errors[0]);
-        }
-      });
+      const parseError = parsedData.error?.issues?.[0]?.message;
       return resError(parseError);
     }
 
@@ -50,22 +40,23 @@ export const createorder = async(data) => {
   })
 }
 
-export const cancelRequest = async(orderId) => {
+export const cancelOrder = async(orderId) => {
   return await TryCatch(async () => {
     if(!orderId) return resError("No order ID was provided");
     
     const session = await getServerSession(authOptions);
     if(!session || !session?.user) return resError("Please login to place order");
 
-    const order = await prisma.order.update({
-      where: {
+    const order = await prisma.order.findFirst({
+      where : {
         id : orderId,
-        customerId: session.user.id
+        customerId : session.user.id
       },
-      data: {
-        status: "CancelRequested"
-      }
-    });
+    })
+
+    if(!order) return resError("Order not found");
+
+    const updatedOrder = await orderCancelService(order,session);
 
     if(!order) return resError("Unauthorized request or order not found.")
     return resSuccess("Order cancel initated.")

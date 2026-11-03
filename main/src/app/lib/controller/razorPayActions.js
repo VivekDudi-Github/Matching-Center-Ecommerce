@@ -30,7 +30,7 @@ const verifYRazorPay = async ({orderId, singature, paymentId}) => {
 
     const order = await prisma.payment.findUnique({
       where: {
-        razorpayOrderId: orderId,
+        gatewayOrderId: orderId,
       }
     });
 
