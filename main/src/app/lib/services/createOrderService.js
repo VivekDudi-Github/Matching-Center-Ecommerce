@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 import { resError } from '@/app/helpers/resObj';
 import { prisma } from '@/app/lib/prisma';
 
@@ -33,22 +33,24 @@ export const createorderService = async(data, email, name, SHIPPING) => {
   try {
     const res = await prisma.$transaction(async( tx) => {
         
-      const updatePromises = colors.map(color => tx.productVariant.update({
-        where: {
-          id: color.colorId,
-          availableMeters: {
-            gte: color.quantity
-          }
-        },
-        data: {
-          availableMeters: {
-            decrement: color.quantity
-          }
-        }
-      })) ;
+      const updatePromises = colors.map(color => tx.$executeRaw`
+          UPDATE "ProductVariant"
+          SET 
+            "availableMeters" = "availableMeters" - ${color.quantity},
+            "isLowStock" = ("availableMeters" - ${color.quantity}) <= "lowstock"
+          WHERE "id" = ${color.colorId}
+            AND "availableMeters" >= ${color.quantity}
+        `
+      );
 
-      await Promise.all(updatePromises);
-          
+      const results = await Promise.all(updatePromises);
+
+      const allSucceeded = results.every(rowsAffected => rowsAffected > 0);
+
+      if (!allSucceeded) {
+        throw new Error("Transaction rolled back: One or more items are out of stock!");
+      }
+
       const products = await tx.product.findMany({
         where: {
           id: {
@@ -160,15 +162,60 @@ export const createorderService = async(data, email, name, SHIPPING) => {
 }
 
 export const orderCancelService = async (order,session) => {
+  if(order.status === "Cancelled") return;
+  
   const orderExpiry = Date.parse(order.expireAt);
-  if(order.payment.status === "Paid" || order.payment.status === "Processing"){
-    
+  if((order?.payment?.status === "Paid" || order?.payment?.status === "Processing") && order.status === "Pending" ){
+      await prisma.order.update({
+        where: {
+          id : order.id
+        } , 
+        data: {
+          status : "CancelRequested"
+        }
+      })
+      return;
   }
 
-  if(orderExpiry  <= Date.now){
-
+  if(orderExpiry  <= Date.now()){
+    return;
   }else {
+  
+    await prisma.$transaction(async (tx) => {
 
+      const colors = order.orderItems.flatMap((item) => item.color).flat();    
+     
+      for( const color of colors) {
+        if(!color) continue;
+        try {
+          await tx.productVariant.update({
+            where: {
+              id: color.colorId
+            },
+            data: {
+              availableMeters:{
+                increment: color.quantity
+              }
+            }
+          })
+        } catch (error) {
+          console.log(":: ColorId ::", color?.colorId);
+          console.log(":: Error in restocking ::", error);
+        }
+      }
+
+      await prisma.order.update({
+        where : {
+          id : order.id
+        }, 
+        data: {
+          reverseAt: null,
+          status: "Cancelled",
+          expireAt: new Date()
+        }
+      })
+    }
+  )
   }
   
 }

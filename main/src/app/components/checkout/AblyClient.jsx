@@ -122,8 +122,12 @@ export default function CustomerNotifications({ customerId, order }) {
 
     buildConnection();
     return () => {
-      if(channel) channel.unsubscribe("notification", handleMessage);
-      if(clientRef.current) clientRef.current.close();
+      try {
+        if(channel) channel.unsubscribe("notification", handleMessage);
+        if(clientRef.current) clientRef.current.close();
+      } catch (error) {
+        console.error("error in returning hook customer notifs", error);
+      }
     };
   }, [customerId, order]);
 

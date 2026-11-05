@@ -1,5 +1,4 @@
-"use server";
-
+import "server-only";
 import { resSuccess } from '@/app/helpers/resObj';
 import { serializePrisma } from '@/app/helpers/serializePrisma';
 import { prisma } from '@/app/lib/prisma';

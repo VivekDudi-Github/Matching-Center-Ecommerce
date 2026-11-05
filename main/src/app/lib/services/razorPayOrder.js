@@ -49,7 +49,7 @@ export const razorPayOrderService = async(orderId, session) => {
     const payment = await prisma.payment.create({
       data: {
           gatewayOrderId: razorpayOrder.id,
-          amount: totalInPaise,
+          amount: order.total + order.shipping,
           status: "Pending",
           method: "UPI",
           order: {

@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link'; 
 import { AlertTriangle, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-toastify';
+import { cancelOrder } from '@/app/lib/controller/orderActions';
+import { exfn } from '@/app/helpers/extractActions';
 
 // Custom hook to detect clicks outside the menu
 function useClickOutside(ref, callback) {
@@ -16,18 +19,25 @@ function useClickOutside(ref, callback) {
   }, [ref, callback]);
 }
 
-export default function OrderActionMenu({ order }) {
+export default function OrderActionMenu({ order, isExpired }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   
-  
+  const showCancel = ((order?.payment?.status === "Paid" || order?.payment?.status === "Processing") && order.status === "Pending" ) || !isExpired   ;
+
   useClickOutside(menuRef, () => setIsOpen(false));
 
-  const handleCancelConfirm = () => {
-    console.log('Order cancelled successfully:', order?.id);
-    setIsConfirmOpen(false);
+  const handleCancelConfirm = async () => {
+    try {
+      const res = await exfn(() => cancelOrder(order.id));
+      console.log("Success", res);
+      toast.success(res || "Cancel Initiated");
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong, please try again")
+      console.log("error in canceling order", error)    
+    }
   };
 
 
@@ -67,11 +77,11 @@ export default function OrderActionMenu({ order }) {
               </Link>
               
               {/* Cancel Option */}
-              {(order?.payment?.status === "Paid" && order.status === "Pending" ) &&
+              {showCancel ?
                 <button
                   onClick={() => {
-                    setIsMenuOpen(false); // Close dropdown
-                    setIsConfirmOpen(true); // Open confirm modal
+                    setIsMenuOpen(false); 
+                    setIsConfirmOpen(true);
                   }}
                   className="w-full text-left px-3 py-2 text-xs rounded-md font-medium transition-colors
                             text-rose-600 dark:text-rose-400
@@ -79,13 +89,14 @@ export default function OrderActionMenu({ order }) {
                 >
                   Cancel
                 </button>
+                :  null
               }
+              
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {(order?.payment?.status === "Paid" && order.status === "Pending" ) && (
         <AnimatePresence>
           {isConfirmOpen && (
             <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
@@ -144,7 +155,7 @@ export default function OrderActionMenu({ order }) {
             </div>
           )}
         </AnimatePresence>
-      )}
+   
     </div>
   );
 }

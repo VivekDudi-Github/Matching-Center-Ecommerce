@@ -52,13 +52,15 @@ export const cancelOrder = async(orderId) => {
         id : orderId,
         customerId : session.user.id
       },
+      include: {
+        orderItems: true
+      }
     })
 
     if(!order) return resError("Order not found");
 
     const updatedOrder = await orderCancelService(order,session);
 
-    if(!order) return resError("Unauthorized request or order not found.")
     return resSuccess("Order cancel initated.")
   })
 }

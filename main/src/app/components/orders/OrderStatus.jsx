@@ -92,6 +92,13 @@ const deliveryConfig = {
       "border-red-200 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400",
   },
 
+  CancelRequested : {
+    label: "Cancel Initiated",
+    icon: XCircle,
+    className:
+      "border-red-200 bg-red-50 text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400",
+  },
+
   Expired: {
     label: "Expired",
     icon: XCircle,

@@ -11,6 +11,7 @@ import { fetchOrdersByCustomerId, fetchUserOrders } from "@/app/lib/controller/f
 import { toast } from "react-toastify";
 import { exfn } from "@/app/helpers/extractActions";
 import { fetchCustomerByEmail } from "@/app/lib/controller/fetchCustomer";
+import { getTimeClient } from "@/app/helpers/getTimeClient";
 
 const ordersTest = {
   orders: [
@@ -138,7 +139,14 @@ export default function OrdersPage() {
     if (status === "authenticated" && session?.user?.email) {
       const fetch = async () => {
         try {
-          
+          const time = await getTimeClient();
+          const timeSec = time/1000;
+
+          if( Date.now()/1000 >= timeSec + 5 && Date.now()/1000 <= timeSec-5){
+            toast.error("Device clock is wrong, Please correct it");
+            return;
+          }
+
           const customer = await exfn(() => fetchCustomerByEmail(session?.user?.email));
           const orders = await exfn(() => fetchUserOrders(null));
           

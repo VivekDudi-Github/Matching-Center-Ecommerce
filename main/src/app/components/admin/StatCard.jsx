@@ -1,15 +1,26 @@
 "use client";
 
+import { exfn } from "@/app/helpers/extractActions";
+import { getDashboard } from "@/app/lib/controller/getAdminDash";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
+
+
+  
 export default function StatCard({
+  
   title,
   value,
   change,
   positive,
   icon: Icon,
+
 }) {
+  const prefix = title == "Revenue" ? "₹" : "";
+
   return (
     <motion.div
       whileHover={{ y: -4 }}
@@ -40,13 +51,13 @@ export default function StatCard({
                     : "text-red-500"
                 }`}
               >
-                {change}
+                {positive ? "+" : ""}{change}{title === "Revenue" ? "%" : ""}
               </span>
             </div>
           </h3>
 
           <h2 className="mt-3 sm:text-3xl text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
-            {value}
+            {prefix}{value}
           </h2>
         </div>
 

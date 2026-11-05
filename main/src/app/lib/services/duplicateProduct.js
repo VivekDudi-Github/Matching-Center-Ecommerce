@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 import { prisma } from '@/app/lib/prisma';
 
 export const duplicateproductService = async(id) => {

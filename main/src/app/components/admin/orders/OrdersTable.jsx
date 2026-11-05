@@ -6,7 +6,12 @@ import { ShoppingBag } from "lucide-react";
 import OrderRow from "./OrderRow";
 import OrderCard from "./OrderCard";
 
-export default function OrdersTable({ orders = [] }) {
+export default function OrdersTable({ orders = [], initialCursor }) {
+  
+  
+  
+  
+  
   if (!orders.length) {
     return (
       <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-16 text-center dark:border-zinc-700 dark:bg-zinc-900">

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Eye } from "lucide-react";
+import OrderStatus from "../../orders/OrderStatus";
 
 const statusColors = {
   Pending:
@@ -54,11 +55,11 @@ export default function OrderRow({ order }) {
       <td className="px-6 py-5">
         <div>
           <p className="font-medium text-zinc-900 dark:text-white">
-            {order.customer}
+            {order.customer.name}
           </p>
 
           <p className="text-sm text-zinc-500">
-            {order.phone}
+            {order.customer.phone}
           </p>
         </div>
       </td>
@@ -72,25 +73,13 @@ export default function OrderRow({ order }) {
       {/* Payment */}
 
       <td className="px-6 py-5">
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            paymentColors[order.payment]
-          }`}
-        >
-          {order.payment}
-        </span>
+        <OrderStatus type={"payment"} status={order?.payment?.status} />
       </td>
 
       {/* Status */}
 
       <td className="px-6 py-5 text-center">
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            statusColors[order.status]
-          }`}
-        >
-          {order.status}
-        </span>
+        <OrderStatus type={"delivery"} status={order?.status} />
       </td>
 
       {/* Date */}

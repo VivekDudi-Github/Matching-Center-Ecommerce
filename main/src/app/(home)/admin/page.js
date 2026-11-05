@@ -1,4 +1,16 @@
 "use client"; 
+
+import StatCard from "@/app/components/admin/StatCard";
+import RecentOrders from "@/app/components/admin/RecentOrders";
+import InventoryAlerts from "@/app/components/admin/InventoryAlerts";
+import RevenueChart from "@/app/components/admin/RevenueChart";
+import TopProducts from "@/app/components/admin/TopSelling";
+import { useEffect, useState } from "react";
+import { getDashboard } from "@/app/lib/controller/getAdminDash";
+import { toast } from "react-toastify";
+import { exfn } from "@/app/helpers/extractActions";
+
+
 import {
   Package,
   ShoppingBag,
@@ -6,43 +18,54 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-import StatCard from "@/app/components/admin/StatCard";
-import RecentOrders from "@/app/components/admin/RecentOrders";
-import InventoryAlerts from "@/app/components/admin/InventoryAlerts";
-import RevenueChart from "@/app/components/admin/RevenueChart";
-import TopProducts from "@/app/components/admin/TopSelling";
 
-export default function AdminDashboard() {
-  const stats = [
+ const stats = [
     {
       title: "Revenue",
-      value: "₹1,24,580",
-      change: "+12.5%",
+      value: "0",
+      change: "0",
       positive: true,
       icon: IndianRupee,
     },
     {
       title: "Orders",
-      value: "324",
-      change: "+8.2%",
+      value: "0",
+      change: "0",
       positive: true,
       icon: ShoppingBag,
     },
     {
       title: "Products",
-      value: "148",
-      change: "+6 New",
+      value: "0",
+      change: "0",
       positive: true,
       icon: Package,
     },
     {
       title: "Low Stock",
-      value: "9",
-      change: "Check Needed",
+      value: "0",
       positive: false,
       icon: AlertTriangle,
     },
   ];
+
+export default function AdminDashboard() {
+  const [data, setData] = useState({});
+ 
+
+  useEffect(() => {
+    const getDashData = async (params) => {
+      try {
+        let res = await exfn(() => getDashboard());
+        setData(res);
+      } catch (error) {
+        toast.error( error?.message || "Something went wrong")
+        console.log("error in getting dashboard", error)
+      }
+    }
+    getDashData()
+  }, [])
+  
 
   return (
       <div className="mx-auto max-w-7xl">
@@ -61,15 +84,24 @@ export default function AdminDashboard() {
 
         {/* Stat Cards */}
         <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          {stats.map((stat) => (
+          {stats.map((stat) => {
+              let field = data?.[stat.title];
+              field = !field ? data.lowStockCount : field;
+
+              stat.change = field?.change;
+              stat.value = field?.value;
+              stat.positive = field?.positive;
+              
+          return (
             <StatCard key={stat.title} {...stat} />
-          ))}
+          )})}
         </section>
 
         {/* Chart + Inventory */}
         <section className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="xl:col-span-2">
-            <RevenueChart />
+            {/* <RevenueChart /> */} 
+            <RecentOrders />          
           </div>
 
           <InventoryAlerts />
@@ -78,7 +110,7 @@ export default function AdminDashboard() {
         {/* Bottom Section */}
         <section className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="xl:col-span-2">
-            <RecentOrders />
+           
           </div>
 
           <div className="xl:col-span-1">

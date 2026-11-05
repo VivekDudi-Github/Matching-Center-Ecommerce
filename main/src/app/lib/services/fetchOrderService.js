@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 import { serializePrisma } from '@/app/helpers/serializePrisma';
 import { prisma } from '@/app/lib/prisma';
 

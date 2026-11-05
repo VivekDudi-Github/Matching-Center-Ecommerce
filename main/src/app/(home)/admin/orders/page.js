@@ -1,55 +1,18 @@
 import OrderToolbar from "@/app/components/admin/orders/OrdersToolbar";
 import OrdersTable from "@/app/components/admin/orders/OrdersTable";
+import { serializePrisma } from "@/app/helpers/serializePrisma";
+import { exfn } from "@/app/helpers/extractActions";
+import { getFirstAdminProdList } from "@/app/lib/controller/getAdminProd";
 
-const orders = [
-  {
-    id: "#1001",
-    customer: "Rahul Sharma",
-    phone: "9876543210",
-    amount: 3250,
-    payment: "Paid",
-    status: "Pending",
-    date: "08 Jul 2026",
-  },
-  {
-    id: "#1002",
-    customer: "Priya Verma",
-    phone: "9876543211",
-    amount: 1850,
-    payment: "Paid",
-    status: "Processing",
-    date: "08 Jul 2026",
-  },
-  {
-    id: "#1003",
-    customer: "Amit Singh",
-    phone: "9876543212",
-    amount: 6200,
-    payment: "Paid",
-    status: "Shipped",
-    date: "07 Jul 2026",
-  },
-  {
-    id: "#1004",
-    customer: "Neha Gupta",
-    phone: "9876543213",
-    amount: 980,
-    payment: "COD",
-    status: "Delivered",
-    date: "06 Jul 2026",
-  },
-  {
-    id: "#1005",
-    customer: "Vikas Jain",
-    phone: "9876543214",
-    amount: 1420,
-    payment: "Paid",
-    status: "Cancelled",
-    date: "05 Jul 2026",
-  },
-];
 
-export default function OrdersPage() {
+export default async function OrdersPage({searchParams}) {
+
+  const query = await searchParams;
+  
+  const {list, newCursor} = await exfn(() => {});
+  const orders = list;
+  const cursor = "newCursor";
+
   return (
     <div className="space-y-6">
       {/* Heading */}
@@ -70,7 +33,7 @@ export default function OrdersPage() {
 
       {/* Table */}
 
-      <OrdersTable orders={orders} />
+      <OrdersTable orders={(orders)} initialCursor={cursor}/>
     </div>
   );
 }

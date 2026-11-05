@@ -107,6 +107,10 @@ model Product {
   @@index([originalPrice])
   @@index([featured])
   @@index([title])
+  @@index([deletedAt])
+  @@index([createdAt])
+  @@index([updatedAt])
+  
 }
 
 model ProductVariant {
@@ -204,7 +208,7 @@ model Order {
   isLocked              Boolean           @default(false) // serves when user create authorize payment at last moment and capturing needs more than 30seconds.
 
   expireAt              DateTime          @default(dbgenerated("(( NOW() + '420 seconds' ::INTERVAL))")) 
-  reverseAt             DateTime?          @default(dbgenerated("(( NOW() + '450 seconds' ::INTERVAL))"))
+  reverseAt             DateTime?         @default(dbgenerated("(( NOW() + '450 seconds' ::INTERVAL))"))
 
   updatedAt             DateTime          @updatedAt
   createdAt             DateTime          @default(now())

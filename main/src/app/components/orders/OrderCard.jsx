@@ -18,6 +18,7 @@ import { useState } from "react";
 import OrderItem from "./OrderItem";
 import OrderStatus from "./OrderStatus";
 import OrderActionMenu from "./OrderActionMenu";
+import { toast } from "react-toastify";
 
 export default function OrderCard({ order }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -47,13 +48,7 @@ export default function OrderCard({ order }) {
       console.error("Failed to copy ID: ", err);
     }
   };
-  const cancelPendingOrder = async () => {
-    try {
-      
-    } catch (error) {
-      
-    }
-  }
+
   return (
     <motion.article
       layout
@@ -84,16 +79,9 @@ export default function OrderCard({ order }) {
                 </h3>
               </div>
 
-              {!isExpired ? 
-                <OrderActionMenu order={order} />
-              : 
-              <button
-                onClick={cancelPendingOrder}
-                className="h-full text-amber-600 border border-amber-200 dark:border-amber-800  hover:text-amber-700 transition-colors p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-                >
-                  Cancel
-               </button>
-              }
+              
+              <OrderActionMenu order={order} isExpired={isExpired}/>
+              
             </div>
 
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-500 dark:text-zinc-400">
@@ -148,7 +136,7 @@ export default function OrderCard({ order }) {
               /> : 
               <OrderStatus
                 type="delivery"
-                status={isExpired ? "Expired" : "Pending"}
+                status={isExpired ? "Expired" : order.status}
               />
             }
           </div>
