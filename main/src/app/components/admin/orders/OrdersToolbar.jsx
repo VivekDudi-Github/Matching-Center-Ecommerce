@@ -1,20 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import { Search, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { ScanSearchIcon, Search, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const statusOptions = [
   "All",
   "Pending",
-  "Processing",
+  "Confirmed",
+  "Packed",
   "Shipped",
   "Delivered",
   "Cancelled",
+  "Cancel Requested",
 ];
 
 export default function OrderToolbar() {
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("All");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+
+  const [search, setSearch] = useState(
+    searchParams.get("search") ?? ""
+  );
+
+  const [status, setStatus] = useState(
+    searchParams.get("status") ?? "All"
+  );
+
 
   const clearFilters = () => {
     setSearch("");
@@ -23,25 +36,50 @@ export default function OrderToolbar() {
 
   const hasFilters = search || status !== "All";
 
+  const updateUrl = () => {
+    const params = new URLSearchParams();
+    
+    if (status !== "All") {
+      params.set("status", status);
+    }
+
+    if (search.length) {
+      params.set("search", search);
+    }
+
+
+    router.push(`?${params.toString()}`);
+  }
+
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
       <div className="flex flex-col gap-4 md:flex-row md:items-center">
         {/* Search */}
 
-        <div className="relative flex-1">
-          <Search
-            size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
-          />
+          <div className="relative flex-1">
+            <Search
+              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
+            />
 
-          <input
-            type="text"
-            placeholder="Search by Order ID, Customer or Phone..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
-          />
-        </div>
+            <input
+              type="text"
+              placeholder="Search id,customer.."
+              value={search}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearch(value);
+              }}
+              className="w-full rounded-lg border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-white"
+            />
+            <button onClick={updateUrl} className="lg:hidden absolute h-[45.6px] top-0 right-0 items-center duration-200 justify-center gap-2 border dark:border-black border-white rounded-lg active:scale-90 bg-zinc-900 p-2  text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200" > 
+              <ScanSearchIcon size={29} />
+            </button>
+          </div>
+          
+          <button onClick={updateUrl} className="lg:inline-flex hidden  items-center duration-200 justify-center gap-2 border dark:border-black border-white rounded-lg bg-zinc-900 p-2 active:scale-90  text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200" > 
+            <ScanSearchIcon size={29} />
+          </button>
 
         {/* Status */}
 

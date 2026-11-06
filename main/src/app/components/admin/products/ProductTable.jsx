@@ -24,9 +24,9 @@ const columns = [
 ]
 
 
-export default function ProductTable({ initalProducts = [], initialCursor = null }) {
+export default function ProductTable({ initalProducts = [], initialCursor = null, errorMsg }) {
   const [ products, setProducts] = useState([]);
-  const [ cursor, setCursour] = useState(initialCursor);
+  const [ cursor, setCursor] = useState(initialCursor);
   const [ isLoading, setIsLoading] = useState(false);
 
   const params = useSearchParams();
@@ -42,7 +42,7 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
       const {list , newCursor} = await exfn(() => getMoreAdminProdList(cursor, search, category, status));
       console.log("LIST:", list);
       setProducts(prev => [...prev, ...list]);
-      setCursour(newCursor);
+      setCursor(newCursor);
     } catch (error) {
       toast.error(error?.message || "Something went wrong");
     } finally {
@@ -71,8 +71,9 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
   }
 
   useEffect(() => {
+    if(errorMsg) toast.error(errorMsg);
     setProducts(initalProducts);
-    setCursour(initialCursor);
+    setCursor(initialCursor);
   }, [initalProducts])
 
   return (

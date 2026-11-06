@@ -2,7 +2,6 @@ import "server-only";
 
 import { prisma } from '@/app/lib/prisma';
 import { Prisma } from '@/generated/prisma/client';
-import { hex } from 'zod';
 
 export const createNewProductService = async(data) => {
   const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = data;

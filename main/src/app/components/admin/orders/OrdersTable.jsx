@@ -1,15 +1,50 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShoppingBag } from "lucide-react";
+import { ArrowDown, Loader2Icon, ShoppingBag } from "lucide-react";
 
 import OrderRow from "./OrderRow";
 import OrderCard from "./OrderCard";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useSearchParams } from "next/navigation";
+import { exfn } from "@/app/helpers/extractActions";
+import { getAdminOrders } from "@/app/lib/controller/getAdminOrder";
 
-export default function OrdersTable({ orders = [], initialCursor }) {
+export default function OrdersTable({ initialOrders = [], initialCursor, errorMsg }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [cursor, setCursor] = useState(null);
   
+  const params = useSearchParams();
+  const loadMore = async() => {
+    setIsLoading(true);
+    try {
+      let status = params.get("status") ?? "";
+      status = !status ? "All" : status;
+      
+      const {list , newCursor} = await exfn(() => getAdminOrders({cursor}));
+      console.log("LIST:", list);
+      setOrders(prev => [...prev, ...list]);
+      setCursor(newCursor);
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
-  
+  useEffect(() => {
+    console.log("errorMsg", errorMsg);
+    if(errorMsg){
+      toast.error(errorMsg);
+    }
+  }, [errorMsg])
+
+  useEffect(() => {
+    setOrders([...initialOrders]);
+    setCursor(initialCursor);
+  }, [initialOrders])
   
   
   if (!orders.length) {
@@ -29,8 +64,7 @@ export default function OrdersTable({ orders = [], initialCursor }) {
         </p>
       </div>
     );
-  }
-
+  };
   return (
     <>
       {/* Desktop */}
@@ -38,7 +72,7 @@ export default function OrdersTable({ orders = [], initialCursor }) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className=" rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+        className=" rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50 md:block hidden"
       >
         <div className="overflow-auto grid grid-cols-1 gap-6 ">
           <table className="min-w-full">
@@ -83,19 +117,37 @@ export default function OrdersTable({ orders = [], initialCursor }) {
               ))}
             </tbody>
           </table>
+
         </div>
       </motion.div>
 
       {/* Mobile */}
 
-      {/* <div className="space-y-4 lg:hidden">
+      <div className="space-y-4 md:hidden">
         {orders.map((order) => (
           <OrderCard
             key={order.id}
             order={order}
           />
         ))}
-      </div> */}
+      </div>
+
+      {cursor && (
+          <div className="flex justify-center m-4">
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={loadMore}
+              className="inline-flex items-center text-sm p-2 justify-center gap-2 rounded-lg border  text-white dark:text-black  border-zinc-300 px-3 py-2 bg-black dark:bg-white font-medium  transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-300 hover:cursor-pointer "  
+            >
+              
+              {isLoading ? 
+              <Loader2Icon className="animate-spin duration-75 " size={18} />
+              : <ArrowDown size={18} /> }
+              Load More
+            </button>
+          </div>
+        )}
     </>
   );
 }

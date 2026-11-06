@@ -1,28 +1,38 @@
 import OrderToolbar from "@/app/components/admin/orders/OrdersToolbar";
 import OrdersTable from "@/app/components/admin/orders/OrdersTable";
-import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { exfn } from "@/app/helpers/extractActions";
-import { getFirstAdminProdList } from "@/app/lib/controller/getAdminProd";
+import { getAdminOrders } from "@/app/lib/controller/getAdminOrder";
+import { Loader2, LoaderIcon } from "lucide-react";
 
 
 export default async function OrdersPage({searchParams}) {
-
-  const query = await searchParams;
-  
-  const {list, newCursor} = await exfn(() => {});
-  const orders = list;
-  const cursor = "newCursor";
+  let orders = [] , cursor = null, errorMsg = null;
+  let isLoading = true;
+  try {
+    isLoading = true;
+    const query = await searchParams;
+      
+      const {list, newCursor} = await exfn(() => getAdminOrders({status: query?.status || "All", search: query?.search}));
+      orders = list;
+      cursor = newCursor;
+      
+  } catch (error) {
+    errorMsg = error?.message || "Something went wrong while fetching."
+    console.log("error in rending orders page at admin", error);
+  } finally{
+    isLoading = false;
+  }
 
   return (
     <div className="space-y-6">
       {/* Heading */}
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+        <h1 className="lg:text-3xl text-xl  font-bold tracking-tight text-zinc-900 dark:text-white">
           Orders
         </h1>
 
-        <p className="mt-1 text-zinc-500 dark:text-zinc-400">
+        <p className="mt-1 text-zinc-500 dark:text-zinc-400 text-base">
           View and manage customer orders.
         </p>
       </div>
@@ -32,8 +42,13 @@ export default async function OrdersPage({searchParams}) {
       <OrderToolbar />
 
       {/* Table */}
-
-      <OrdersTable orders={(orders)} initialCursor={cursor}/>
+      {isLoading && 
+        <div className="flex justify-center gap-2">
+          <LoaderIcon className="animate-pulse " />
+          Loading...
+        </div>
+      }
+      <OrdersTable initialOrders={orders} initialCursor={cursor} errorMsg={errorMsg}/>
     </div>
   );
 }

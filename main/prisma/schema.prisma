@@ -26,6 +26,10 @@ model Customer  {
   addresses   Address[]
 
   createdAt   DateTime @default(now())
+
+  @@index([name])
+  @@index([email])
+  
 }
 
 model Admin{

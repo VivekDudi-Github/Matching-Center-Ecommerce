@@ -2,62 +2,56 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Eye } from "lucide-react";
+import { Check, Copy, Eye } from "lucide-react";
+import OrderStatus from "../../orders/OrderStatus";
+import { useState } from "react";
 
-const statusColors = {
-  Pending:
-    "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-400",
-
-  Processing:
-    "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400",
-
-  Shipped:
-    "bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400",
-
-  Delivered:
-    "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
-
-  Cancelled:
-    "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400",
-};
-
-const paymentColors = {
-  Paid:
-    "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
-
-  COD:
-    "bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400",
-
-  Failed:
-    "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400",
-};
 
 export default function OrderCard({ order }) {
+  const [copied, setCopied] = useState(false);
+  
+  
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(order.id);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy ID: ", err);
+    }
+  };
+
   return (
     <motion.div
       layout
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+      className="rounded-2xl border border-zinc-200 bg-white p-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50"
     >
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
-            {order.id}
-          </h2>
+          <h3 title={order?.id} className="font-semibold text-zinc-300 dark:text-white truncate dark:bg-zinc-950 border border-amber-700/50 dark:hover:border-amber-200/50 bg-zinc-950 p-2 rounded-xs   group relative w-full overflow-hidden   px-4 py-2.5 text-sm tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300 cursor-pointer">
+            ID: {order?.id.slice(0, 5)}...
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="shrink-0  pl-4 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 rounded transition-colors"
+              title="Copy Order ID"
+            >
+              {copied ? (
+                <Check size={14} className="text-emerald-500" />
+              ) : (
+                <Copy size={14} />
+              )}
+            </button>
+          </h3>
 
           <p className="mt-1 text-sm text-zinc-500">
             {order.date}
           </p>
         </div>
 
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            statusColors[order.status]
-          }`}
-        >
-          {order.status}
-        </span>
+        <OrderStatus type={"delivery"} status={order?.status} />
       </div>
 
       <div className="mt-5 space-y-3 text-sm">
@@ -65,7 +59,7 @@ export default function OrderCard({ order }) {
           <span className="text-zinc-500">Customer</span>
 
           <span className="font-medium text-zinc-900 dark:text-white">
-            {order.customer}
+            {order.customer.name}
           </span>
         </div>
 
@@ -73,7 +67,7 @@ export default function OrderCard({ order }) {
           <span className="text-zinc-500">Phone</span>
 
           <span className="text-zinc-900 dark:text-white">
-            {order.phone}
+            {order.customer.number}
           </span>
         </div>
 
@@ -81,20 +75,14 @@ export default function OrderCard({ order }) {
           <span className="text-zinc-500">Amount</span>
 
           <span className="font-semibold text-zinc-900 dark:text-white">
-            ₹{order.amount}
+            ₹{order.payment.amount}
           </span>
         </div>
 
         <div className="flex justify-between items-center">
           <span className="text-zinc-500">Payment</span>
 
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${
-              paymentColors[order.payment]
-            }`}
-          >
-            {order.payment}
-          </span>
+          <OrderStatus type={"payment"} status={order?.payment?.status} />
         </div>
       </div>
 

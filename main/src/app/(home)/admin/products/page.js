@@ -8,11 +8,17 @@ import { exfn } from "@/app/helpers/extractActions";
 
 
 export default async function ProductsPage({searchParams}) {
-  const query = await searchParams;
-  
-  const {list, newCursor} = await exfn( () => getFirstAdminProdList(query?.search, query?.category, query?.status));
-  const products = list;
-  const cursor = newCursor;
+  let products = [], cursor = null, errorMsg = null;
+  try {
+    const query = await searchParams;
+    
+    const {list, newCursor} = await exfn( () => getFirstAdminProdList(query?.search, query?.category, query?.status));
+    products = list;
+    cursor = newCursor;
+  } catch (error) {
+    errorMsg = error?.message || "Something went wrong while fetching.";
+    console.log("error in rending product page on server side", error);
+  }
 
   return (
     <div className="space-y-2">
@@ -34,8 +40,7 @@ export default async function ProductsPage({searchParams}) {
 
       {/* Products */}
       <section className="md:mt-8 mt-4 grid grid-cols-1">
-        <ProductTable initalProducts={serializePrisma(products)} initialCursor={cursor} />
-
+        <ProductTable initalProducts={serializePrisma(products)} initialCursor={cursor} errorMsg={errorMsg} />
       </section>
       
     </div>

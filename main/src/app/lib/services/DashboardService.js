@@ -1,5 +1,5 @@
 import "server-only";
-
+import { prisma } from "@/app/lib/prisma";
 
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -31,7 +31,7 @@ const getProdCountService = async () => {
   })
 
   console.log("Prod count", thisMonethsProds, lastMonethsProds)
-  return {thisMonethsProds, lastMonethsProds};
+  return {thisMonethsProds , lastMonethsProds};
 }
 
 const checkLowStockCount = async () => {

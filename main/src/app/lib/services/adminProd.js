@@ -2,7 +2,7 @@
 import "server-only";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { TryCatch } from "@/app/helpers/TryCatch";
-
+import { prisma } from "@/app/lib/prisma";
 
 
 export const getFirstAdminProdListNotStatusBased = async( search, category) => {

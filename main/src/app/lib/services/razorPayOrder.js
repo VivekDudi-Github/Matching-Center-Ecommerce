@@ -1,6 +1,7 @@
 import "server-only";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import Razorpay from "razorpay";
+import { prisma } from "@/app/lib/prisma";
 
 export const razorPayOrderService = async(orderId, session) => {
     // find old order
