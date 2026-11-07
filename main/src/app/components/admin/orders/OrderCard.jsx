@@ -31,7 +31,7 @@ export default function OrderCard({ order }) {
       <div className="flex items-start justify-between">
         <div>
           <h3 title={order?.id} className="font-semibold text-zinc-300 dark:text-white truncate dark:bg-zinc-950 border border-amber-700/50 dark:hover:border-amber-200/50 bg-zinc-950 p-2 rounded-xs   group relative w-full overflow-hidden   px-4 py-2.5 text-sm tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300 cursor-pointer">
-            ID: {order?.id.slice(0, 5)}...
+            ID: {order?.id.slice(0, 8)}...
             <button
               type="button"
               onClick={handleCopy}

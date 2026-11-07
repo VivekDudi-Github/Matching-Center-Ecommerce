@@ -1,12 +1,13 @@
 "use server";
 
 import { TryCatch } from "@/app/helpers/TryCatch";
-import { checkLowStockCount, getProdCountService, getRevenueCount } from "../services/DashboardService";
+import { checkLowStockCount, getInventryAlerts, getProdCountService, getRevenueCount } from "../services/dashboardService";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
-import { positive } from "zod";
+import { adminOrderService } from "../services/Ably/adminOrdersService";
+
 
 export const getDashboard = async () => {
     return TryCatch( async () => {
@@ -19,6 +20,8 @@ export const getDashboard = async () => {
       const lowStockCount = await checkLowStockCount();
 
       const payments = await getRevenueCount();
+      const {orders} = await adminOrderService({search: "", cursor: "", status: "All"});
+      const {alerts, newCursor} = await getInventryAlerts({cursor: ""});
 
       const revenueChange = Math.floor((((payments?.thisMoenthPaymentStats?._sum?.amount ?? 0) - (payments?.LastMoenthPaymentStats?._sum?.amount ?? 0)) / payments?.LastMoenthPaymentStats?._sum?.amount) * 100);
 
@@ -43,7 +46,22 @@ export const getDashboard = async () => {
           value : serializePrisma(payments?.thisMoenthPaymentStats?._count?.amount ?? 0),
           change: serializePrisma(( (payments?.thisMoenthPaymentStats?._count?.amount ?? 0) - (payments?.LastMoenthPaymentStats?._count?.amount ?? 0) / (payments?.LastMoenthPaymentStats?._count?.amount ?? 0)) *100 ) ,
           positive: (payments?.thisMoenthPaymentStats?._count?.amount ?? 0) >= (payments?.LastMoenthPaymentStats?._count?.amount ?? 0)
+        }, 
+        recentorders: serializePrisma(orders) ,
+        invertoryAlert : {
+          alerts : serializePrisma(alerts), 
+          newCursor: serializePrisma(newCursor)
         }
       })
     })
+}
+
+export const moreInventryAlerts = async ({cursor}) => {
+  return TryCatch( async() => {
+    if(!cursor) return resError("No cursor found");
+
+    const {alerts, newCursor} = await getInventryAlerts({ cursor});
+    
+    return {alerts : serializePrisma(alerts) , cursor: serializePrisma(newCursor) };
+  })
 }

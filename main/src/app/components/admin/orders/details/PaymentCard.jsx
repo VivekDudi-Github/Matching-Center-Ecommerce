@@ -1,5 +1,6 @@
 "use client";
 
+import OrderStatus from "@/app/components/orders/OrderStatus";
 import { CreditCard } from "lucide-react";
 
 const paymentColors = {
@@ -47,13 +48,7 @@ export default function PaymentCard({ payment }) {
         <div className="flex justify-between items-center">
           <span className="text-zinc-500">Status</span>
 
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${
-              paymentColors[payment.status]
-            }`}
-          >
-            {payment.status}
-          </span>
+          <OrderStatus type={"payment"} status={payment?.status} />
         </div>
 
         <div className="flex justify-between border-t border-zinc-200 pt-5 dark:border-zinc-800">

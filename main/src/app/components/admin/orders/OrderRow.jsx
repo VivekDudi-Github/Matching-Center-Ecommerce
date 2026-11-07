@@ -36,8 +36,8 @@ export default function OrderRow({ order }) {
       {/* Order */}
 
       <td className="px-2 py-2 font-semibold text-zinc-900 dark:text-white ">
-        <h3 title={order?.id} className="font-semibold text-zinc-300 dark:text-white truncate dark:bg-zinc-950 border border-amber-700/50 dark:hover:border-amber-200/50 bg-zinc-950 p-2 rounded-xs   group relative w-full overflow-hidden   px-4 py-2.5 text-sm tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300 cursor-pointer">
-          ID: {order?.id.slice(0, 5)}...
+        <h3 title={order?.id} className="font-semibold w-full text-zinc-300 dark:text-white truncate dark:bg-zinc-950 border border-amber-700/50 dark:hover:border-amber-200/50 bg-zinc-950 p-2 rounded-xs   group relative overflow-hidden   px-4 py-2.5 text-sm tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300 cursor-pointer">
+          ID: {order?.id.slice(0, 8)}...
           <button
             type="button"
             onClick={handleCopy}

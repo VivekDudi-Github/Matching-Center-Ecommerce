@@ -54,7 +54,7 @@ export default function AdminDashboard() {
  
 
   useEffect(() => {
-    const getDashData = async (params) => {
+    const getDashData = async () => {
       try {
         let res = await exfn(() => getDashboard());
         setData(res);
@@ -101,10 +101,10 @@ export default function AdminDashboard() {
         <section className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="xl:col-span-2">
             {/* <RevenueChart /> */} 
-            <RecentOrders />          
+            <RecentOrders orders={data?.recentorders} />          
           </div>
 
-          <InventoryAlerts />
+          <InventoryAlerts initialAlerts={data?.invertoryAlert?.alerts} initalCursor={data.invertoryAlert?.newCursor}  />
         </section>
 
         {/* Bottom Section */}

@@ -1,6 +1,7 @@
 import "server-only";
 import { prisma } from "@/app/lib/prisma";
 
+  const LIMIT = 6;
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth(); // comes as indexes fdrom 0-11
@@ -86,11 +87,46 @@ const getRevenueCount = async () => {
   return {thisMoenthPaymentStats, LastMoenthPaymentStats};
 }
 
+const getInventryAlerts = async ({cursor}) => {
+  const cursorFilter = cursor ? {
+    cursor: {
+      id : cursor
+    }
+  } : {};
+
+  const alerts = await prisma.productVariant.findMany({
+    where: {
+      isLowStock: true,
+      product: {
+        isPublished : true,
+        deletedAt : null
+      }
+    },
+    ...cursorFilter,
+    take : LIMIT,
+    include: {
+      product: {
+        select : {
+          title : true,
+          id: true
+        },
+      }
+    },
+  })
+  
+  let newCursor = null;
+  if(alerts.length === LIMIT ){
+    newCursor = alerts.at(-1).id;
+    alerts.pop();
+  }
+
+  return {alerts, newCursor};
+}
 
 export {
   
   getProdCountService,
   getRevenueCount,
   checkLowStockCount,
- 
+  getInventryAlerts,
 }

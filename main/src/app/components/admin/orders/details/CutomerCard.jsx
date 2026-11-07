@@ -46,11 +46,11 @@ export default function CustomerCard({ customer }) {
 
           <div className="mt-2 flex items-center justify-between gap-4">
             <p className="font-medium text-zinc-900 dark:text-white">
-              {customer.phone}
+              {customer.number}
             </p>
 
             <a
-              href={`tel:${customer.phone}`}
+              href={`tel:${customer.number}`}
               className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
             >
               <Phone size={16} />

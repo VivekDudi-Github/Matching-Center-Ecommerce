@@ -6,6 +6,9 @@ import AddressCard from "@/app/components/admin/orders/details/AddressCard";
 import PaymentCard from "@/app/components/admin/orders/details/PaymentCard";
 import StatusCard from "@/app/components/admin/orders/details/StatusCard";
 import ProductsCard from "@/app/components/admin/orders/details/ProductsCard";
+import { getAdminOrderById } from "@/app/lib/controller/getAdminOrder";
+import { exfn } from "@/app/helpers/extractActions";
+import OrderStatus from "@/app/components/orders/OrderStatus";
 
 const ORDER = {
   id: "1001",
@@ -52,7 +55,18 @@ const ORDER = {
   ],
 };
 
-export default function OrderDetailsPage() {
+export default async function OrderDetailsPage({params}) {
+  let order = null;
+  let creationTime = "Loading..."
+  try {
+    const query = await params;
+    order = await exfn(() => getAdminOrderById(query?.id));
+    let newDate = new Date(order?.payment?.updatedAt).toLocaleDateString(undefined, {dateStyle:"medium", timeStyle: "short" });
+    creationTime = newDate;
+  } catch (error) {
+    console.log("error in order fetching", error);
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -67,18 +81,22 @@ export default function OrderDetailsPage() {
             Back to Orders
           </Link>
 
+          {!order && (
+            <div className="text-red-400 text-base font-semibold">
+              Order not Found
+            </div>
+          )}
+
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
-              Order #{ORDER.id}
+              Order #{order?.id.slice(0,10)}...
             </h1>
 
-            <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm font-medium text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-400">
-              {ORDER.status}
-            </span>
+            <OrderStatus type={"delivery"} status={order?.state}/>
           </div>
 
           <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-            Placed on {ORDER.date}
+            Placed on {creationTime}
           </p>
         </div>
       </div>
@@ -86,20 +104,20 @@ export default function OrderDetailsPage() {
       {/* Top Grid */}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <CustomerCard customer={ORDER.customer} />
+        <CustomerCard customer={order?.customer} />
 
-        <PaymentCard payment={ORDER.payment} />
+        <PaymentCard payment={order?.payment} />
 
-        <AddressCard address={ORDER.address} />
+        <AddressCard address={order?.address} notes={order?.notes} />
 
-        <StatusCard status={ORDER.status} />
+        <StatusCard status={order?.status} />
       </div>
 
       {/* Products */}
 
       <ProductsCard
-        products={ORDER.items}
-        payment={ORDER.payment}
+        products={order?.orderItems}
+        payment={order?.payment}
       />
     </div>
   );
