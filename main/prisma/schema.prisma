@@ -235,6 +235,8 @@ enum PaymentStatus {
 enum Method {
   COD
   UPI
+  CARD
+  NET
 }
 
 model Payment {
@@ -249,7 +251,7 @@ model Payment {
   
   gatewayOrderId     String?             @unique
   gatewayPaymentId   String?             @unique
-  gatewayEventId     String?            @unique
+  gatewayEventId     String?             @unique
    
 
   customerId          String

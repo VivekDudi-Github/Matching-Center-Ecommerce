@@ -21,7 +21,7 @@ import { getCloudinarySignature } from "@/app/helpers/Cloudinary";
 import { createNewProductImages, deleteProductImages, updateProduct } from "@/app/lib/controller/productActions";
 import {uploadToCloudinary} from '@/app/helpers/UploadToCloudinary';
 import { useParams, useRouter } from "next/navigation";
-import { getAdminProdById } from "@/app/lib/controller/getAdminProd";
+import { getAdminProdById } from "@/app/lib/controller/admin/getAdminProd";
 import { exfn } from "@/app/helpers/extractActions";
 
 export default function EditProductPage() {

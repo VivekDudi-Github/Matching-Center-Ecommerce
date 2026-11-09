@@ -1,12 +1,12 @@
 "use server";
 
 import { TryCatch } from "@/app/helpers/TryCatch";
-import { checkLowStockCount, getInventryAlerts, getProdCountService, getRevenueCount } from "../services/dashboardService";
+import { checkLowStockCount, getCancelRequestAlerts, getInventryAlerts, getProdCountService, getRevenueCount } from "@/app/lib/services/dashboardService";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
-import { adminOrderService } from "../services/Ably/adminOrdersService";
+import { adminOrderService } from "@/app/lib/services/Ably/adminOrdersService";
 
 
 export const getDashboard = async () => {
@@ -24,7 +24,7 @@ export const getDashboard = async () => {
       const {alerts, newCursor} = await getInventryAlerts({cursor: ""});
 
       const revenueChange = Math.floor((((payments?.thisMoenthPaymentStats?._sum?.amount ?? 0) - (payments?.LastMoenthPaymentStats?._sum?.amount ?? 0)) / payments?.LastMoenthPaymentStats?._sum?.amount) * 100);
-
+      const cancelRequests = await getCancelRequestAlerts();
 
       return resSuccess({
         Products : {
@@ -51,7 +51,8 @@ export const getDashboard = async () => {
         invertoryAlert : {
           alerts : serializePrisma(alerts), 
           newCursor: serializePrisma(newCursor)
-        }
+        },
+        cancelRequests: serializePrisma(cancelRequests)
       })
     })
 }

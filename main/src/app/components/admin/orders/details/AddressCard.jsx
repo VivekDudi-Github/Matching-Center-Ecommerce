@@ -4,9 +4,9 @@ import { MapPin, NotepadText } from "lucide-react";
 
 export default function AddressCard({ address, notes }) {
   return (
-    <div className="rounded-2xl ">
+    <div className="rounded-2xl border border-zinc-400 bg-white lg:p-6 p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
      
-      <div className=" border border-zinc-400 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="     shadow-sm ">
         <div className="mb-6 flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
             <MapPin
@@ -16,11 +16,11 @@ export default function AddressCard({ address, notes }) {
           </div>
 
           <div>
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+            <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-white">
               Shipping Address
             </h2>
 
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
               Delivery location
             </p>
           </div>
@@ -42,7 +42,7 @@ export default function AddressCard({ address, notes }) {
       </div>
       
       {notes?.length ? 
-        <div className=" border border-zinc-400 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mt-3 ">
           <div className="mb-6 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
               <NotepadText
@@ -61,7 +61,7 @@ export default function AddressCard({ address, notes }) {
               </p>
             </div>
           </div>
-          <textarea value={"notes"} disabled className="rounded-xl bg-zinc-300 p-4 text-sm leading-7 dark:bg-zinc-950 w-full" />
+          <textarea value={notes || ""} disabled className="rounded-xl bg-zinc-300 p-4 text-sm leading-7 dark:bg-zinc-950 w-full" />
 
         </div>
         : null  

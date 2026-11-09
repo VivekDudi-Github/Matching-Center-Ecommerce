@@ -1,7 +1,7 @@
 import OrderToolbar from "@/app/components/admin/orders/OrdersToolbar";
 import OrdersTable from "@/app/components/admin/orders/OrdersTable";
 import { exfn } from "@/app/helpers/extractActions";
-import { getAdminOrders } from "@/app/lib/controller/getAdminOrder";
+import { getAdminOrders } from "@/app/lib/controller/admin/getAdminOrder";
 import { Loader2, LoaderIcon } from "lucide-react";
 
 

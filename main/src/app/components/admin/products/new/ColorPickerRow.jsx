@@ -36,6 +36,10 @@ function ColorPickerRow({ index }) {
       <input 
         {...register(`colors.${index}.hex`, { required: "Hex color is required" })}
         type="color"
+        onChange={() => {}}
+        onBlur={(e) => {
+          setValue(`colors.${index}.hex`, e.target.value, { shouldValidate: true, shouldDirty: true });
+        }}
         className="h-12 w-14 rounded-lg border cursor-pointer"
       />
 

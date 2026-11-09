@@ -105,7 +105,7 @@ export default function CardSlider({prods = [], cursor : propCursor}) {
   // console.log(positionX, maxScroll)
 
   return (
-    <div className="w-full touch-pan-y dark:bg-black px-6 py-12 md:px-16" >
+    <div className="w-full touch-pan-y dark:bg-black px-6 py-7 md:px-16" >
       {/* Top Header Row with Navigation Controls */}
       <div className="mb-8 flex items-center justify-between">
         <div>

@@ -87,9 +87,7 @@ export default function CartItem({ item }) {
       layout
       className="border-b border-zinc-200 py-4 last:border-b-0 dark:border-zinc-800"
     >
-      {/* ------------------------------------------------
-          PRODUCT HEADER
-      ------------------------------------------------- */}
+          {/* PRODUCT HEADER */}
       <div className="flex gap-3">
         {/* Image */}
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900">
@@ -163,9 +161,7 @@ export default function CartItem({ item }) {
         </div>
       </div>
 
-      {/* ------------------------------------------------
-          COLOR SELECTOR
-      ------------------------------------------------- */}
+          {/* COLOR SELECTOR */}
       <div className="mt-4">
         <div className="flex flex-wrap gap-2">
           {colors.map((color) => {
@@ -246,9 +242,8 @@ export default function CartItem({ item }) {
         </div>
       </div>
 
-      {/* ------------------------------------------------
-          COLLAPSIBLE QUANTITY CONTROL
-      ------------------------------------------------- */}
+       {/* QUANTITY CONTROL */}
+
       <AnimatePresence initial={false}>
         {selectedColor && (
           <motion.div

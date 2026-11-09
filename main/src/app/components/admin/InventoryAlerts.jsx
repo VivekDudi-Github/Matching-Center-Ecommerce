@@ -1,7 +1,7 @@
 
 "use client";
 
-import { moreInventryAlerts } from "@/app/lib/controller/getAdminDash";
+import { moreInventryAlerts } from "@/app/lib/controller/admin/getAdminDash";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowDown, Loader2Icon } from "lucide-react";
 import Link from "next/link";

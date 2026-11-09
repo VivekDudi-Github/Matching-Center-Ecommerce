@@ -1,7 +1,7 @@
 "use client";
 
 import OrderStatus from "@/app/components/orders/OrderStatus";
-import { CreditCard } from "lucide-react";
+import { CopyIcon, CreditCard } from "lucide-react";
 
 const paymentColors = {
   Paid:
@@ -16,7 +16,7 @@ const paymentColors = {
 
 export default function PaymentCard({ payment }) {
   return (
-    <div className="rounded-2xl border border-zinc-400 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-2xl border border-zinc-400 bg-white lg:p-6 p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
           <CreditCard
@@ -26,24 +26,43 @@ export default function PaymentCard({ payment }) {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+          <h2 className="md:text-lg text-base font-semibold text-zinc-900 dark:text-white">
             Payment
           </h2>
 
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
             Payment details
           </p>
         </div>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-3 text-xs md:text-sm">
         <div className="flex justify-between">
           <span className="text-zinc-500">Method</span>
 
           <span className="font-medium text-zinc-900 dark:text-white">
-            {payment.method}
+            {payment.method} 
           </span>
         </div>
+
+        <div className="flex justify-between">
+          <span className="text-zinc-500">Gateway Payment ID</span>
+
+          <span className="font-medium text-zinc-900 dark:text-white flex gap-2 ">
+            {payment.gatewayPaymentId} 
+            <CopyIcon size={16} onClick={() => navigator.clipboard.writeText(payment.gatewayPaymentId)} />
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-zinc-500">Gateway Order ID</span>
+
+          <span className="font-medium text-zinc-900 dark:text-white flex gap-2">
+            {payment.gatewayOrderId}
+            <CopyIcon size={16} onClick={() => navigator.clipboard.writeText(payment.gatewayPaymentId)} />
+          </span>
+        </div>
+        
 
         <div className="flex justify-between items-center">
           <span className="text-zinc-500">Status</span>
@@ -54,10 +73,12 @@ export default function PaymentCard({ payment }) {
         <div className="flex justify-between border-t border-zinc-200 pt-5 dark:border-zinc-800">
           <span className="text-zinc-500">Amount</span>
 
-          <span className="text-lg font-semibold text-zinc-900 dark:text-white">
+          <span className="text-sm font-semibold text-zinc-900 dark:text-white">
             ₹{payment.amount}
           </span>
         </div>
+
+        
       </div>
     </div>
   );

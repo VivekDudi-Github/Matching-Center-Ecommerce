@@ -4,7 +4,7 @@ import { User, Phone } from "lucide-react";
 
 export default function CustomerCard({ customer }) {
   return (
-    <div className="rounded-2xl border border-zinc-400 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-2xl border border-zinc-400 bg-white lg:p-6 p-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
 
       <div className="mb-6 flex items-center gap-3">
@@ -16,11 +16,11 @@ export default function CustomerCard({ customer }) {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+          <h2 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-white">
             Customer
           </h2>
 
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
             Customer information
           </p>
         </div>
@@ -28,19 +28,41 @@ export default function CustomerCard({ customer }) {
 
       {/* Details */}
 
-      <div className="space-y-5">
+      <div className="space-y-3 text-xs md:text-sm">
+        <div className="justify-between flex">          
+          <div>
+            <p className=" text-zinc-500 dark:text-zinc-400">
+              Name
+            </p>
+
+            <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+              {customer.name}
+            </p>  
+          </div>              
+          <div>
+            <p className=" text-zinc-500 dark:text-zinc-400">
+              Email
+            </p>
+
+            <p className="mt-1 font-medium text-zinc-900 dark:text-white">
+              {customer?.email}
+            </p>
+          </div>
+        </div>
+
+
         <div>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Name
+          <p className=" text-zinc-500 dark:text-zinc-400">
+            Customer ID
           </p>
 
           <p className="mt-1 font-medium text-zinc-900 dark:text-white">
-            {customer.name}
+            {customer.id}
           </p>
         </div>
 
         <div>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className=" text-zinc-500 dark:text-zinc-400">
             Phone
           </p>
 

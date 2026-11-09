@@ -2,7 +2,7 @@ import ProductToolbar from "@/app/components/admin/products/ProductToolbar";
 import ProductTable from "@/app/components/admin/products/ProductTable";
 import {prisma} from "@/app/lib/prisma";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
-import { getFirstAdminProdList } from "@/app/lib/controller/getAdminProd";
+import { getFirstAdminProdList } from "@/app/lib/controller/admin/getAdminProd";
 import { exfn } from "@/app/helpers/extractActions";
 
 

@@ -6,7 +6,7 @@ import AddressCard from "@/app/components/admin/orders/details/AddressCard";
 import PaymentCard from "@/app/components/admin/orders/details/PaymentCard";
 import StatusCard from "@/app/components/admin/orders/details/StatusCard";
 import ProductsCard from "@/app/components/admin/orders/details/ProductsCard";
-import { getAdminOrderById } from "@/app/lib/controller/getAdminOrder";
+import { getAdminOrderById } from "@/app/lib/controller/admin/getAdminOrder";
 import { exfn } from "@/app/helpers/extractActions";
 import OrderStatus from "@/app/components/orders/OrderStatus";
 
@@ -58,11 +58,12 @@ const ORDER = {
 export default async function OrderDetailsPage({params}) {
   let order = null;
   let creationTime = "Loading..."
+  let id = null;
   try {
     const query = await params;
+    id = query?.id
     order = await exfn(() => getAdminOrderById(query?.id));
-    let newDate = new Date(order?.payment?.updatedAt).toLocaleDateString(undefined, {dateStyle:"medium", timeStyle: "short" });
-    creationTime = newDate;
+    creationTime = new Date(order?.payment?.updatedAt).toLocaleString(undefined, {dateStyle:"medium", timeStyle: "short"});
   } catch (error) {
     console.log("error in order fetching", error);
   }
@@ -88,8 +89,9 @@ export default async function OrderDetailsPage({params}) {
           )}
 
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
-              Order #{order?.id.slice(0,10)}...
+            <h1 className="text-xl bg-zinc-300 dark:bg-zinc-950 rounded-md p-2 font-bold flex text-zinc-900 dark:text-white">
+              Order  #{order?.id} 
+  
             </h1>
 
             <OrderStatus type={"delivery"} status={order?.state}/>
@@ -110,15 +112,18 @@ export default async function OrderDetailsPage({params}) {
 
         <AddressCard address={order?.address} notes={order?.notes} />
 
-        <StatusCard status={order?.status} />
+        <StatusCard status={order?.status} id={id} />
       </div>
 
       {/* Products */}
 
       <ProductsCard
+        order={order}
         products={order?.orderItems}
         payment={order?.payment}
       />
     </div>
   );
+
+
 }

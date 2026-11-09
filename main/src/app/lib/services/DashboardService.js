@@ -123,10 +123,37 @@ const getInventryAlerts = async ({cursor}) => {
   return {alerts, newCursor};
 }
 
+const getCancelRequestAlerts = async() => {
+  const alerts = await prisma.order.findMany({
+    where: {
+      status: "CancelRequested",
+      payment: {
+        status: "Paid"
+      }
+    },
+    include : {
+      payment: {
+        select: {
+          updatedAt: true,
+          status: true,
+          amount : true
+        }
+      },
+      customer: {
+        select : {
+          name: true
+        }
+      }
+    }
+  })
+  return alerts;
+}
+
 export {
   
   getProdCountService,
   getRevenueCount,
   checkLowStockCount,
   getInventryAlerts,
+  getCancelRequestAlerts
 }

@@ -7,7 +7,7 @@ import {prisma} from "@/app/lib/prisma";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { Status as StatusRef} from "@/generated/prisma/enums";
-import { adminOrderService } from "../services/Ably/adminOrdersService";
+import { adminOrderService } from "@/app/lib/services/Ably/adminOrdersService";
 
 
 export const getAdminOrders = async ({status, search, cursor}) => {
@@ -54,5 +54,26 @@ export const getAdminOrderById = async(id) => {
     })
 
     return resSuccess(serializePrisma(order));
+  })
+}
+
+export const changeAdminOrderStatus = async({status, id}) => {
+  return await TryCatch( async() => {
+
+      if (!Object.values(StatusRef).includes(status)) {
+        return resError("Invalid status provided"); 
+      };
+
+      if(!id) return resError("id is required");
+
+      await prisma.order.update({
+        where: {
+          id
+        },
+        data: {
+          status: status
+        }
+      })
+      return resSuccess(status);
   })
 }

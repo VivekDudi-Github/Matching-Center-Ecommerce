@@ -12,7 +12,7 @@ export default function ColorSelector({ colors, selectedColor, onSelectColor }) 
 
   return (
     <div className="space-y-3 -z-10" >
-      <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-100 flex flex-col">
+      <h3 className="md:text-sm text-[12px]  font-medium text-zinc-900 dark:text-zinc-100 flex flex-col">
         <span>
           Color: {selectedColor && <span className="text-zinc-500 dark:text-zinc-400">{selectedColor?.name} {`(${selectedColor?.hex})`}</span>}
         </span>
@@ -68,7 +68,7 @@ export default function ColorSelector({ colors, selectedColor, onSelectColor }) 
           </div>
         ))}
       </div>
-      <div className='text-zinc-500 flex items-center gap-1'>
+      <div className='text-zinc-500 md:text-sm text-[12px] flex items-center gap-1'>
         <InfoIcon size={19}   />
          You can adjust the item measurements by adding to the cart.
       </div>

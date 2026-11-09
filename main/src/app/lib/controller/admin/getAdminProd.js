@@ -2,7 +2,7 @@
 
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { TryCatch } from "@/app/helpers/TryCatch";
-import { getFirstAdminProdListNotStatusBased, getFirstAdminProdListStatusBased, getMoreAdminProdListNotStatusBased, getMoreAdminProdListStatusBased } from "../services/adminProd";
+import { getFirstAdminProdListNotStatusBased, getFirstAdminProdListStatusBased, getMoreAdminProdListNotStatusBased, getMoreAdminProdListStatusBased } from "@/app/lib/services/adminProd";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 
 export const getMoreAdminProdList = async(cursor, search, category, status) => { 

@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import { exfn } from "@/app/helpers/extractActions";
-import { getAdminOrders } from "@/app/lib/controller/getAdminOrder";
+import { getAdminOrders } from "@/app/lib/controller/admin/getAdminOrder";
 
 export default function OrdersTable({ initialOrders = [], initialCursor, errorMsg }) {
   const [isLoading, setIsLoading] = useState(false);

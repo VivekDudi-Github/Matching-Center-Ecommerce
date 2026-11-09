@@ -48,8 +48,8 @@ export default function ProductPage() {
   }
 
   const discountPercent = () => {
-    const discount = PRODUCT_DATA.originalPrice - PRODUCT_DATA.price;
-    return Math.round((discount / PRODUCT_DATA.originalPrice) * 100);
+    const discount = PRODUCT_DATA?.originalPrice - PRODUCT_DATA?.price;
+    return Math.round((discount / PRODUCT_DATA?.originalPrice) * 100);
   } 
 
   useEffect(() => {
@@ -86,14 +86,14 @@ export default function ProductPage() {
   if(isLoading) return  <Skeleton /> ;
   
   return (
-    <div className="min-h-screen -mt-12 pt-12 bg-zinc-100 dark:bg-black pb-20 lg:pb-0 font-sans">
+    <div className="min-h-screen -mt-12 pt-12 bg-zinc-100 dark:bg-black pb-0 lg:pb-0 font-sans">
       
-      <main className="max-w-350 mx-auto lg:p-4">
+      {PRODUCT_DATA ? <main className="max-w-350 mx-auto lg:p-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 lg:gap-4">
           
           {/* LEFT SIDE: Image Gallery & Desktop Actions */}
           <div className="lg:col-span-5 bg-white dark:bg-stone-950/30 p-4 lg:p-6 lg:rounded-sm lg:shadow-sm z-10">
-            <ProductGallery images={PRODUCT_DATA?.images} />
+            <ProductGallery images={PRODUCT_DATA?.images || []} />
             
           </div>
 
@@ -102,7 +102,7 @@ export default function ProductPage() {
             
             {/* Breadcrumbs */}
             <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 hidden lg:block">
-              Home {'>'} Fabrics {'>'} Silk {'>'} Premium Blend
+              Home {'>'} Products {'>'} {PRODUCT_DATA?.id} 
             </div>
 
             {/* Title & Ratings */}
@@ -125,9 +125,9 @@ export default function ProductPage() {
             </div>
             
             {/* Color Selector */}
-            <div className='p-2 z-0'>
+            <div className=' z-0'>
               <ColorSelector 
-                colors={PRODUCT_DATA?.color } 
+                colors={PRODUCT_DATA?.color || [] } 
                 selectedColor={selectedColor } 
                 onSelectColor={handleColorSelect}
               />
@@ -138,10 +138,10 @@ export default function ProductPage() {
               <p className="text-green-600 dark:text-green-400 text-sm font-bold mb-1">Special price</p>
               <div className="flex items-end gap-3">
                 <span className="text-3xl font-semibold text-zinc-900 dark:text-white flex items-end">
-                  ₹{PRODUCT_DATA.price}
+                  ₹{PRODUCT_DATA?.price}
                 </span>
                 <span className="text-base text-zinc-500 line-through mb-1">
-                  ₹{PRODUCT_DATA.originalPrice}
+                  ₹{PRODUCT_DATA?.originalPrice}
                 </span>
                 <span className="text-base text-green-600 dark:text-green-400 font-bold mb-1">
                   {discountPercent()}% off
@@ -154,20 +154,20 @@ export default function ProductPage() {
               <h3 className="text-lg font-medium mb-4 dark:text-white">Product Details</h3>
               <div className="grid grid-cols-3 gap-y-4 text-sm">
                 <div className="text-zinc-500">Fabric</div>
-                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA.category.name}</div>
+                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA?.category.name}</div>
                 
                 <div className="text-zinc-500">Pattern</div>
-                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA.pattern}</div>
+                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA?.pattern}</div>
                 
                 <div className="text-zinc-500">Width</div>
-                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA.width} Inches</div>
+                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA?.width} Inches</div>
 
                 <div className="text-zinc-500">Wash Care</div>
-                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA.washCare}</div>
+                <div className="col-span-2 text-zinc-900 dark:text-zinc-200">{PRODUCT_DATA?.washCare}</div>
                 
                 <div className="text-zinc-500">Description</div>
-                <div className="col-span-2 text-zinc-900 dark:text-zinc-200 leading-relaxed">
-                  {PRODUCT_DATA.description}
+                <div className="col-span-2 text-zinc-900 dark:text-zinc-200 leading-relaxed wrap-break-word text-wrap">
+                  {PRODUCT_DATA?.description} 
                 </div>
               </div>
             </div>
@@ -239,7 +239,11 @@ export default function ProductPage() {
         </div>
 
         
-      </main>
+      </main> : 
+      <div className='w-full h-56 text-center font-bold'>
+        No Product found!
+      </div>
+      }
       <CardSlider prods={prods} cursor={cursor} />
       
     </div>

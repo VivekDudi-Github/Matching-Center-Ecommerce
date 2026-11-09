@@ -6,7 +6,7 @@ import InventoryAlerts from "@/app/components/admin/InventoryAlerts";
 import RevenueChart from "@/app/components/admin/RevenueChart";
 import TopProducts from "@/app/components/admin/TopSelling";
 import { useEffect, useState } from "react";
-import { getDashboard } from "@/app/lib/controller/getAdminDash";
+import { getDashboard } from "@/app/lib/controller/admin/getAdminDash";
 import { toast } from "react-toastify";
 import { exfn } from "@/app/helpers/extractActions";
 
@@ -16,7 +16,9 @@ import {
   ShoppingBag,
   IndianRupee,
   AlertTriangle,
+  Loader2Icon,
 } from "lucide-react";
+import CancelRequested from "@/app/components/admin/CancelRequested";
 
 
  const stats = [
@@ -51,24 +53,34 @@ import {
 
 export default function AdminDashboard() {
   const [data, setData] = useState({});
- 
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getDashData = async () => {
       try {
+        setIsLoading(true);
         let res = await exfn(() => getDashboard());
         setData(res);
       } catch (error) {
         toast.error( error?.message || "Something went wrong")
         console.log("error in getting dashboard", error)
+      } finally{
+        setIsLoading(false);
       }
     }
     getDashData()
-  }, [])
+  }, []);
   
-
+  
   return (
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-7xl z-0 relative">
+        {isLoading ? (
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/30 backdrop-blur-sm dark:bg-black/30">
+            <Loader2Icon className="h-6 w-6 animate-spin text-primary sticky bottom-[50%]" />
+            <span className="mt-2 text-sm font-medium text-muted-foreground sticky bottom-[46.5%] ">Loading..</span>
+          </div>
+        ) : null}
+
         {/* Heading */}
         <div className="mb-8  flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div>
@@ -97,7 +109,6 @@ export default function AdminDashboard() {
           )})}
         </section>
 
-        {/* Chart + Inventory */}
         <section className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="xl:col-span-2">
             {/* <RevenueChart /> */} 
@@ -110,14 +121,13 @@ export default function AdminDashboard() {
         {/* Bottom Section */}
         <section className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
           <div className="xl:col-span-2">
-           
+           <CancelRequested orders={data?.cancelRequests} />
           </div>
 
-          <div className="xl:col-span-1">
+          <div className="xl:col-span-">
             <TopProducts />
           </div>
         </section>
       </div>
-
   );
 }
