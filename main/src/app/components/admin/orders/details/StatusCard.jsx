@@ -5,6 +5,7 @@ import { AlertTriangleIcon, Loader2Icon, Truck } from "lucide-react";
 import { exfn } from "@/app/helpers/extractActions";
 import { toast } from "react-toastify";
 import { changeAdminOrderStatus } from "@/app/lib/controller/admin/getAdminOrder";
+import ConfirmStatusBox from "./ConfirmStatusBox";
 
 const statuses = [
   'Pending',
@@ -21,9 +22,14 @@ const cancelStatus = [
 export default function StatusCard({ status,id }) {
   const [currentStatus, setCurrentStatus] = useState(status);
   const [isLoading, setIsLoading] = useState(false);
+  const [openDialog,  setOpenDialog ] = useState(false);
 
   const changeStatus = async() => {
     try {
+      if(status === "CancelRequested" ){
+        setOpenDialog(true);
+        return;
+      }
       setIsLoading(true);
       const res = await exfn(() => changeAdminOrderStatus({id, status: currentStatus}));
       toast.success("Status changed to ", currentStatus)
@@ -57,7 +63,7 @@ export default function StatusCard({ status,id }) {
       </div>
 
 
-      {status === "Camcelrequested" ? 
+      {status === "CancelRequested" ? 
         <div className="text-red-400 text-base flex gap-2 font-semibold pb-2">
           <AlertTriangleIcon size={50} />
           <p>Customer has requested to cancel the order. Please inspect the product and only after that refund the payment.</p>
@@ -77,6 +83,10 @@ export default function StatusCard({ status,id }) {
           ))
         }
       </select> 
+
+      {openDialog ? (
+        <ConfirmStatusBox id={id} closeBox={() => setOpenDialog(false)} />  
+      ) : null }
       
       <button
       onClick={changeStatus}

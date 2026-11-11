@@ -31,6 +31,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.84.0",
+    "react-player": "^3.4.0",
     "react-toastify": "^11.1.0",
     "resend": "^6.37.0",
     "zod": "^4.4.3",

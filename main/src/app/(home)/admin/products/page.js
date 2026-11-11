@@ -40,7 +40,7 @@ export default async function ProductsPage({searchParams}) {
 
       {/* Products */}
       <section className="md:mt-8 mt-4 grid grid-cols-1">
-        <ProductTable initalProducts={serializePrisma(products)} initialCursor={cursor} errorMsg={errorMsg} />
+        <ProductTable initalProducts={products} initialCursor={cursor} errorMsg={errorMsg} />
       </section>
       
     </div>

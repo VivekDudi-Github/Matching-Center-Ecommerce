@@ -10,7 +10,11 @@ export const getShopSelectionService = async() => {
               name: true,
               _count:{
                   select:{
-                      products: true
+                      products: {
+                        where: {
+                            deletedAt : null
+                        }
+                      }
                   }
               }     
           }
@@ -43,22 +47,20 @@ export const getShopSelectionService = async() => {
 
 
 export const getShopProductsService = async({categoryId, outOfStock, minPrice, maxPrice, sort, searchText, cursor}) => {
-    if(typeof categoryId === "string" && categoryId.length > 0) {
-        categoryId = categoryId?.split(",")?.map(id => parseInt(id));
-    } else {
-        categoryId = [];
-    }
+    console.log(categoryId,outOfStock, minPrice, maxPrice, sort, searchText, cursor )
 
     const products = await prisma.product.findMany({
         where:{
             isPublished: true,
             deletedAt: null,
-            ...(categoryId.length && { 
+            ...(categoryId?.length && { 
                 categoryId: {
                     in : categoryId
             } }),
-            ...(minPrice && { price: { gte: Math.max(minPrice,0) } }),
-            ...(maxPrice && { price: { lte: maxPrice } }),
+            price: { 
+                ...(maxPrice && {lte : maxPrice} ),
+                ...(minPrice && {gte: minPrice} ), 
+            },
             ...(searchText && { 
                 OR: [
                     {
@@ -93,6 +95,7 @@ export const getShopProductsService = async({categoryId, outOfStock, minPrice, m
             ...(sort === "price-asc" && {price: "asc"}) ,
             ...(sort === "price-desc" && {price: "desc"}) ,
             ...(sort === "featured" && {id: "desc"}) ,
+            ...(sort === "newest" && {id: "desc"}) ,
         },
         include: {
             color: true,

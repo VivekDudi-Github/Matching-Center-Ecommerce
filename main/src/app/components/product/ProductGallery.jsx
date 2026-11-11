@@ -3,6 +3,8 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SafeImage from '../SafeImage';
 
+
+
 export default function ProductGallery({ images }) {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -69,6 +71,7 @@ export default function ProductGallery({ images }) {
                 alt="Main Product" 
                 className="w-full h-full object-contain drop-shadow-sm pointer-events-none duration-200"
               />
+
               
             </motion.div>
           </AnimatePresence>

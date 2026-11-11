@@ -46,7 +46,7 @@ export const razorPayOrderService = async(orderId, session) => {
     
     if(razorpayOrder?.error && razorpayOrder.error?.code === "BAD_REQUEST_ERROR") return resError(razorpay.error.description);
 
-
+    //create pament row and update it's gateway-orderId
     const payment = await prisma.payment.create({
       data: {
           gatewayOrderId: razorpayOrder.id,
@@ -69,4 +69,40 @@ export const razorPayOrderService = async(orderId, session) => {
 
     return resSuccess(razorpayOrder.id);
 
+}
+
+export const razorPayRefundService = async(order) => {
+  const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
+  const refundableAmount = (order.payment.amount) - ((order.payment.amount * 2)/100) - (order?.shipping || 0)    ;
+  console.log("refundableAmount", order.payment.gatewayPaymentId, );
+
+  const res = await razorpay.payments.refund(
+    order.payment.gatewayPaymentId, {
+      "amount": refundableAmount * 100,
+      "speed": "normal",
+  })
+  console.log("res", res);
+  
+  if(res.error ){
+    return resError(res.error.description);
+  }
+
+  await prisma.order.update({
+    where: {id},
+    data: {
+      status: "Cancelled",
+      payment: {
+        update: {
+          status : "Refunded",
+          refundId: res.id
+        }
+      }
+    }
+  })
+ 
+  return res.id;
 }

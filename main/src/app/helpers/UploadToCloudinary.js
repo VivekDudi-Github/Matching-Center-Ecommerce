@@ -1,6 +1,6 @@
 'use client';
 import {getCloudinaryDeletionSignature} from '@/app/helpers/Cloudinary'; 
-import { deleteProductImages } from '@/app/lib/controller/productActions';
+import { deleteProductImages } from '@/app/lib/controller/admin/productActions';
 import { resError, resSuccess } from './resObj';
 
 export const uploadToCloudinary = async (file, signature, timestamp) => {

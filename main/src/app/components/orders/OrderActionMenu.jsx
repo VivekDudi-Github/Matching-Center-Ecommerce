@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link'; 
-import { AlertTriangle, Menu } from 'lucide-react';
+import { AlertTriangle, Loader2Icon, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { cancelOrder } from '@/app/lib/controller/orderActions';
@@ -19,11 +19,12 @@ function useClickOutside(ref, callback) {
   }, [ref, callback]);
 }
 
-export default function OrderActionMenu({ order, isExpired }) {
+export default function OrderActionMenu({ order, isExpired, changeStatus }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   const showCancel = ((order?.payment?.status === "Paid" || order?.payment?.status === "Processing") && order.status === "Pending" ) || !isExpired   ;
 
@@ -31,12 +32,16 @@ export default function OrderActionMenu({ order, isExpired }) {
 
   const handleCancelConfirm = async () => {
     try {
+      setIsLoading(true);
       const res = await exfn(() => cancelOrder(order.id));
       console.log("Success", res);
+      changeStatus("CancelRequested")
       toast.success(res || "Cancel Initiated");
     } catch (error) {
       toast.error(error?.message || "Something went wrong, please try again")
       console.log("error in canceling order", error)    
+    } finally{
+      setIsLoading(false);
     }
   };
 
@@ -143,11 +148,13 @@ export default function OrderActionMenu({ order, isExpired }) {
                     No, keep it
                   </button>
                   <button
+                    disabled={isLoading}
                     onClick={handleCancelConfirm}
                     className="px-3 py-2 rounded-md transition-colors text-white
                               bg-red-600 hover:bg-red-700
-                              dark:bg-red-700 dark:hover:bg-red-600"
+                              dark:bg-red-700 dark:hover:bg-red-600 flex items-center gap-2"
                   >
+                    {isLoading ? <Loader2Icon className='animate-spin' size={12} /> : null}
                     Yes, cancel order
                   </button>
                 </div>

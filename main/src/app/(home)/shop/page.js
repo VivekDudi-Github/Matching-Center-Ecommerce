@@ -55,7 +55,7 @@ export default function ShopLayout() {
         const sort = searchParams.get("sort") ?? "featured";
         const search = searchParams.get("search") ?? "";
   
-        console.log("search:", search)
+        setProducts([]);
         const res = await exfn(() => getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search}));
         console.log("products res:", res);
   

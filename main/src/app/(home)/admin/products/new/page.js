@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { newProductFormSchema } from "@/app/lib/validation/product.schema";
 import { getCloudinarySignature } from "@/app/helpers/Cloudinary";
-import { createNewProduct, createNewProductImages } from "@/app/lib/controller/productActions";
+import { createNewProduct, createNewProductImages } from "@/app/lib/controller/admin/productActions";
 import {uploadToCloudinary} from '@/app/helpers/UploadToCloudinary';
 import { useRouter } from "next/navigation";
 import { exfn } from "@/app/helpers/extractActions";

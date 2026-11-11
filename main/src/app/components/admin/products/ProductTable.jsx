@@ -25,11 +25,14 @@ const columns = [
 
 
 export default function ProductTable({ initalProducts = [], initialCursor = null, errorMsg }) {
-  const [ products, setProducts] = useState([]);
+  const [ products, setProducts] = useState(initalProducts);
   const [ cursor, setCursor] = useState(initialCursor);
   const [ isLoading, setIsLoading] = useState(false);
 
+
+  //it causes infinte updates over server connection loss.
   const params = useSearchParams();
+
   console.log("initalProducts", initalProducts);
   const loadMore = async() => {
     setIsLoading(true);
@@ -37,7 +40,6 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
       const search = params.get("search") ?? "";
       const category = params.get("category") ?? "";
       const status = params.get("status") ?? "";
-
 
       const {list , newCursor} = await exfn(() => getMoreAdminProdList(cursor, search, category, status));
       console.log("LIST:", list);
@@ -54,7 +56,7 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
     setIsLoading(true);
     try {
       setProducts([]);
-      setCursour(null);
+      setCursor(null);
 
       const search = params.get("search") ?? "";
       const category = params.get("category") ?? "";
@@ -62,7 +64,7 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
 
       const {list , newCursor} = await exfn( () => getFirstAdminProdList( search, category, status));
       setProducts(list);
-      setCursour(newCursor);
+      setCursor(newCursor);
     } catch (error) {
       toast.error(error?.message || "Something went wrong");
     } finally {
@@ -71,10 +73,11 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
   }
 
   useEffect(() => {
-    if(errorMsg) toast.error(errorMsg);
-    setProducts(initalProducts);
-    setCursor(initialCursor);
-  }, [initalProducts])
+    console.log("errorMsg", errorMsg);
+    if(errorMsg){
+      toast.error(errorMsg);
+    }
+  }, [errorMsg])
 
   return (
     <>

@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AlertCircleIcon, ArrowUpRight, Star, ThumbsUpIcon } from "lucide-react";
+import { AlertCircleIcon, ArrowUpRight, Check, Copy, Star, ThumbsUpIcon } from "lucide-react";
 import OrderStatus from "../orders/OrderStatus";
 import Link from "next/link";
+import {format} from "date-fns";
+import { useState } from "react";
 
 const prod = [
   {
@@ -19,13 +21,25 @@ const prod = [
 
 function CancelRequested({orders = []}) {
   const products = [];
-  return (
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (order) => {
+    try {
+      await navigator.clipboard.writeText(order.id);
+      setCopied(order.id);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy ID: ", err);
+    }
+  };
+
+  return ( 
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
+      className="rounded-2xl border border-zinc-200 bg-white  shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
     >
-      <div className="mb-6 flex items-center justify-between">
+      <div className=" p-6 pb-2 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
             Ordered for Cancellation
@@ -76,13 +90,13 @@ function CancelRequested({orders = []}) {
               return (
                 <tr
                   key={order.id}
-                  className="border-b border-zinc-100 transition hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50"
+                  className="border-b border-zinc-100 relative transition hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50"
                 >
 
-                  <td className="px-6 py-5 relative font-semibold text-zinc-900 dark:text-white">                  
+                  <td className="px-6 py-5  font-semibold text-zinc-900 dark:text-white">                  
                     <Link 
                       href={"/admin/orders/"+ order.id} 
-                      className="after:absolute after:inset-0 after:z-10"
+                      className="after:absolute after:inset-0 after:z-10 w-full"
                     />
 
                     <h3 title={order?.id} className="font-semibold w-fit text-zinc-300 dark:text-white truncate dark:bg-zinc-950 border border-amber-700/50 dark:hover:border-amber-200/50 bg-zinc-950 p-2 rounded-xs   group relative overflow-hidden   px-4 py-2.5 text-sm tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.25)] transition-all duration-300 cursor-pointer">

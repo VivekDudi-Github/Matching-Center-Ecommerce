@@ -2,7 +2,7 @@
 
 import {prisma} from "@/app/lib/prisma";
 import {TryCatch} from "@/app/helpers/TryCatch";
-import { fetchOrdersByCustomerIdService } from "../services/fetchOrderService";
+import { fetchOrdersByCustomerIdService } from "@/app/lib/services/fetchOrderService";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";

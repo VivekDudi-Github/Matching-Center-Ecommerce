@@ -61,7 +61,7 @@ export default async function OrderDetailsPage({params}) {
   let id = null;
   try {
     const query = await params;
-    id = query?.id
+    id = query?.id;
     order = await exfn(() => getAdminOrderById(query?.id));
     creationTime = new Date(order?.payment?.updatedAt).toLocaleString(undefined, {dateStyle:"medium", timeStyle: "short"});
   } catch (error) {

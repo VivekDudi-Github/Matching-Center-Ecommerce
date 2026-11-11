@@ -13,8 +13,8 @@ import { getAdminOrders } from "@/app/lib/controller/admin/getAdminOrder";
 
 export default function OrdersTable({ initialOrders = [], initialCursor, errorMsg }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [orders, setOrders] = useState([]);
-  const [cursor, setCursor] = useState(null);
+  const [orders, setOrders] = useState(initialOrders);
+  const [cursor, setCursor] = useState(initialCursor);
   
   const params = useSearchParams();
   const loadMore = async() => {
@@ -41,10 +41,6 @@ export default function OrdersTable({ initialOrders = [], initialCursor, errorMs
     }
   }, [errorMsg])
 
-  useEffect(() => {
-    setOrders([...initialOrders]);
-    setCursor(initialCursor);
-  }, [initialOrders])
   
   
   if (!orders.length) {

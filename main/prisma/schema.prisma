@@ -258,6 +258,8 @@ model Payment {
   customer            Customer            @relation(fields: [customerId], references: [id])
   
   number              String?
+
+  refundId            String?
   
   updatedAt           DateTime            @updatedAt
   createdAt           DateTime            @default(now())

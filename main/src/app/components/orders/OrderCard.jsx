@@ -24,6 +24,8 @@ export default function OrderCard({ order }) {
   const [isOpen, setIsOpen] = useState(true);
   const [copied, setCopied] = useState(false);
 
+  const [currStatus, setCurrStatus] = useState(order.staus);
+
   const itemCount = order?.orderItems?.length || 0;
   const dateOptions = {
     year: 'numeric',
@@ -80,7 +82,7 @@ export default function OrderCard({ order }) {
               </div>
 
               
-              <OrderActionMenu order={order} isExpired={isExpired}/>
+              <OrderActionMenu order={order} isExpired={isExpired} changeStatus={setCurrStatus}/>
               
             </div>
 

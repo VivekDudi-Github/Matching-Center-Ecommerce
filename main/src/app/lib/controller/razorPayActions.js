@@ -1,10 +1,9 @@
 "use server";
 import { resError, resSuccess } from "@/app/helpers/resObj";
-import Razorpay from "razorpay";
 import { TryCatch } from "@/app/helpers/TryCatch";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { razorPayOrderService } from "../services/razorPayOrder";
+import { razorPayOrderService } from "@/app/lib/services/razorPayOrder";
 
 const getRazorpayOrder = async (orderId) => {
   return await TryCatch(async () => {

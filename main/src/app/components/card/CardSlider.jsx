@@ -9,27 +9,6 @@ import { toast } from "react-toastify";
 import CardSkeleton from "./CardSkeleton";
 import { exfn } from "@/app/helpers/extractActions";
 
-// Mock list array of fabrics to populate our slider
-// export const products = [
-//   { id: "fab-1", quantity: 1, title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99,  saleTag: "28% OFF", images:[{url: "/dis_1.webp"}], color: "pink", description: "Luxurious silk fabric with a smooth texture, perfect for elegant garments and accessories.Luxurious silk fabric with a smooth texture, perfect for elegant garments and accessories." },
-//   { id: "fab-2", quantity: 1, title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null, images:[{url: "/dis_2.webp"}], color: "pink", description: "Soft and breathable linen fabric, ideal for summer clothing and home decor projects." },
-//   { id: "fab-3", quantity: 1, title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5", images:[{url: "/fabrics_3.webp"}], color: "maroon", description: "High-quality cotton fabric with a smooth texture, perfect for casual wear and everyday clothing." },
-//   { id: "fab-4", quantity: 1, title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal",images:[{url: "/fabrics_2.jpg"}], color: "red", description: "Soft and warm wool fabric, ideal for winter clothing and accessories." },
-//   { id: "fab-5", quantity: 1, title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null, images:[{url: "/fabrics_1.webp"}], color: "gray", description: "Traditional floral chiffon fabric, perfect for special occasions and weddings." },
-
-//   { id: "fab-31", quantity: 1, title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, saleTag: "28% OFF", images:[{url: "/dis_1.webp"}], color: "pink", description: "Luxurious silk fabric with a smooth texture, perfect for elegant garments and accessories." },
-//   { id: "fab-32", quantity: 1, title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null, images:[{url: "/dis_2.webp"}], color: "maroon", description: "Soft and breathable linen fabric, ideal for summer clothing and home decor projects." },
-//   { id: "fab-33", quantity: 1, title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5", images:[{url: "/fabrics_3.webp"}], color: "red", description: "High-quality cotton fabric with a smooth texture, perfect for casual wear and everyday clothing." },
-//   { id: "fab-34", quantity: 1, title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal", images:[{url: "/fabrics_2.jpg"}], color: "maroon", description: "Soft and warm wool fabric, ideal for winter clothing and accessories." },
-//   { id: "fab-35", quantity: 1, title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null, images:[{url: "/fabrics_1.webp"}], color: "gray", description: "Traditional floral chiffon fabric, perfect for special occasions and weddings." },
-
-//   { id: "fab-21", quantity: 1, title: "Premium Mulberry Silk", price: 24.99, originalPrice: 34.99, saleTag: "28% OFF", images:[{url: "/dis_1.webp"}], color: "pink", description: "Luxurious silk fabric with a smooth texture, perfect for elegant garments and accessories." },
-//   { id: "fab-22", quantity: 1, title: "Organic Washed Linen", price: 18.50, originalPrice: null, saleTag: null, images:[{url: "/dis_2.webp"}], color: "maroon", description: "Soft and breathable linen fabric, ideal for summer clothing and home decor projects." },
-//   { id: "fab-23", quantity: 1, title: "Heavyweight Cotton Canvas", price: 14.99, originalPrice: 19.99, saleTag: "Save $5", color: "red", images:[{url: "/fabrics_3.webp"}], description: "High-quality cotton fabric with a smooth texture, perfect for casual wear and everyday clothing." },
-//   { id: "fab-24", quantity: 1, title: "Merino Wool Knit", price: 29.99, originalPrice: 39.99, saleTag: "Winter Deal", color: "gray", images:[{url: "/fabrics_2.jpg"}], description: "Soft and warm wool fabric, ideal for winter clothing and accessories." },
-//   { id: "fab-25", quantity: 1, title: "Vintage Floral Chiffon", price: 16.25, originalPrice: null, saleTag: null, color: "pink", images:[{url: "/fabrics_1.webp"}], description: "Traditional floral chiffon fabric, perfect for special occasions and weddings." }
-
-// ];
 
 export default function CardSlider({prods = [], cursor : propCursor}) {
   const isFetchingRef = useRef(false);

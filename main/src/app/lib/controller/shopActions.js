@@ -3,8 +3,9 @@
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { TryCatch } from "@/app/helpers/TryCatch";
 import { prisma } from "@/app/lib/prisma";
-import { getShopProductsService, getShopSelectionService } from "../services/shopService";
+import { getShopProductsService, getShopSelectionService } from "@/app/lib/services/shopService";
 import { resError, resSuccess } from "@/app/helpers/resObj";
+import { shopFilterSchema } from "../validation/shopFilter.schema";
 
 export const getShopSelections = async () => {
   return await TryCatch(async () => {
@@ -16,10 +17,26 @@ export const getShopSelections = async () => {
   });
 };
 
-export const getProducts = async ({categoryId = '', outOfStock, minPrice, maxPrice,sort, searchText, cursor }) => { 
-    if(searchText && searchText?.length > 15 ) return resError("search length is too long")
+export const getProducts = async (data) => { 
+  return await TryCatch(async () => {
 
-    return await TryCatch(async () => {
+        if(typeof data?.categoryId === "string" && data?.categoryId.length > 0) {
+            data.categoryId = data.categoryId?.split(",");
+        } else {
+            data.categoryId = [];
+        }
+        console.log("data", data.categoryId);
+
+        const parsedData = shopFilterSchema.safeParse(data);
+        if (!parsedData.success) {
+            console.log(parsedData?.error?.issues)
+            const parseError = parsedData?.error?.issues?.[0]?.message;
+            return resError(parseError);
+        }
+
+
+        const {categoryId , outOfStock, minPrice, maxPrice,sort, searchText, cursor } = parsedData.data;
+
         const {products, newCursor} = await getShopProductsService({categoryId, outOfStock, minPrice, maxPrice,sort, searchText, cursor});
 
         return resSuccess({products : serializePrisma(products), newCursor});

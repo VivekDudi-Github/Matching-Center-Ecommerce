@@ -5,7 +5,7 @@ import z from "zod";
 const LIMIT = 11;
 
 export const adminOrderService = async ({cursor, search, status}) => {
-  
+
     const cursorFilter = cursor ? {
       cursor : {
         id : cursor
@@ -19,6 +19,7 @@ export const adminOrderService = async ({cursor, search, status}) => {
     let isId = v7Schema.safeParse(search);
     isId = !!isId.success ;  
 
+    // provides the filter based on either id or text based
     const searchFIlter = isId ? {
       id : search
     } : search ? {
@@ -30,10 +31,18 @@ export const adminOrderService = async ({cursor, search, status}) => {
       }
     } : {} ;
 
+    // show all the orders if there is an query added  
+    const paymentStatusFilter = Object.keys(searchFIlter).length > 0  ? 
+        [] : 
+        [
+          {status: "Paid"},
+          {status: "Refunded"}
+        ] ;
+
     const orders = await prisma.order.findMany({
       where: {
         payment: {
-          status : "Paid"
+          OR: paymentStatusFilter
         },
         ...statusFilter ,
         ...searchFIlter

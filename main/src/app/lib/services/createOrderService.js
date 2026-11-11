@@ -163,8 +163,9 @@ export const createorderService = async(data, email, name, SHIPPING) => {
 
 export const orderCancelService = async (order,session) => {
   if(order.status === "Cancelled") return;
-  
   const orderExpiry = Date.parse(order.expireAt);
+  
+  // change order status if the payment is already made and delivery has not begun
   if((order?.payment?.status === "Paid" || order?.payment?.status === "Processing") && order.status === "Pending" ){
       await prisma.order.update({
         where: {
@@ -177,10 +178,19 @@ export const orderCancelService = async (order,session) => {
       return;
   }
 
+  // expiry and restocking api has 30sec difference
+  // order expiry if is older than now then the restock api will take care of unfreezed products
   if(orderExpiry  <= Date.now()){
+    await prisma.order.update({
+      where: {id : order.id},
+      data: {
+        isLocked : false
+      }
+    })
     return;
   }else {
-  
+
+    // immediately release the stocks if user cancel the order before paying.
     await prisma.$transaction(async (tx) => {
 
       const colors = order.orderItems.flatMap((item) => item.color).flat();    

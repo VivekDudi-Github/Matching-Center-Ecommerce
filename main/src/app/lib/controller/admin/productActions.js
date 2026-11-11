@@ -4,11 +4,11 @@ import { serializePrisma } from '@/app/helpers/serializePrisma';
 import { TryCatch } from '@/app/helpers/TryCatch';
 import { prisma } from '@/app/lib/prisma';
 import {newProductFormSchema} from '@/app/lib/validation/product.schema';
-import { updateProductService } from '../services/UpdateProd';
-import { duplicateproductService } from '../services/duplicateProduct';
-import { deleteProductImagesService } from '../services/deleteImages';
+import { updateProductService } from '@/app/lib/services/UpdateProd';
+import { duplicateproductService } from '@/app/lib/services/duplicateProduct';
+import { deleteProductImagesService } from '@/app/lib/services/deleteImages';
 import { resError, resSuccess } from '@/app/helpers/resObj';
-import { createNewProductService } from '../services/createNewProd';
+import { createNewProductService } from '@/app/lib/services/createNewProd';
 
 
 export async function createNewProduct(data) {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ShoppingCart, Star, Check, IndianRupeeIcon } from 'lucide-react';
 import ProductGallery from '@/app/components/product/ProductGallery';
 import ColorSelector from '@/app/components/product/ColorSelector';
@@ -13,6 +13,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { exfn } from '@/app/helpers/extractActions';
 import { getProducts } from '@/app/lib/controller/shopActions';
+import ReactPlayer from "react-player"
 
 export default function ProductPage() {
   const {id} = useParams();
@@ -72,7 +73,7 @@ export default function ProductPage() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const {products, newCursor} = await exfn(() => getProducts({cursor: cursor, sort: "featured", outOfStock: false }) );
+        const {products, newCursor} = await exfn(() => getProducts({sort: "featured", outOfStock: false }) );
         setProducts(products);
         setCursor(newCursor);
       } catch (error) {
@@ -237,7 +238,27 @@ export default function ProductPage() {
             </div>
           </div>
         </div>
-
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black shadow-lg">
+          <ReactPlayer
+            url={"https://www.youtube.com/watch?v=LXb3EKWsInQ"}
+            width="100%"
+            height="100%"
+            preload="https://www.youtube.com/watch?v=LXb3EKWsInQ"
+            controls={true}
+            playing={false}
+            autoPlay={false}
+            muted={true} 
+            config={{
+              youtube: {
+                playerVars: { 
+                  rel: 0, // Don't show related videos from other channels at the end
+                  modestbranding: 1 // Hide the YouTube logo as much as possible
+                }
+              }
+            }}
+          />                   
+        </div>   
+   
         
       </main> : 
       <div className='w-full h-56 text-center font-bold'>
