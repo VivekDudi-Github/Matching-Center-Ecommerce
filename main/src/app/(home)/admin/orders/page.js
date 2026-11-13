@@ -1,7 +1,7 @@
 import OrderToolbar from "@/app/components/admin/orders/OrdersToolbar";
 import OrdersTable from "@/app/components/admin/orders/OrdersTable";
 import { exfn } from "@/app/helpers/extractActions";
-import { getAdminOrders } from "@/app/lib/controller/admin/getAdminOrder";
+import { getAdminOrders } from "@/app/lib/controller/admin/changeAdminOrder";
 import { Loader2, LoaderIcon } from "lucide-react";
 
 
@@ -12,9 +12,9 @@ export default async function OrdersPage({searchParams}) {
     isLoading = true;
     const query = await searchParams;
       
-      const {list, newCursor} = await exfn(() => getAdminOrders({status: query?.status || "All", search: query?.search}));
-      orders = list;
-      cursor = newCursor;
+    const {list, newCursor} = await exfn(() => getAdminOrders({status: query?.status || "All", search: query?.search}));
+    orders = list;
+    cursor = newCursor;
       
   } catch (error) {
     errorMsg = error?.message || "Something went wrong while fetching."

@@ -1,7 +1,9 @@
 
 "use client";
 
+import { api } from "@/app/lib/axios";
 import { moreInventryAlerts } from "@/app/lib/controller/admin/getAdminDash";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowDown, Loader2Icon } from "lucide-react";
 import Link from "next/link";
@@ -10,30 +12,51 @@ import { toast } from "react-toastify";
 
 
 export default function InventoryAlerts({initialAlerts , initalCursor}) {
-  const [items, setItems] = useState([]);
-  const [cursor, setCursor] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["inventory-alerts"],
 
-  const loadMore = async() => {
-    try {
-      setIsLoading(true);
-      const {cursor : newCursor, alerts : newAlerts} = await moreInventryAlerts(cursor);
-      
-      setCursor(newCursor);
-      setItems(prev => [...prev, newAlerts]);
-      
-    } catch (error) {
-      toast.error(error?.message || "error in fetching Inventry alerts");
-      console.log("error in loading inventry alerts");
-    } finally {
-      setIsLoading(false);
-    }
+    queryFn: async ({ pageParam }) => {
+      const params = new URLSearchParams();
+      if (pageParam) {
+        params.set("cursor", pageParam);
+      }
+      const res = await api.get(`/admin/dash/inventory-alerts/?${params}`);
+      return res.data;
+    },
+
+    initialPageParam: null,
+    enabled: Boolean(initialAlerts),
+    initialData: initialAlerts
+      ? {
+          pages: [{alerts: initialAlerts,newCursor : initalCursor}],
+          pageParams: [],
+        }
+      : undefined,
+   
+    staleTime: 60 * 1000, 
+    
+
+    getNextPageParam: (lastPage) =>
+      lastPage?.newCursor
+        ? lastPage?.newCursor
+        : undefined,
+  });
+
+
+  const loadMore = async( ) => {
+    if(!isFetchingNextPage && !hasNextPage){
+      await fetchNextPage()
+    } 
   }
+  const items = data?.pages?.flatMap((page) => page?.alerts) ?? [];
 
-  useEffect(() => {
-    setItems(initialAlerts);
-    setCursor(initalCursor);
-  }, [initialAlerts, initalCursor])
+
 
   return (
     <motion.div
@@ -57,9 +80,9 @@ export default function InventoryAlerts({initialAlerts , initalCursor}) {
 
       <div className="space-y-3 p-5">
         {items?.map((item) => (
-          <Link href={"/admin/products/"+item?.product?.id+"/edit" } key={item.id}>
+          <Link href={"/admin/products/"+item?.product?.id+"/edit" } key={item?.id}>
             <div
-              key={item.id}
+              key={item?.id}
               className="rounded-xl border border-zinc-200 p-4 transition hover:border-orange-300 hover:bg-orange-50 dark:border-zinc-800 dark:hover:border-orange-700 dark:hover:bg-orange-500/5"
             >
               <p className="font-medium">
@@ -82,7 +105,7 @@ export default function InventoryAlerts({initialAlerts , initalCursor}) {
           </Link>
         ))}
       </div>
-    {cursor && (
+    {hasNextPage && (
         <div className="flex justify-center m-4">
           <button
             type="button"

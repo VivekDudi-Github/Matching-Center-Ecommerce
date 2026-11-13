@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AlertTriangleIcon, Loader2Icon, Truck } from "lucide-react";
 import { exfn } from "@/app/helpers/extractActions";
 import { toast } from "react-toastify";
-import { changeAdminOrderStatus } from "@/app/lib/controller/admin/getAdminOrder";
+import { changeAdminOrderStatus } from "@/app/lib/controller/admin/changeAdminOrder";
 import ConfirmStatusBox from "./ConfirmStatusBox";
 
 const statuses = [

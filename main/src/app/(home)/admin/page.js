@@ -3,13 +3,8 @@
 import StatCard from "@/app/components/admin/StatCard";
 import RecentOrders from "@/app/components/admin/RecentOrders";
 import InventoryAlerts from "@/app/components/admin/InventoryAlerts";
-import RevenueChart from "@/app/components/admin/RevenueChart";
 import TopProducts from "@/app/components/admin/TopSelling";
-import { useEffect, useState } from "react";
-import { getDashboard } from "@/app/lib/controller/admin/getAdminDash";
-import { toast } from "react-toastify";
-import { exfn } from "@/app/helpers/extractActions";
-
+import { useQuery } from '@tanstack/react-query';
 
 import {
   Package,
@@ -19,6 +14,7 @@ import {
   Loader2Icon,
 } from "lucide-react";
 import CancelRequested from "@/app/components/admin/CancelRequested";
+import { api } from "@/app/lib/axios";
 
 
  const stats = [
@@ -52,29 +48,21 @@ import CancelRequested from "@/app/components/admin/CancelRequested";
   ];
 
 export default function AdminDashboard() {
-  const [data, setData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    data,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ['admin-dashboard'],
+    queryFn: async() => {
+      const res = await api.get("/admin/dash");
+      return res?.data ;
+    },
+  })
 
-  useEffect(() => {
-    const getDashData = async () => {
-      try {
-        setIsLoading(true);
-        let res = await exfn(() => getDashboard());
-        setData(res);
-      } catch (error) {
-        toast.error( error?.message || "Something went wrong")
-        console.log("error in getting dashboard", error)
-      } finally{
-        setIsLoading(false);
-      }
-    }
-    getDashData()
-  }, []);
-  
-  
   return (
       <div className="mx-auto max-w-7xl z-0 relative">
-        {isLoading ? (
+        {(isLoading || isFetching) ? (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/30 backdrop-blur-sm dark:bg-black/30">
             <Loader2Icon className="h-6 w-6 animate-spin text-primary sticky bottom-[50%]" />
             <span className="mt-2 text-sm font-medium text-muted-foreground sticky bottom-[46.5%] ">Loading..</span>
@@ -98,14 +86,14 @@ export default function AdminDashboard() {
         <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat) => {
               let field = data?.[stat.title];
-              field = !field ? data.lowStockCount : field;
+              field = !field ? data?.lowStockCount : field;
 
               stat.change = field?.change;
               stat.value = field?.value;
               stat.positive = field?.positive;
               
           return (
-            <StatCard key={stat.title} {...stat} />
+            <StatCard key={stat?.title} {...stat} />
           )})}
         </section>
 
@@ -115,7 +103,7 @@ export default function AdminDashboard() {
             <RecentOrders orders={data?.recentorders} />          
           </div>
 
-          <InventoryAlerts initialAlerts={data?.invertoryAlert?.alerts} initalCursor={data.invertoryAlert?.newCursor}  />
+          <InventoryAlerts initialAlerts={data?.inventoryAlert?.alerts} initalCursor={data?.inventoryAlert?.newCursor}  />
         </section>
 
         {/* Bottom Section */}

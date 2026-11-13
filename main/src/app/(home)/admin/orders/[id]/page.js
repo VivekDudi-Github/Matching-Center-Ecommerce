@@ -6,7 +6,7 @@ import AddressCard from "@/app/components/admin/orders/details/AddressCard";
 import PaymentCard from "@/app/components/admin/orders/details/PaymentCard";
 import StatusCard from "@/app/components/admin/orders/details/StatusCard";
 import ProductsCard from "@/app/components/admin/orders/details/ProductsCard";
-import { getAdminOrderById } from "@/app/lib/controller/admin/getAdminOrder";
+import { getAdminOrderById } from "@/app/lib/controller/queries/admin/getAdminOrderById";
 import { exfn } from "@/app/helpers/extractActions";
 import OrderStatus from "@/app/components/orders/OrderStatus";
 

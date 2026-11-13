@@ -252,7 +252,7 @@ export default function ProductPage() {
               youtube: {
                 playerVars: { 
                   rel: 0, // Don't show related videos from other channels at the end
-                  modestbranding: 1 // Hide the YouTube logo as much as possible
+                  modestbranding: 0 // Hide the YouTube logo as much as possible
                 }
               }
             }}
