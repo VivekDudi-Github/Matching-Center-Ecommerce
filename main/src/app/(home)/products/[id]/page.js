@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingCart, Star, Check, IndianRupeeIcon } from 'lucide-react';
 import ProductGallery from '@/app/components/product/ProductGallery';
 import ColorSelector from '@/app/components/product/ColorSelector';
@@ -8,28 +8,30 @@ import useCartStore from '@/app/store/CartStore';
 import CardSlider from '@/app/components/card/CardSlider';
 import { AnimatePresence , motion} from 'framer-motion';
 import Skeleton from '@/app/components/product/ProductPageSkeleton';
-import { getProductById } from '@/app/lib/controller/fetchProduct';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/app/lib/axios';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { exfn } from '@/app/helpers/extractActions';
-import { getProducts } from '@/app/lib/controller/shopActions';
 import ReactPlayer from "react-player"
 
 export default function ProductPage() {
   const {id} = useParams();
   const router = useRouter();
   
-  const [selectedColor, setSelectedColor] = useState(null); 
-  const addItem = useCartStore(s => s.addItem);``
+  const [selectedColor, setSelectedColor] = useState(null);
+  const addItem = useCartStore(s => s.addItem);
   const items = useCartStore(s => s.items);
 
   const [isAdded, setIsAdded] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  const [PRODUCT_DATA, setPRODUCT_DATA] = useState(null);
 
-  const [prods, setProducts] = useState([]);
-  const [cursor, setCursor] = useState(null);
+  const { data: PRODUCT_DATA, isLoading } = useQuery({
+    queryKey: ["product", id],
+    queryFn: async () => {
+      const res = await api.get(`/product/${id}`);
+      return res.data;
+    },
+    enabled: !!id,
+  });
 
 
   const handleColorSelect = (color) => {
@@ -51,38 +53,7 @@ export default function ProductPage() {
   const discountPercent = () => {
     const discount = PRODUCT_DATA?.originalPrice - PRODUCT_DATA?.price;
     return Math.round((discount / PRODUCT_DATA?.originalPrice) * 100);
-  } 
-
-  useEffect(() => {
-    setIsLoading(true);
-    const fetch = async () => {
-      try {
-        const prod = await exfn(() => getProductById(id));
-        console.log("prod:", prod);
-        if(prod) setPRODUCT_DATA(prod);
-      } catch (error) {
-        console.log("error in fetching product: ", error);
-        toast.error(error?.message || "Something went wrong while fetching product");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetch();
-  }, [])
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const {products, newCursor} = await exfn(() => getProducts({sort: "featured", outOfStock: false }) );
-        setProducts(products);
-        setCursor(newCursor);
-      } catch (error) {
-        console.log("error in fetching product: ", error);
-        toast.error(error?.message || "Something went wrong while fetching product");
-      }
-    }
-    fetch();
-  }, [])
+  }
 
   if(isLoading) return  <Skeleton /> ;
   
@@ -265,7 +236,7 @@ export default function ProductPage() {
         No Product found!
       </div>
       }
-      <CardSlider prods={prods} cursor={cursor} />
+      <CardSlider />
       
     </div>
   );

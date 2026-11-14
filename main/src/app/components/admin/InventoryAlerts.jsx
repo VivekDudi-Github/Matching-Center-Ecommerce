@@ -2,13 +2,10 @@
 "use client";
 
 import { api } from "@/app/lib/axios";
-import { moreInventryAlerts } from "@/app/lib/controller/admin/getAdminDash";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowDown, Loader2Icon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 
 export default function InventoryAlerts({initialAlerts , initalCursor}) {

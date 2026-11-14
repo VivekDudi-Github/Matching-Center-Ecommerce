@@ -7,163 +7,39 @@ import { useSession } from "next-auth/react";
 import HeaderSkeleton from "@/app/components/orders/skeleton/HeaderSkeleton";
 import { useEffect, useState } from "react";
 import OrderCardSkeleton from "@/app/components/orders/skeleton/OrderCardSkeleton";
-import { fetchOrdersByCustomerId, fetchUserOrders } from "@/app/lib/controller/fetchOrder";
-import { toast } from "react-toastify";
-import { exfn } from "@/app/helpers/extractActions";
-import { fetchCustomerByEmail } from "@/app/lib/controller/fetchCustomer";
-import { getTimeClient } from "@/app/helpers/getTimeClient";
-
-const ordersTest = {
-  orders: [
-  {
-    id: "ORD-2026-00124",
-    createdAt: "September 22, 2026",
-    paymentStatus: "Paid",
-    status: "Shipped",
-    subtotal: 2450,
-    shipping: 80,
-    total: 2530,
-
-    orderItems: [
-      {
-        id: 1,
-        name: "Premium Cotton Fabric",
-        image: "/images/products/cotton.jpg",
-        price: 650,
-        category: "Cotton",
-        color: [
-          {
-            colorName: "Sky Blue",
-            hex: "#60A5FA",
-            quantity: 2.5,
-          },
-          {
-            colorName: "White",
-            hex: "#FFFFFF",
-            quantity: 1.5,
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: "Printed Rayon Fabric",
-        image: "/images/products/rayon.jpg",
-        price: 850,
-        category: "Rayon",
-        color: [
-          {
-            colorName: "Maroon",
-            hex: "#7F1D1D",
-            quantity: 1.5,
-          },
-        ],
-      },
-    ],
-  },
-
-  {
-    id: "ORD-2026-00108",
-    createdAt: "September 15, 2026",
-    paymentStatus: "Paid",
-    status: "Delivered",
-    subtotal: 1850,
-    shipping: 0,
-    total: 1850,
-
-    items: [
-      {
-        id: 3,
-        name: "Soft Silk Fabric",
-        image: "/images/products/silk.jpg",
-        price: 925,
-        category: "Silk",
-        color: [
-          {
-            colorName: "Wine",
-            hex: "#722F37",
-            quantity: 1,
-          },
-          {
-            namecolorName: "Black",
-            hex: "#000000",
-            quantity: 1,
-          },
-        ],
-      },
-    ],
-  },
-
-  {
-    id: "ORD-2026-00091",
-    createdAt: "September 5, 2026",
-    paymentStatus: "Pending",
-    status: "Pending",
-    subtotal: 1200,
-    shipping: 80,
-    total: 1280,
-
-    items: [
-      {
-        id: 4,
-        name: "Printed Cotton Fabric",
-        image: "/images/products/printed-cotton.jpg",
-        price: 600,
-        category: "Cotton",
-        colors: [
-          {
-            name: "Green",
-            hex: "#22C55E",
-            meters: 2,
-          },
-        ],
-      },
-    ],
-  },
-]};
-
-const customerTest = {
-  name: "Vivek Dudi",
-  email: "vivek@example.com",
-  number: "+91 98765 43210",
-  avatar: null,
-};
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/app/lib/axios";
 
 export default function OrdersPage() {
-  const [isLoading, setIsLoading] = useState(true);
   const { data: session, status } = useSession();
   const [customer, setCustomer] = useState({});
-  const [orders, setOrders] = useState([]);
-  const [cursor, setCursor] = useState(null);
+
+  const { data: customerData } = useQuery({
+    queryKey: ["customer", session?.user?.email],
+    queryFn: async () => {
+      const res = await api.get(`/customer?email=${session?.user?.email}`);
+      return res.data;
+    },
+    enabled: status === "authenticated" && !!session?.user?.email,
+  });
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.email) {
-      const fetch = async () => {
-        try {
-          const time = await getTimeClient();
-          const timeSec = time/1000;
-
-          if( Date.now()/1000 >= timeSec + 5 && Date.now()/1000 <= timeSec-5){
-            toast.error("Device clock is wrong, Please correct it");
-            return;
-          }
-
-          const customer = await exfn(() => fetchCustomerByEmail(session?.user?.email));
-          const orders = await exfn(() => fetchUserOrders(null));
-          
-          setCustomer(customer);
-          setCursor(orders?.cursor);
-          setOrders(orders?.orders || []);
-          
-        } catch (error) {
-          console.log("error in fetching customer and orders", error);
-          toast.error(error?.message || "Something went wrong");
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      fetch();
+    if (customerData) {
+      setCustomer(customerData);
     }
-  }, [status])
+  }, [customerData]);
+
+  const { data: ordersData, isLoading: ordersLoading } = useQuery({
+    queryKey: ["orders"],
+    queryFn: async () => {
+      const res = await api.get(`/order`);
+      return res.data;
+    },
+    enabled: status === "authenticated",
+  });
+
+  const orders = ordersData?.orders || [];
+  const cursor = ordersData?.cursor || null;
 
 
   return (
@@ -200,14 +76,14 @@ export default function OrdersPage() {
               <h2 className="text-lg font-semibold">Your Orders</h2>
 
               <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
-                {orders.length} orders
+                {orders?.length} orders
               </p>
             </div>
           </div>
 
-          {(isLoading && orders?.length === 0) ?
+          {(ordersLoading && orders?.length === 0) ?
             Array.from({length: 4}, (_, i) => <OrderCardSkeleton key={i} />)
-            : <OrdersList orders={orders} cursor={cursor} setOrders={setOrders} />
+            : <OrdersList initialOrders={orders} initialCursor={cursor} />
           } 
 
         </section>

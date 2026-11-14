@@ -1,6 +1,5 @@
 
 import { serializePrisma } from "@/app/helpers/serializePrisma";
-import { resError, resSuccess } from "@/app/helpers/resObj";
 import { Status as StatusRef} from "@/generated/prisma/enums";
 import { adminOrderService } from "@/app/lib/services/Ably/adminOrdersService";
 
@@ -19,8 +18,8 @@ export async function GET(req) {
     // ssion.user.email !== "") return resError("Unauthorized request");
     
     const searchParams = req.nextUrl.searchParams;
-    const cursor = searchParams.get('cursor') ?? '';
-    const status = searchParams.get('staus') ?? '';
+    const cursor = searchParams.get('cursor') || undefined;
+    const status = searchParams.get('status') ?? 'All';
     const search = searchParams.get('search') ?? '';
     
 

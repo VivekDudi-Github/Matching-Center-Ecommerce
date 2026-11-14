@@ -24,7 +24,7 @@ export default function OrderCard({ order }) {
   const [isOpen, setIsOpen] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const [currStatus, setCurrStatus] = useState(order.staus);
+  const [currStatus, setCurrStatus] = useState(order.status);
 
   const itemCount = order?.orderItems?.length || 0;
   const dateOptions = {

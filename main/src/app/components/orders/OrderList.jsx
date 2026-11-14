@@ -3,14 +3,40 @@
 import { motion } from "framer-motion";
 import { PackageOpen } from "lucide-react";
 import OrderCard from "./OrderCard";
-import { useEffect, useRef, useState } from "react";
-import { exfn } from "@/app/helpers/extractActions";
-import { fetchUserOrders } from "@/app/lib/controller/fetchOrder";
-import { toast } from "react-toastify";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { api } from "@/app/lib/axios";
 import OrderCardSkeleton from "./skeleton/OrderCardSkeleton";
 
-export default function OrdersList({ orders = [] , cursor, setOrders }) {
-  if (!orders.length) {
+export default function OrdersList({ initialOrders = [], initialCursor }) {
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["orders"],
+    queryFn: async ({ pageParam }) => {
+      const query = new URLSearchParams();
+      if (pageParam) {
+        query.set("cursor", pageParam);
+      }
+      const res = await api.get(`/order?${query}`);
+      return res.data;
+    },
+    initialPageParam: null,
+    initialData: initialOrders?.length
+      ? {
+          pages: [{ orders: initialOrders, cursor: initialCursor }],
+          pageParams: [null],
+        }
+      : undefined,
+    getNextPageParam: (lastPage) => lastPage?.cursor || undefined,
+  });
+
+  const orders = data?.pages?.flatMap((page) => page?.orders) ?? [];
+
+  if (!orders?.length && !isLoading) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -32,27 +58,12 @@ export default function OrdersList({ orders = [] , cursor, setOrders }) {
       </motion.div>
     );
   }
-  const [cursorState, setCurserState] = useState(cursor);
-  const [isLoading, setIsLoading] = useState(false);
-  
 
-  const fetchMore = async(idx) => {
-    try {
-      if(!cursorState || isLoading ) return;
-      setIsLoading(true);
-      const orders = await exfn(() => fetchUserOrders(cursorState));
-      setCurserState(orders?.cursor);
-  
-      setOrders(prev => [
-        ...prev, ...orders.orders
-      ])
-    } catch (error) {
-      console.log("error in fetching orders", error);
-      toast.error(error.message || "Something went wrong while fetching more orders")
-    } finally {
-      setIsLoading(false);
+  const fetchMore = async (idx) => {
+    if (hasNextPage && !isFetchingNextPage) {
+      await fetchNextPage();
     }
-  }
+  };
 
   return (
     <motion.div
@@ -70,7 +81,7 @@ export default function OrdersList({ orders = [] , cursor, setOrders }) {
     >
       {orders.map((order, idx) => (
         <motion.div
-          onViewportEnter={ idx === orders.length-1 ? () => fetchMore(idx) : null }
+          onViewportEnter={ idx === orders?.length-1 ? () => fetchMore(idx) : null }
           key={order.id}
           variants={{
             hidden: {
@@ -89,7 +100,7 @@ export default function OrdersList({ orders = [] , cursor, setOrders }) {
           <OrderCard order={order} />
         </motion.div>
       ))}
-      {isLoading ? Array.from({length: 4}, (_, i) => <OrderCardSkeleton key={i} />) : null   }
+      {isFetchingNextPage ? Array.from({length: 4}, (_, i) => <OrderCardSkeleton key={i} />) : null}
       
     </motion.div>
   );

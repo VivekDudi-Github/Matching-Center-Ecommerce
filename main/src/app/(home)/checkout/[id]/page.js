@@ -1,28 +1,23 @@
 "use client"
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-import { useSession } from "next-auth/react";
+import React, { useEffect } from 'react'
+import { useSession, signIn } from "next-auth/react";
 import { FormProvider, useForm } from 'react-hook-form';
 import CheckoutSteps from '@/app/components/checkout/CheckoutSteps';
 import CustomerDetailsCard from '@/app/components/checkout/CustomerDetails';
 import OrderSummary from '@/app/components/checkout/OrderSummary';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { newOrderFormSchemaClient } from '@/app/lib/validation/newOrder.schema';
-import { exfn } from '@/app/helpers/extractActions';
-import { fetchOrderById } from '@/app/lib/controller/fetchOrder';
-import { toast } from 'react-toastify';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/app/lib/axios';
 import { AlertTriangleIcon, Loader2Icon } from "lucide-react";
 import CheckSumSkeleton from '@/app/components/checkout/CheckSumSkeleton';
-import { getTimeClient } from '@/app/helpers/getTimeClient';
 import CustomerNotifications from '@/app/components/checkout/AblyClient';
 
 export default function page() {
   const {id} = useParams();
-  
-  const {data : session, status} = useSession();
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [order, setOrder] = useState();
+  const {data : session, status} = useSession();
 
   const methods = useForm({
     resolver: zodResolver(newOrderFormSchemaClient),
@@ -42,46 +37,32 @@ export default function page() {
       notes: "",
     }
   });
-  
+  // add a time check for the order to be placed
+
+  const { data: order, isLoading: orderLoading } = useQuery({
+    queryKey: ["order", id],
+    queryFn: async () => {
+      const res = await api.get(`/order/${id}`);
+      return res.data;
+    },
+    enabled: status === "authenticated" && !!id,
+  });
 
   useEffect(() => {
-    if(status === "authenticated" && id){
-      const fetch = async () => {
-        try {
-          const time = await getTimeClient();
-          const timeSec = time/1000;
-
-          if( Date.now()/1000 >= timeSec + 5 && Date.now()/1000 <= timeSec-5){
-            toast.error("Device clock is wrong, Please correct it");
-            return;
-          }
-
-          const order = await exfn(() => fetchOrderById(id));
-
-          const setValue = methods.setValue;
-
-          setValue("name", order.customer.name);
-          setValue("phone", order.customer.number);
-          setValue("email", order.customer.email);
-          setValue("address", order.address.address);
-          setValue("area", order.address.area);
-          setValue("landmark", order.address.landmark);
-          setValue("city", order.address.city);
-          setValue("state", order.address.state);
-          setValue("pincode", order.address.pincode);
-          setValue("notes", order.notes);
-
-          setOrder(order);
-        } catch (error) {
-          console.log("error in fetching order", error);
-          toast.error(error?.message || "Something went wrong");
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      fetch();
+    if (order) {
+      const setValue = methods.setValue;
+      setValue("name", order.customer.name);
+      setValue("phone", order.customer.number);
+      setValue("email", order.customer.email);
+      setValue("address", order.address.address);
+      setValue("area", order.address.area);
+      setValue("landmark", order.address.landmark);
+      setValue("city", order.address.city);
+      setValue("state", order.address.state);
+      setValue("pincode", order.address.pincode);
+      setValue("notes", order.notes);
     }
-  }, [session, id])
+  }, [order, methods]);
 
   return (
      <FormProvider {...methods}>
@@ -125,7 +106,7 @@ export default function page() {
                     hidden={status == "authenticated"} 
                     onClick={() => signIn("google")}
                     className="mt-3 flex h-12 w-full mb-3 cursor-pointer items-center justify-center rounded-xl bg-black text-base font-bold text-white transition hover:opacity-90 dark:bg-white disabled:opacity-50 dark:text-black">
-                      {(isLoading || status === "loading") ?
+                      {(orderLoading || status === "loading") ?
                         <Loader2Icon className="animate-spin"/> 
                         :
                         "Google Login / SignUp"
@@ -140,10 +121,10 @@ export default function page() {
 
             <div className="lg:col-span-5">
               <div className="lg:sticky lg:top-24">
-                {(isLoading || status !== "authenticated" || !order) ? 
+                {(orderLoading || status !== "authenticated" || !order) ?
                   <CheckSumSkeleton />
-                    : 
-                  <OrderSummary isLoading={isLoading} order={order ?? []} session={session} status={status}/>  
+                    :
+                  <OrderSummary isLoading={orderLoading} order={order ?? []} session={session} status={status}/>
                 }
                 
               </div>

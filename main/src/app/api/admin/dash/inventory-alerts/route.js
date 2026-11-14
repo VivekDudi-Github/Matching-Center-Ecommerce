@@ -12,7 +12,7 @@ export async function GET(req) {
   return ApiTryCatch( async() => {
     
   const searchParams = req.nextUrl.searchParams;
-  const cursor = searchParams.get('cursor') ?? '';
+  const cursor = searchParams.get('cursor') || undefined;
 
   
     if(!cursor || !cursor.length) return resError("No cursor found", null, 400,true);

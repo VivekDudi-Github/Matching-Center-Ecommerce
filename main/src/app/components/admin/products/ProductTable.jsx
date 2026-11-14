@@ -6,12 +6,12 @@ import { ArrowDown, Loader2Icon, PackageOpen } from "lucide-react";
 import ProductRow from "./ProductRow";
 import ProductCard from "./ProductCard";
 import ProductToolbar from "./ProductToolbar";
-import { useEffect, useState } from "react";
-import { getFirstAdminProdList, getMoreAdminProdList } from "@/app/lib/controller/admin/getAdminProd";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { api } from "@/app/lib/axios";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import TableLoading from "./TrSkeleton";
-import { exfn } from "@/app/helpers/extractActions";
+import { useEffect } from "react";
 
 const columns = [
   "Product",
@@ -25,51 +25,51 @@ const columns = [
 
 
 export default function ProductTable({ initalProducts = [], initialCursor = null, errorMsg }) {
-  const [ products, setProducts] = useState(initalProducts);
-  const [ cursor, setCursor] = useState(initialCursor);
-  const [ isLoading, setIsLoading] = useState(false);
-
-
-  //it causes infinte updates over server connection loss.
   const params = useSearchParams();
+  const search = params.get("search") ?? "";
+  const category = params.get("category") ?? "";
+  const status = params.get("status") ?? "";
 
-  console.log("initalProducts", initalProducts);
-  const loadMore = async() => {
-    setIsLoading(true);
-    try {
-      const search = params.get("search") ?? "";
-      const category = params.get("category") ?? "";
-      const status = params.get("status") ?? "";
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["admin-products", search, category, status],
+    queryFn: async ({ pageParam }) => {
+      const query = new URLSearchParams();
+      if (pageParam) {
+        query.set("cursor", pageParam);
+      }
+      query.set("search", search);
+      query.set("category", category);
+      query.set("status", status);
+      const res = await api.get(`/admin/products?${query}`);
+      return res.data;
+    },
+    initialPageParam: null,
+    initialData: initalProducts?.length
+      ? {
+          pages: [{ list: initalProducts, newCursor: initialCursor }],
+          pageParams: [null],
+        }
+      : undefined,
+    getNextPageParam: (lastPage) => lastPage?.newCursor || undefined,
+  });
 
-      const {list , newCursor} = await exfn(() => getMoreAdminProdList(cursor, search, category, status));
-      console.log("LIST:", list);
-      setProducts(prev => [...prev, ...list]);
-      setCursor(newCursor);
-    } catch (error) {
-      toast.error(error?.message || "Something went wrong");
-    } finally {
-      setIsLoading(false);
+  const products = data?.pages?.flatMap((page) => page?.list) ?? [];
+  const cursor = data?.pages?.[data.pages.length - 1]?.newCursor || null;
+
+  const loadMore = async () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      await fetchNextPage();
     }
   }
 
-  const loadInitial = async() => {
-    setIsLoading(true);
-    try {
-      setProducts([]);
-      setCursor(null);
-
-      const search = params.get("search") ?? "";
-      const category = params.get("category") ?? "";
-      const status = params.get("status") ?? "";
-
-      const {list , newCursor} = await exfn( () => getFirstAdminProdList( search, category, status));
-      setProducts(list);
-      setCursor(newCursor);
-    } catch (error) {
-      toast.error(error?.message || "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+  const loadInitial = async () => {
+    await fetchNextPage();
   }
 
   useEffect(() => {
@@ -138,18 +138,18 @@ export default function ProductTable({ initalProducts = [], initialCursor = null
             </div>
           )}
 
-          <TableLoading isLoading={isLoading} />
+          <TableLoading isLoading={isFetchingNextPage} />
 
-          {cursor && (
+          {hasNextPage && (
             <div className="flex justify-center m-4">
               <button
                 type="button"
-                disabled={isLoading}
+                disabled={isFetchingNextPage}
                 onClick={loadMore}
-                className="inline-flex items-center text-sm p-2 justify-center gap-2 rounded-lg border  text-white dark:text-black  border-zinc-300 px-3 py-2 bg-black dark:bg-white font-medium  transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-300 hover:cursor-pointer "  
+                className="inline-flex items-center text-sm p-2 justify-center gap-2 rounded-lg border  text-white dark:text-black  border-zinc-300 px-3 py-2 bg-black dark:bg-white font-medium  transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-300 hover:cursor-pointer "
               >
-                
-                {isLoading ? 
+
+                {isFetchingNextPage ?
                 <Loader2Icon className="animate-spin duration-75 " size={18} />
                 : <ArrowDown size={18} /> }
                 Load More

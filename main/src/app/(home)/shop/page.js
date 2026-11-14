@@ -1,25 +1,20 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { AlertTriangleIcon, FilterIcon, Menu, Minus} from "lucide-react";
+import { AlertTriangleIcon, FilterIcon, Minus} from "lucide-react";
 
 import Card from "../../components/card/Card";
 import Sidebar from "@/app/components/shop/Sidebar";
 import MobileDrawer from "@/app/components/shop/MobileDrawer";
 
-import {getProducts} from '@/app/lib/controller/shopActions';
-import { toast } from "react-toastify";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { api } from "@/app/lib/axios";
 import CardSkeleton from "@/app/components/card/CardSkeleton";
-import { exfn } from "@/app/helpers/extractActions";
 
 export default function ShopLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchParams, setSearchParams] = useState(new URLSearchParams());
-  const [cursor, setCursor] = useState(null);
-  const [products, setProducts] = useState([]);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const [openSections, setOpenSections] = useState({
     categories: false,
@@ -41,62 +36,45 @@ export default function ShopLayout() {
     });
   };
 
-  useEffect(() => {
-    const fetchItems = async() => {
-      setIsLoading(true);
-      try {
-        console.log("searchParams:", searchParams);
-       
-        const categoryId = searchParams.get("categoryId") ?? [];
-        const outOfStock = searchParams.get("outOfStock") ?? true;
-        const minPrice = searchParams.get("minPrice") ;
-        const maxPrice = searchParams.get("maxPrice") ;
-  
-        const sort = searchParams.get("sort") ?? "featured";
-        const search = searchParams.get("search") ?? "";
-  
-        setProducts([]);
-        const res = await exfn(() => getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search}));
-        console.log("products res:", res);
-  
-        setProducts(res.products);
-        setCursor(res.newCursor);
-      } catch (error) {
-        toast.error(error?.message || "Something went wrong while fetching product");
-        console.log("error in fetching product: ", error);
-      } finally {
-        setIsLoading(false);
+  const categoryId = searchParams.get("categoryId") ?? "";
+  const outOfStock = searchParams.get("outOfStock") ?? "true";
+  const minPrice = searchParams.get("minPrice") ?? "";
+  const maxPrice = searchParams.get("maxPrice") ?? "";
+  const sort = searchParams.get("sort") ?? "featured";
+  const search = searchParams.get("search") ?? "";
+
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["shop-products", categoryId, outOfStock, minPrice, maxPrice, sort, search],
+    queryFn: async ({ pageParam }) => {
+      const query = new URLSearchParams();
+      if (pageParam) {
+        query.set("cursor", pageParam);
       }
-    }
-    fetchItems();
-  }, [searchParams])
+      if (categoryId) query.set("categoryId", categoryId);
+      if (outOfStock) query.set("outOfStock", outOfStock);
+      if (minPrice) query.set("minPrice", minPrice);
+      if (maxPrice) query.set("maxPrice", maxPrice);
+      if (sort) query.set("sort", sort);
+      if (search) query.set("searchText", search);
+      const res = await api.get(`/shop/products?${query}`);
+      return res.data;
+    },
+    initialPageParam: null,
+    getNextPageParam: (lastPage) => lastPage?.newCursor || undefined,
+  });
+
+  const products = data?.pages?.flatMap((page) => page?.products) ?? [];
+  const cursor = data?.pages?.[data.pages.length - 1]?.newCursor || null;
 
   const triggerCursorFetch = async(index) => {
-    if(index === products.length - 4 && cursor) {
-        try {
-          setIsLoading(true);
-          console.log("fetching products");
-          const categoryId = searchParams.get("categoryId") ?? [];
-          const outOfStock = searchParams.get("outOfStock") ?? true;
-          const minPrice = searchParams.get("minPrice") ;
-          const maxPrice = searchParams.get("maxPrice") ;
-
-          const sort = searchParams.get("sort") ?? "featured";
-          const search = searchParams.get("search") ?? "";
-          
-          console.log("search:", search)
-          const res = await exfn( () => getProducts({categoryId , outOfStock, minPrice, maxPrice,sort, searchText: search, cursor} ));
-          console.log("products res:", res);
-
-          setProducts(prev => [...prev, ...res.products]);
-          setCursor(res.newCursor);
-
-        } catch (error) {
-           toast.error(error?.message || "Something went wrong while fetching product");
-           console.log("error in fetching product: ", error);
-        } finally {
-          setIsLoading(false);
-        }
+    if(index === products.length - 4 && hasNextPage && !isFetchingNextPage) {
+      await fetchNextPage();
     }
   }
 
@@ -130,12 +108,11 @@ export default function ShopLayout() {
             <span>Search & Filters</span>
             <Minus size={16} className="ml-2 text-zinc-500 dark:text-zinc-300 cursor-pointer"  />
           </div>
-        <Sidebar 
-          setCursor={setCursor}
+        <Sidebar
           setParams={setSearchParams}
-          openSections={openSections} 
-          toggleSection={toggleSection} 
-          collapseAll={collapseAll} 
+          openSections={openSections}
+          toggleSection={toggleSection}
+          collapseAll={collapseAll}
         />
       </MobileDrawer>
 
@@ -146,12 +123,11 @@ export default function ShopLayout() {
             <span>Search & Filters</span>
             <Minus size={16} className="ml-2 text-zinc-500 dark:text-zinc-300 cursor-pointer"  />
           </div>
-          <Sidebar 
-            setCursor={setCursor}
+          <Sidebar
             setParams={setSearchParams}
-            openSections={openSections} 
-            toggleSection={toggleSection} 
-            collapseAll={collapseAll} 
+            openSections={openSections}
+            toggleSection={toggleSection}
+            collapseAll={collapseAll}
           />
         </aside>
 
@@ -191,10 +167,10 @@ export default function ShopLayout() {
                 <Card fabricDetails={item}/>
               </motion.div>
             ))}
-            {isLoading &&
-              Array.from({length: 10}).map((_, i) => 
+            {isFetchingNextPage &&
+              Array.from({length: 10}).map((_, i) =>
                 <CardSkeleton key={i} />
-            )
+              )
             }
           </motion.div>
         </main>

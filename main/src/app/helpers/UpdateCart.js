@@ -1,7 +1,6 @@
 "use client";
 import useCartStore  from "@/app/store/CartStore"
-import { exfn } from "./extractActions";
-import { updateCartController } from "../lib/controller/updateCart";
+import { api } from "../lib/axios";
 
 
 export const updateCartStore = async() => {
@@ -13,12 +12,13 @@ export const updateCartStore = async() => {
     const newProds = [];
 
     if(items.length > 0) {
-      const res = await exfn(() => updateCartController(items.map(i => i.id)));
+      const res = await api.get(`/cart?items=${items.map(i => i.id).join(',')}`);
+      const data = res.data;
       useCartStore.getState().clearCart();
-      if(!res.length) return ;
+      if(!data.length) return ;
 
-      
-      res.forEach((pro) => {
+
+      data.forEach((pro) => {
         const item = items.find(i => i.id === pro.id);
         const newColor = pro.color;
 
@@ -37,13 +37,13 @@ export const updateCartStore = async() => {
         });
       })
 
-      
+
       useCartStore.getState().setItems(newProds);
       return;
     }
   } catch (error) {
     useCartStore.getState().clearCart();
-    useCartStore.getState().setItems(oldCart);  
+    useCartStore.getState().setItems(oldCart);
     console.error("Error updating cart:", error);
   }
 }

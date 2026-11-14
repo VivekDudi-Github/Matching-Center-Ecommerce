@@ -1,9 +1,6 @@
 import ProductToolbar from "@/app/components/admin/products/ProductToolbar";
 import ProductTable from "@/app/components/admin/products/ProductTable";
-import {prisma} from "@/app/lib/prisma";
-import { serializePrisma } from "@/app/helpers/serializePrisma";
-import { getFirstAdminProdList } from "@/app/lib/controller/admin/getAdminProd";
-import { exfn } from "@/app/helpers/extractActions";
+import { getFirstAdminProdList } from "@/app/lib/controller/queries/admin/getAdminProducts";
 
 
 
@@ -11,10 +8,14 @@ export default async function ProductsPage({searchParams}) {
   let products = [], cursor = null, errorMsg = null;
   try {
     const query = await searchParams;
-    
-    const {list, newCursor} = await exfn( () => getFirstAdminProdList(query?.search, query?.category, query?.status));
-    products = list;
-    cursor = newCursor;
+
+    const result = await getFirstAdminProdList(query?.search, query?.category, query?.status);
+    if (result?.success) {
+      products = result.data?.list || [];
+      cursor = result.data?.newCursor || null;
+    } else {
+      errorMsg = result?.message || "Something went wrong while fetching.";
+    }
   } catch (error) {
     errorMsg = error?.message || "Something went wrong while fetching.";
     console.log("error in rending product page on server side", error);

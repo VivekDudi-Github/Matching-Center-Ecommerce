@@ -21,7 +21,8 @@ import { getCloudinarySignature } from "@/app/helpers/Cloudinary";
 import { createNewProductImages, deleteProductImages, updateProduct } from "@/app/lib/controller/admin/productActions";
 import {uploadToCloudinary} from '@/app/helpers/UploadToCloudinary';
 import { useParams, useRouter } from "next/navigation";
-import { getAdminProdById } from "@/app/lib/controller/admin/getAdminProd";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/app/lib/axios";
 import { exfn } from "@/app/helpers/extractActions";
 
 export default function EditProductPage() {
@@ -33,10 +34,7 @@ export default function EditProductPage() {
     timestamp: null
   });
 
-  const [product, setProduct] = useState(null);
-
   const [isLoading, setIsLoading] = useState(false);
-  const [inititalLoading, setInititalLoading] = useState(true);
 
   const [allImages, setAllImages] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
@@ -89,7 +87,7 @@ export default function EditProductPage() {
     name: "colors" , control: methods.control
   });
 
-  const { replace: replaceImages } = useFieldArray({ 
+  const { replace: replaceImages } = useFieldArray({
     name: "alreadyUploaded" , control: methods.control
   });
 
@@ -98,7 +96,56 @@ export default function EditProductPage() {
     control: methods.control,
     defaultValue: []
   })
-  
+
+  const { data: product, isLoading: inititalLoading } = useQuery({
+    queryKey: ["admin-product", id],
+    queryFn: async () => {
+      const res = await api.get(`/admin/products/${id}`);
+      return res.data;
+    },
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (product) {
+      setValue("title", product.title);
+      setValue("slug", product.slug);
+      setValue("price", product.price);
+      setValue("originalPrice", product.originalPrice);
+      setValue("featured", product.featured);
+      setValue("isPublished", product.isPublished);
+      setValue("description", product.description);
+      setValue("width", product.width);
+      setValue("seoTitle", product.seoTitle);
+      setValue("washCare", product.washCare);
+      setValue("seoDescription", product.seoDescription);
+      setValue("pattern", product.pattern);
+      setValue("category", product.category.name);
+      setValue("sku", product.sku);
+
+      if(product.tags.length) {
+        const tags = product.tags.map(tag => tag.name);
+        setValue("tags", tags);
+      }
+
+      if (product.color?.length) {
+        replace(
+          product.color.map((color) => ({
+            name: color.name,
+            hex: color.hex,
+            hexText: color.hex,
+            availableMeters: color.availableMeters,
+            lowStockAlert: color.lowStockAlert,
+          }))
+        );
+      }
+
+      if(product.images.length) {
+        replaceImages(product.images);
+      }
+    }
+  }, [product, setValue, replace, replaceImages]);
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
@@ -177,59 +224,7 @@ export default function EditProductPage() {
     }
   }
 
-  useEffect(() => { 
-    const product = async() => {
-      if(!id) return;
-      try {
-        const product = await exfn(() => getAdminProdById(id));
-        console.log("product", product);
-        setProduct(product);
-        
-        setValue("title", product.title);
-        setValue("slug", product.slug);
-        setValue("price", product.price);
-        setValue("originalPrice", product.originalPrice);
-        setValue("featured", product.featured);
-        setValue("isPublished", product.isPublished);
-        setValue("description", product.description);
-        setValue("width", product.width);
-        setValue("seoTitle", product.seoTitle);
-        setValue("washCare", product.washCare);
-        setValue("seoDescription", product.seoDescription);
-        setValue("pattern", product.pattern);
-        setValue("category", product.category.name); 
-        setValue("sku", product.sku);
 
-        if(product.tags.length) {
-          const tags = product.tags.map(tag => tag.name);
-          setValue("tags", tags);
-        }
-        
-        if (product.color?.length) {
-          replace(
-            product.color.map((color) => ({
-              name: color.name,
-              hex: color.hex,
-              hexText: color.hex,
-              availableMeters: color.availableMeters,
-              lowStockAlert: color.lowStockAlert,
-            }))
-          );
-        }
-
-        if(product.images.length) {
-          replaceImages(product.images);
-        }
-      } catch (error) {
-        console.log("error which fetching product", error);
-        return toast.error(error?.message || "Something went wrong");
-      } finally {
-        setInititalLoading(false);
-      }
-    }
-    product();
-
-  }, [id, setValue]);
 
   useEffect(() => {
     setValue("images", allImages);

@@ -1,17 +1,12 @@
-
-
 import { serializePrisma } from "@/app/helpers/serializePrisma";
-import { ApiTryCatch, TryCatch } from "@/app/helpers/TryCatch";
+import { ApiTryCatch } from "@/app/helpers/TryCatch";
 import { resError, resSuccess } from "@/app/helpers/resObj";
+import { prisma } from "@/app/lib/prisma";
 
-
-export default async function GET(req, context){
-// ?export const getAdminProdById = async(id) => {
- 
+export async function GET(req, { params }) {
   return await ApiTryCatch(async () => {
-
-    const { id } = await context.params;
-    if(!id) return  resError("Product Id is missing", null, 400, true);
+    const { id } = await params;
+    if (!id) return resError("Product Id is missing", null, 400, true);
 
     const product = await prisma.product.findUnique({
       where: {

@@ -4,10 +4,10 @@ import {useEffect, useState} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp, FilterIcon, Loader2Icon, Minus, SearchIcon } from "lucide-react";
 import PriceSlider from "./PriceSlider";
-import { getShopSelections } from "@/app/lib/controller/shopActions";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/app/lib/axios";
 import { SortSelector } from "./SortSelector";
 import SideBardSkeleton from "./SideBardSkeleton";
-import { exfn } from "@/app/helpers/extractActions";
 
 
 const sortOptions = [
@@ -17,9 +17,8 @@ const sortOptions = [
   { value: "newest", label: "Newest" },
 ];
 
-export default function Sidebar({ openSections, toggleSection, setCursor, setParams }) {
+export default function Sidebar({ openSections, toggleSection, setParams }) {
   const [priceRange, setPriceRange] = useState([0, 500]);
-  const [isLoading, setisLoading] = useState(false);
   
   const [priceLow, setPriceLow] = useState(0);
   const [priceHigh, setPriceHigh] = useState(500);
@@ -40,7 +39,6 @@ export default function Sidebar({ openSections, toggleSection, setCursor, setPar
     params.set("sort", sortBy);
     params.set("search", search);
     params.set("outOfStock", outOfStock);
-    setCursor(null);
     setParams(params);
   }
 
@@ -52,20 +50,23 @@ export default function Sidebar({ openSections, toggleSection, setCursor, setPar
     }
   }
 
-  useEffect(() =>{
-    const fetchSelections = async () => {
-      setisLoading(true);
-      const res = await exfn(() => getShopSelections());
-      setCategories(res.categories);
-      setPriceLow(Number(res.priceRange.low));
-      setPriceHigh(Number(res.priceRange.high));
+  const { data: selections, isLoading } = useQuery({
+    queryKey: ["shop-selections"],
+    queryFn: async () => {
+      const res = await api.get(`/shop/selections`);
+      return res.data;
+    },
+  });
 
-      setPriceRange([Number(res.priceRange.low), Number(res.priceRange.high)])
-      setisLoading(false);
+  useEffect(() => {
+    if (selections) {
+      console.log("selection data", selections);
+      setCategories(selections.categories);
+      setPriceLow(Number(selections.priceRange.low));
+      setPriceHigh(Number(selections.priceRange.high));
+      setPriceRange([Number(selections.priceRange.low), Number(selections.priceRange.high)]);
     }
-
-    fetchSelections();
-  }, [])
+  }, [selections]);
 
   if(isLoading) return <SideBardSkeleton />
 

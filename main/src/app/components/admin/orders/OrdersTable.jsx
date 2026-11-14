@@ -23,27 +23,25 @@ export default function OrdersTable({ initialOrders = [], initialCursor, errorMs
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [search, status],
+    queryKey: ["admin-orders", search, status],
 
     queryFn: async ({ pageParam }) => {
-      const params = new URLSearchParams();
+      const query = new URLSearchParams();
       if (pageParam) {
-        params.set("cursor", pageParam.cursor);
-      }      
-      params.set("search", search);{{
-      params.set("status", status);}}
-      status = !status ? "All" : status;
+        query.set("cursor", pageParam);
+      }
+      query.set("search", search);
+      query.set("status", status || "All");
 
-      const res = await api.get(`/admin/order/?${params}`);
+      const res = await api.get(`/admin/order/?${query}`);
       return res.data;
     },
 
     initialPageParam: null,
-    enabled: Boolean(initialOrders?.length),
     initialData: initialOrders?.length
       ? {
-          pages: [{list: initialOrders,newCursor : initialCursor}],
-          pageParams: [],
+          pages: [{ list: initialOrders, newCursor: initialCursor }],
+          pageParams: [null],
         }
       : undefined,
    
@@ -57,7 +55,7 @@ export default function OrdersTable({ initialOrders = [], initialCursor, errorMs
 
 
   const loadMore = async( ) => {
-    if(!isFetchingNextPage && !hasNextPage){
+    if(hasNextPage && !isFetchingNextPage){
       await fetchNextPage()
     } 
   }
@@ -160,12 +158,12 @@ export default function OrdersTable({ initialOrders = [], initialCursor, errorMs
           <div className="flex justify-center m-4">
             <button
               type="button"
-              disabled={isFetchingNextPage }
+              disabled={isFetchingNextPage || isLoading}
               onClick={loadMore}
               className="inline-flex items-center text-sm p-2 justify-center gap-2 rounded-lg border  text-white dark:text-black  border-zinc-300 px-3 py-2 bg-black dark:bg-white font-medium  transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-300 hover:cursor-pointer "  
             >
               
-            {isFetchingNextPage ? 
+            {(isFetchingNextPage || isLoading) ? 
               <Loader2Icon className="animate-spin duration-75 " size={18} />
               : <ArrowDown size={18} /> }
               Load More

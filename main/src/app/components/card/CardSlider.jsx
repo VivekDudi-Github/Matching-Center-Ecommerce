@@ -4,10 +4,10 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Card from './Card';
-import { getProducts } from "../../lib/controller/shopActions";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { api } from "@/app/lib/axios";
 import { toast } from "react-toastify";
 import CardSkeleton from "./CardSkeleton";
-import { exfn } from "@/app/helpers/extractActions";
 
 
 export default function CardSlider({prods = [], cursor : propCursor}) {
@@ -16,28 +16,43 @@ export default function CardSlider({prods = [], cursor : propCursor}) {
   const sliderRef = useRef(null);
   const [positionX, setPositionX] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
-  const [productsList, setProductsList] = useState(prods);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [cursor, setCursor] = useState(propCursor || null);
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["shop-products-featured"],
+    queryFn: async ({ pageParam }) => {
+      const query = new URLSearchParams();
+      if (pageParam) {
+        query.set("cursor", pageParam);
+      }
+      query.set("sort", "featured");
+      query.set("outOfStock", "false");
+      const res = await api.get(`/shop/products?${query}`);
+      return res.data;
+    },
+    initialPageParam: null,
+    initialData: prods?.length
+      ? {
+          pages: [{ products: prods, newCursor: propCursor }],
+          pageParams: [null],
+        }
+      : undefined,
+    getNextPageParam: (lastPage) => lastPage?.newCursor || undefined,
+  });
 
+  const productsList = data?.pages?.flatMap((page) => page?.products) ?? [];
+  const cursor = data?.pages?.[data.pages.length - 1]?.newCursor || null;
 
   const fetchProducts = async (i) => {
-    if(i !== productsList.length-1 || !cursor || isFetchingRef.current  ) return  ;
-    setIsLoading(true);
+    if (i !== productsList.length - 1 || !hasNextPage || isFetchingRef.current) return;
     isFetchingRef.current = true;
-    try {
-      const {products, newCursor} = await exfn(() => getProducts({cursor: cursor, sort: "featured", outOfStock: false }));
-
-      setCursor(newCursor);
-      setProductsList(prev => [...prev, ...products]);
-    } catch (error) {
-      console.log("error in fetching product: ", error);
-      toast.error(error?.message || "Something went wrong while fetching product");
-    } finally {
-      setIsLoading(false);
-      isFetchingRef.current = false;
-    }
+    await fetchNextPage();
+    isFetchingRef.current = false;
   };
    
 
@@ -75,12 +90,8 @@ export default function CardSlider({prods = [], cursor : propCursor}) {
 
   useEffect(() => {
     if(productsList.length > 0) resetWidth(true);
-  },[isLoading])
+  },[isFetchingNextPage])
   
-  useEffect(() => {
-    setProductsList(prods);
-  }, [prods])
-
   // console.log(positionX, maxScroll)
 
   return (
