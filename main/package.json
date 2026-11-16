@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
+    "@next/third-parties": "^16.4.6",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.0",
     "@radix-ui/react-dropdown-menu": "^2.1.24",
@@ -33,7 +34,6 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.84.0",
-    "react-player": "^3.4.0",
     "react-toastify": "^11.1.0",
     "resend": "^6.37.0",
     "zod": "^4.4.3",

@@ -8,11 +8,10 @@ import useCartStore from '@/app/store/CartStore';
 import CardSlider from '@/app/components/card/CardSlider';
 import { AnimatePresence , motion} from 'framer-motion';
 import Skeleton from '@/app/components/product/ProductPageSkeleton';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery} from '@tanstack/react-query';
 import { api } from '@/app/lib/axios';
 import { useParams, useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
-import ReactPlayer from "react-player"
+ 
 
 export default function ProductPage() {
   const {id} = useParams();
@@ -209,26 +208,7 @@ export default function ProductPage() {
             </div>
           </div>
         </div>
-        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black shadow-lg">
-          <ReactPlayer
-            url={"https://www.youtube.com/watch?v=LXb3EKWsInQ"}
-            width="100%"
-            height="100%"
-            preload="https://www.youtube.com/watch?v=LXb3EKWsInQ"
-            controls={true}
-            playing={false}
-            autoPlay={false}
-            muted={true} 
-            config={{
-              youtube: {
-                playerVars: { 
-                  rel: 0, // Don't show related videos from other channels at the end
-                  modestbranding: 0 // Hide the YouTube logo as much as possible
-                }
-              }
-            }}
-          />                   
-        </div>   
+
    
         
       </main> : 

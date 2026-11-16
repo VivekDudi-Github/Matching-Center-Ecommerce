@@ -27,6 +27,8 @@ api.interceptors.response.use(
       toast.error('Server error. Please try again later.')
     } else if (error.code === 'ECONNABORTED') {
       toast.error('Request timed out')
+    } else if (error.code === 'ERR_CANCELED' || error.name === 'AbortError') {
+      return Promise.reject(error);
     } else if (!error.response) {
       toast.error('Network error. Please check your connection.')
     }

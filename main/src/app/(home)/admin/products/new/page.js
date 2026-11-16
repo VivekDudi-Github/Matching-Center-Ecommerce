@@ -21,6 +21,7 @@ import { createNewProduct, createNewProductImages } from "@/app/lib/controller/a
 import {uploadToCloudinary} from '@/app/helpers/UploadToCloudinary';
 import { useRouter } from "next/navigation";
 import { exfn } from "@/app/helpers/extractActions";
+import VideoUrls from "@/app/components/admin/products/new/VideoUrls";
 
 
 export default function NewProductPage() {
@@ -69,6 +70,7 @@ export default function NewProductPage() {
         ],
 
         images: [],
+        videoIds: [],
 
         seoTitle: "",
 
@@ -184,6 +186,7 @@ export default function NewProductPage() {
 
             <div className="space-y-6 lg:col-span-5">
               <ProductImages setAllImages={setAllImages} allImages={allImages} uploadedImages={uploadedImages} />         
+              <VideoUrls />
             </div>
 
             {/* Right */}

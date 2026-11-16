@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SafeImage from '../SafeImage';
-
+import { YouTubeEmbed } from "@next/third-parties/google";
 
 
 export default function ProductGallery({ images }) {
@@ -71,8 +71,10 @@ export default function ProductGallery({ images }) {
                 alt="Main Product" 
                 className="w-full h-full object-contain drop-shadow-sm pointer-events-none duration-200"
               />
-
-              
+              {/* <div className=" w-full rounded-xl bg-black shadow-lg">                
+                  <YouTubeEmbed videoid="LXb3EKWsInQ" style="max-width: 100%; width: 100%;" />
+              </div>   
+               */}
             </motion.div>
           </AnimatePresence>
         </div>

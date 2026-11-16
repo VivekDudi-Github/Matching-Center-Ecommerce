@@ -80,7 +80,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
   }, [allImages]);
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white shadow-sm shadown-black/20 dark:border-zinc-800 dark:bg-zinc-900">
+    <section className="rounded-2xl bg-white shadow-sm shadow-black/20 border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800">
       {/* Header */}
 
       <div className="flex items-center justify-between border-b border-zinc-200 p-6 dark:border-zinc-800">
@@ -257,7 +257,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
               className="mt-0.5 text-blue-600"
             />
 
-            <div className="space-y-1 text-sm">
+            <div className="space-y-1 text-xs md:text-sm">
               <p className="font-medium text-blue-700 dark:text-blue-300">
                 Image Guidelines
               </p>

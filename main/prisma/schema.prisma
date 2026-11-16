@@ -139,6 +139,7 @@ model ProductImages {
   id            String           @id @default(uuid(7))
   publicId      String           
   url           String
+  isVideo       Boolean          @default(false)
   productId     String
   product       Product          @relation(fields: [productId], references: [id])
   
@@ -156,6 +157,7 @@ model StrandedImages {
   id            String           @id @default(uuid(7))
   publicId      String           
   url           String
+  isVideo       Boolean          @default(false)
 
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
@@ -188,7 +190,6 @@ enum Status {
   Cancelled
   CancelRequested
 }
-
 
 model Order {
   id                    String            @id @default(uuid(7))
@@ -316,5 +317,3 @@ model OrderItem {
   @@index([productId])
   @@index([orderId])
 } 
-
-
