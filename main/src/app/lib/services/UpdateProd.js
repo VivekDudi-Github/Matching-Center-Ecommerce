@@ -5,7 +5,7 @@ import { prisma } from '@/app/lib/prisma';
 
 
 export const updateProductService = async(id, data) => {
-  const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = data;
+  const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors,videoIds, images, seoTitle, washCare, seoDescription } = data;
   
   let product = null;
   await prisma.$transaction(async (tx) => {
@@ -22,6 +22,7 @@ export const updateProductService = async(id, data) => {
         });
       })
     );
+    
 
     product = await tx.product.update({
       where: {
@@ -38,6 +39,19 @@ export const updateProductService = async(id, data) => {
         width ,
         sku,
         pattern,
+        images: {
+          deleteMany: { 
+            isVideo: true
+          },
+          create: videoIds.map((videoId) => {
+            return {
+              publicId: videoId,
+              isVideo: true,
+              url : "",
+              displayOrder: videoIds.indexOf(videoId),
+            };
+          })
+        },
         category: {
           connectOrCreate: {
             where: {

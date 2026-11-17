@@ -18,7 +18,6 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
     defaultValue: []
   });
 
-  
 
   const handleImageChange = () => {
   };
@@ -79,6 +78,7 @@ export default function ProductImages( {allImages = [], setAllImages, uploadedIm
     }
   }, [allImages]);
 
+  console.log("oldimages",oldimages)
   return (
     <section className="rounded-2xl bg-white shadow-sm shadow-black/20 border border-zinc-200 dark:bg-zinc-900 dark:border-zinc-800">
       {/* Header */}

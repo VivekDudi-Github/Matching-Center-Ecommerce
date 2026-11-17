@@ -25,6 +25,7 @@ export default function VideoUrls() {
     const id = getYouTubeID(ytUrl);
     if (id && !videoIdsField.includes(id)) {
       setValue('videoIds', [...videoIdsField, id]);
+      setYtUrl('');
     }
   }, [ytUrl])
 
@@ -50,17 +51,22 @@ export default function VideoUrls() {
         </div>
       </div>
 
-      <div className="md:p-6 p-2">
+      <div className="md:p-6 md:pt-0 p-2">
         <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
           Urls
         </label>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex gap-3 relative">
           <input 
+            value={ytUrl}
             onChange={(e) => setYtUrl(e.target.value)}
             placeholder="https://www.youtube.com/watch?v=..."
-            className=" w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
+            className=" w-full rounded-xl border border-zinc-300 bg-white pr-10 px-4 py-3 outline-none transition focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white"
           />
+          
+          <button type='button' onClick={() => setYtUrl("")} className=' absolute right-2 top-1/2 -translate-y-1/2 rounded-md dark:bg-zinc-600 bg-zinc-900 hover:opacity-80 p-1 text-white'>
+            <XIcon className='size-5' />
+          </button>
         </div>
 
         <div className="pt-2 w-full grid grid-cols-4 ">

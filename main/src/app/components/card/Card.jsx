@@ -7,21 +7,11 @@ import SafeImage from "../SafeImage";
 import Link from "next/link";
 import useCartStore from "../../store/CartStore";
 
-// const fabricData = {
-//   id: "fab-01",
-//   title: "Premium Mulberry Silk",
-//   price: 240,
-//   originalPrice: 340,
-//   unit: "yard",
-//   saleTag: "28% OFF",
-//   color: "pink",
-//   imageUrl: "/dis_1.webp",
-//   description: "Pure 19mm mulberry silk with a luminous satin finish. Perfect for bridal, evening wear, and luxury linings.",
-//};
-
 export default function FabricProductCard({fabricDetails}) {
   const [isLiked, setIsLiked] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
+
+
 
   const fabricData = fabricDetails;
   const addItem = useCartStore(s => s.addItem); 
@@ -67,8 +57,8 @@ export default function FabricProductCard({fabricDetails}) {
           />
         </button>
 
-        <Link href={`products/${fabricData.id}`} className="relative md:h-64 h-36 w-full overflow-hidden rounded-md inline-block bg-stone-100">
-            <SafeImage src={fabricData?.images?.[0]?.url} alt={fabricData.title} />
+        <Link href={`/products/${fabricData.id}`} className="relative md:h-64 h-36 w-full overflow-hidden rounded-md inline-block bg-stone-100">
+            <SafeImage src={fabricData?.images?.[0]?.url} publicId={fabricData?.images?.[0]?.publicId} isVideo={fabricData?.images?.[0]?.isVideo} alt={fabricData.title} />
           
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-linear-to-t from-stone-900/10 via-transparent to-transparent pointer-events-none" />

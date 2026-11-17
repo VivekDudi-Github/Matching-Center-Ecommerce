@@ -109,9 +109,16 @@ export default function ProductRow({ product }) {
     }
   }
 
-  const transformedImageUrl = (transformation) => {
-    if(!sortedImages[selectedImageIdx]?.url) return "";
+  const transformedImageUrl = (transformation) => {    
     let url = sortedImages[selectedImageIdx]?.url;
+
+    url = url ? url : `https://i.ytimg.com/vi/${sortedImages?.[selectedImageIdx]?.publicId}/hqdefault.jpg`
+
+  
+    if(url.includes("i.ytimg.com")) {
+      console.log("url", url);
+      return url;
+    }
 
     url = url.replace("/upload/", `/upload/${transformation}/`);
     return url;
@@ -158,15 +165,15 @@ export default function ProductRow({ product }) {
           <div className="relative sm:size-16 size-12 scale-125 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700"
             onClick={() => setSelectedImageIdx((selectedImageIdx + 1) % sortedImages.length)}
           >
-             <div className={`absolute top-0 left-0 h-full w-full bg-black/40 z-10 flex items-center justify-center ${isChangingImg ? "hidden" : "block"}`}>
+             {isChangingImg && <div className={` absolute top-0 left-0 h-full w-full bg-black/40 z-30 flex items-center justify-center`}>
                 <LoaderIcon className="animate-spin duration-500" />
-              </div>
+              </div>}
             {sortedImages.length > 0 && (
               <Image
                 src={transformedImageUrl("w_512,q_auto")}
                 alt={title}
                 fill
-                onBlur={() => setIsChaningImg(false)}
+                onLoad={() => setIsChaningImg(false)}
                 className="object-cover"
               />
             )}

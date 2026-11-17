@@ -1,14 +1,16 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SafeImage from '../SafeImage';
 import { YouTubeEmbed } from "@next/third-parties/google";
 
 
-export default function ProductGallery({ images }) {
+export default function ProductGallery({ images : productImages }) {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
   
+  const [images, setImages] = useState([]); 
+
   const [showZoom, setShowZoom] = useState(false);
   const [zoomStyle, setZoomStyle] = useState({ backgroundPosition: '0% 0%' });
   const imageContainerRef = useRef(null);
@@ -27,6 +29,16 @@ export default function ProductGallery({ images }) {
     });
   };
 
+  useEffect(() => {
+    const allImages = productImages.filter(img => !img.isVideo);
+    const allVideoIds = productImages.filter(img => img.isVideo);
+    
+    allImages.sort((a, b) => a?.displayOrder - b?.displayOrder);
+    allVideoIds.sort((a, b) => a?.displayOrder - b?.displayOrder);
+
+    setImages([...allImages, ...allVideoIds]);
+  }, [productImages]);
+
   return (
     <div className="flex flex-col md:flex-row gap-4 md:sticky md:top-20 relative">
       
@@ -35,7 +47,7 @@ export default function ProductGallery({ images }) {
         {images.map((img, index) => (
           <button
             key={index}
-            onMouseEnter={() => setSelectedIndex(index)} 
+            onMouseEnter={() => (setSelectedIndex(index))} 
             onClick={() => setSelectedIndex(index)}
             className={`relative shrink-0 size-16 rounded border-2 transition-colors ${
               selectedIndex === index 
@@ -43,7 +55,7 @@ export default function ProductGallery({ images }) {
                 : 'border-zinc-200 dark:border-zinc-800'
             }`}
           >
-            <SafeImage src={img?.url} alt={index} />
+            <SafeImage src={img?.url} publicId={img?.publicId} isVideo={img?.isVideo} alt={index} />
           </button>
         ))}
       </div>
@@ -66,15 +78,17 @@ export default function ProductGallery({ images }) {
               transition={{ duration: 0.2 }}
               className="absolute inset-0 flex items-center justify-center"
             >
+              {!images?.[selectedIndex]?.isVideo ? 
               <img 
                 src={images?.[selectedIndex]?.url} 
                 alt="Main Product" 
                 className="w-full h-full object-contain drop-shadow-sm pointer-events-none duration-200"
-              />
-              {/* <div className=" w-full rounded-xl bg-black shadow-lg">                
-                  <YouTubeEmbed videoid="LXb3EKWsInQ" style="max-width: 100%; width: 100%;" />
-              </div>   
-               */}
+              /> :
+                <div className=" w-full rounded-xl bg-black shadow-lg">                
+                    <YouTubeEmbed videoid={images?.[selectedIndex]?.publicId} style="max-width: 100%; width: 100%;" />
+                </div>  
+              } 
+              
             </motion.div>
           </AnimatePresence>
         </div>
@@ -84,6 +98,7 @@ export default function ProductGallery({ images }) {
 
       {showZoom && (
         <div 
+          hidden={images?.[selectedIndex]?.isVideo}
           className="hidden md:block absolute top-0 left-[calc(100%+4rem)] w-[146%] h-[105%] bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 shadow-2xl rounded z-30 pointer-events-none"  
           style={{
             backgroundImage: `url(${images?.[selectedIndex]?.url})`,

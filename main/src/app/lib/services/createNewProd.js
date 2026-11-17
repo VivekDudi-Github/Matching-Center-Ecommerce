@@ -4,7 +4,7 @@ import { prisma } from '@/app/lib/prisma';
 import { Prisma } from '@/generated/prisma/client';
 
 export const createNewProductService = async(data) => {
-  const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors, images, seoTitle, washCare, seoDescription } = data;
+  const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors,videoIds , images, seoTitle, washCare, seoDescription } = data;
 
   const product = await prisma.product.create({
     data: {
@@ -18,6 +18,14 @@ export const createNewProductService = async(data) => {
       width ,
       sku,
       pattern,
+      images: {
+        create: videoIds.map(videoId => ({
+          publicId: videoId,
+          url: "",
+          displayOrder: videoIds.indexOf(videoId),
+          isVideo: true,
+        }))
+      },
       category: {
         connectOrCreate: {
           where: {

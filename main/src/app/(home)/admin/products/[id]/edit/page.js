@@ -24,6 +24,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/app/lib/axios";
 import { exfn } from "@/app/helpers/extractActions";
+import VideoUrls from "@/app/components/admin/products/new/VideoUrls";
 
 export default function EditProductPage() {
   const {id} = useParams();
@@ -74,6 +75,7 @@ export default function EditProductPage() {
         ],
 
         images: [],
+        videoIds: [],
 
         seoTitle: "",
 
@@ -141,7 +143,12 @@ export default function EditProductPage() {
       }
 
       if(product.images.length) {
-        replaceImages(product.images);
+        const images = product.images.filter(img => !img.isVideo);
+        replaceImages(images);
+      }
+      if(product.images.length) {
+        const videoIds = product.images.filter(img => img.isVideo);
+        setValue("videoIds", [...videoIds.map(video => video.publicId)] || []);
       }
     }
   }, [product, setValue, replace, replaceImages]);
@@ -264,6 +271,7 @@ export default function EditProductPage() {
 
             <div className="space-y-6 lg:col-span-5">
               <ProductImages setAllImages={setAllImages} allImages={allImages} uploadedImages={uploadedImages} setRemovedImages={setRemovedImages}/>         
+              <VideoUrls/>
             </div>
 
             {/* Right */}

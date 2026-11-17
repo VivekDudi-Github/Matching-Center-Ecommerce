@@ -54,6 +54,8 @@ export const newProductFormSchema = z.object({
     })
   ).optional(),
 
+  videoIds: z.array(z.string(), "Video IDs invalid data type").optional(),
+
   width: z.coerce.number('Width is required').positive("Width must be greater than 0"),
 
   washCare: z.string().min(1, "Wash care is required"),

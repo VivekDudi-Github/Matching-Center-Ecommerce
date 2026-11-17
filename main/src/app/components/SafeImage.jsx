@@ -2,14 +2,15 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Scissors } from "lucide-react";
+import { PlayIcon, Scissors } from "lucide-react";
 
-export default function SafeImage({ src, alt }) {
+export default function SafeImage({ src, alt, publicId, isVideo = false }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const imageUrl = !isVideo ? src : `https://i.ytimg.com/vi/${publicId}/hqdefault.jpg`;
   return (
     <div className="relative h-full w-full bg-zinc-950">
-      {!isLoaded && (
+      {(!isLoaded || !imageUrl) && (
         <div className="absolute inset-0 z-10 flex items-center justify-center animate-pulse  bg-zinc-900">
           <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-zinc-500 dark:via-zinc-300 via-zinc-800/60 to-transparent" />
           <Scissors className="h-8 w-8 animate-pulse text-amber-700" />
@@ -17,7 +18,7 @@ export default function SafeImage({ src, alt }) {
       )}
 
       <motion.img
-        src={src}
+        src={imageUrl}
         alt={alt}
         className="h-full w-full object-cover"
         initial={{ opacity: 0 }}
@@ -29,6 +30,14 @@ export default function SafeImage({ src, alt }) {
         }}
         onLoad={() => setIsLoaded(true)} 
       />
+      {(isVideo && imageUrl) && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div className=" rounded-full p-2">
+            <PlayIcon className="h-8 w-8 text-white fill-black/50" />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
