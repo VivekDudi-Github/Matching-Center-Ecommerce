@@ -4,11 +4,13 @@ import { TryCatch } from "@/app/helpers/TryCatch";
 import {prisma} from "@/app/lib/prisma";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { Status as StatusRef} from "@/generated/prisma/enums";
+import { requireAdmin } from "@/app/helpers/auth";
 
 
 
 export const changeAdminOrderStatus = async({status, id}) => {
   return await TryCatch( async() => {
+
 
       if (!Object.values(StatusRef).includes(status)) {
         return resError("Invalid status provided"); 
@@ -25,5 +27,5 @@ export const changeAdminOrderStatus = async({status, id}) => {
         }
       })
       return resSuccess(status);
-  })
+  }, requireAdmin)
 }

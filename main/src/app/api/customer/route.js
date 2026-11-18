@@ -1,19 +1,12 @@
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { ApiTryCatch } from "@/app/helpers/TryCatch";
 import { resError, resSuccess } from "@/app/helpers/resObj";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getServerSession } from "next-auth";
 import { prisma } from "@/app/lib/prisma";
+import { requireUser } from "@/app/helpers/auth";
 
 export async function GET(req) {
-  return ApiTryCatch(async () => {
-    const session = await getServerSession(authOptions);
-    if (!session || !session?.user) {
-      return resError("Please login to view customer details", null, 401, true);
-    }
-
-    const searchParams = req.nextUrl.searchParams;
-    const email = searchParams.get('email') ?? '';
+  return ApiTryCatch(async (user) => {
+    const email = user.email;
 
     if (!email) {
       return resError("Email is required", null, 400, true);
@@ -25,5 +18,5 @@ export async function GET(req) {
       }
     });
     return resSuccess(serializePrisma(customer), 200, true);
-  }, "getCustomerByEmail");
+  }, "getCustomerByEmail", requireUser);
 }

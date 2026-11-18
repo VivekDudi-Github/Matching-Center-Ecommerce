@@ -4,21 +4,11 @@ import { checkLowStockCount, getCancelRequestAlerts, getInventryAlerts, getProdC
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { adminOrderService } from "@/app/lib/services/Ably/adminOrdersService";
+import { requireAdmin } from "@/app/helpers/auth";
 
 
 export async function GET() {
-    return ApiTryCatch( async () => {
-      // const session = await getServerSession(authOptions); 
-
-      // Authentication
-      // if (!session?.user) {
-      //   return resError("Unauthorized request", null, 401, true);
-      // }
-      // if (session?.user?.role !== 'ADMIN') {
-      //   return resError("Forbidden", null, 401, true);
-      // }
-
-      
+    return ApiTryCatch( async () => {     
       const [
         prodCount,
         lowStockCount,
@@ -75,5 +65,5 @@ export async function GET() {
         cancelRequests: serializePrisma(cancelRequests)
       }, 200, true)
     
-    }, "getDashBoard", true )
+    }, "getDashBoard", requireAdmin )
 }

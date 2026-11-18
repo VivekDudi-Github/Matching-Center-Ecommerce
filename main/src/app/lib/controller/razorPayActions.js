@@ -1,25 +1,20 @@
 "use server";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { TryCatch } from "@/app/helpers/TryCatch";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { requireUser } from "@/app/helpers/auth";
 import { razorPayOrderService } from "@/app/lib/services/razorPayOrder";
 import { prisma } from "@/app/lib/prisma";
 import crypto from "crypto";
 
 const getRazorpayOrder = async (orderId) => {
-  return await TryCatch(async () => {
+  return await TryCatch(async (user) => {
     if(!orderId) return resError("Order id not found");
 
-    const session = await getServerSession(authOptions);
-
-    if(!session || !session.user) return resError("Please Login.")
-
-    const razorpayId = await razorPayOrderService(orderId, session);
+    const razorpayId = await razorPayOrderService(orderId, { user });
 
     console.log("razorpay-orderId", razorpayId);
     return razorpayId;
-  })
+  }, requireUser)
 }
 
 

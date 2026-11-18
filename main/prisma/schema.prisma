@@ -35,8 +35,8 @@ model Customer  {
 model Admin{
   id           String     @id @default(uuid(7))
 
-  password     String     
   name         String
+  email        String     @unique
   loginAttempt Int        @default(0)
   loginTime    DateTime   @default(now())
 

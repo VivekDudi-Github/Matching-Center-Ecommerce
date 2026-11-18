@@ -2,24 +2,17 @@ import { prisma } from "@/app/lib/prisma";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { TryCatch } from "@/app/helpers/TryCatch";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { requireUser } from "@/app/helpers/auth";
 import "server-only";
 
 export const getOrderById = async (id) => {
   if (!id) return resError("Order Id is missing");
 
-  return await TryCatch(async () => {
-    const session = await getServerSession(authOptions);
-    if (!session || !session?.user) return resError("Please login to view order");
-
-    const userId = session?.user?.id;
-    if (!userId) return resError("Something went wrong please logIn again.");
-
+  return await TryCatch(async (user) => {
     const order = await prisma.order.findUnique({
       where: {
         id: id,
-        customerId: userId
+        customerId: user.id
       },
       include: {
         customer: true,
@@ -39,20 +32,14 @@ export const getOrderById = async (id) => {
     if (!order) return resError("Order not found");
 
     return resSuccess(serializePrisma(order));
-  });
+  }, requireUser);
 };
 
 export const getUserOrders = async (cursor) => {
-  return await TryCatch(async () => {
-    const session = await getServerSession(authOptions);
-    if (!session || !session?.user) return resError("Please login to view orders");
-
-    const userId = session?.user?.id;
-    if (!userId) return resError("User credential is missing");
-
+  return await TryCatch(async (user) => {
     const { fetchOrdersByCustomerIdService } = await import("@/app/lib/services/fetchOrderService");
-    return resSuccess(await fetchOrdersByCustomerIdService({ customerId: userId, cursor }));
-  });
+    return resSuccess(await fetchOrdersByCustomerIdService({ customerId: user.id, cursor }));
+  }, requireUser);
 };
 
 export const getOrdersByCustomerId = async (customerId, cursor) => {
