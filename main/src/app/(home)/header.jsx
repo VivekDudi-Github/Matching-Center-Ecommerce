@@ -6,10 +6,12 @@ import { useEffect, useState } from 'react';
 import {useTheme} from 'next-themes';
 import Link from 'next/link';
 import CartSideBar from '@/app/components/cart/CartSidebar';
-import HyderationWrapper from '../components/HyderationWrapper';
-import { updateCartStore } from '../helpers/UpdateCart';
+import HyderationWrapper from '@/app/components/HyderationWrapper';
+import { updateCartStore } from '@/app/helpers/UpdateCart';
+import { useSession } from 'next-auth/react';
 
 function Header() {
+  const {data : session} = useSession();
   const {theme, setTheme} = useTheme();
   const {scrollY} = useScroll();
 
@@ -79,9 +81,10 @@ function Header() {
           }
         </button>
 
+        {session?.user?.role === "ADMIN" && 
         <Link href={'/admin'} className="inline-block">
           <User2Icon className="size-5 sm:size-6 fill-white mr-4"  strokeWidth={0} />
-        </Link>
+        </Link>}
         
         <ShoppingBagIcon className="size-5 sm:size-6  text-white mr-4 md:mr-0 duration-500" 
         onClick={() => setIsCartOpen(prev => prev+1)}

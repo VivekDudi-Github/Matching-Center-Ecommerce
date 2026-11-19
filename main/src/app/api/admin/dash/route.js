@@ -65,5 +65,5 @@ export async function GET() {
         cancelRequests: serializePrisma(cancelRequests)
       }, 200, true)
     
-    }, "getDashBoard", requireAdmin )
+    }, "getDashBoard", requireAdmin  )
 }

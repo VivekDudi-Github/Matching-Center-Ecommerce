@@ -1,12 +1,20 @@
 import Sidebar from "@/app/components/admin/Sidebar";
 import Navbar from "@/app/components/admin/Navbar";
 import MobileSidebar from "@/app/components/admin/MobileSideBar";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/lib/authOptions";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Admin Dashboard",
 };
 
-export default function AdminLayout({ children }) {
+export default async function AdminLayout({ children }) {
+  const session = await getServerSession(authOptions);
+ 
+  if (!session?.user) redirect("/api/auth/signin");
+  if (session.user.role !== "ADMIN") redirect("/");
+ 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
       <div className="flex">

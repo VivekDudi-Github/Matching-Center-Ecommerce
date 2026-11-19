@@ -9,6 +9,7 @@ import { duplicateproductService } from '@/app/lib/services/duplicateProduct';
 import { deleteProductImagesService } from '@/app/lib/services/deleteImages';
 import { resError, resSuccess } from '@/app/helpers/resObj';
 import { createNewProductService } from '@/app/lib/services/createNewProd';
+import { requireAdmin } from '@/app/helpers/auth';
 
 
 export async function createNewProduct(data) {
@@ -58,7 +59,7 @@ export const updateProduct = async(id, data) => {
   
     return resSuccess(serializePrisma(product)); 
   
-  });
+  }, "updateProduct", requireAdmin);
 }
 
 export const deleteProductAction = async(id) => {
@@ -73,7 +74,7 @@ export const deleteProductAction = async(id) => {
       }
     });
     return resSuccess(true);
-  });
+  }, "deleteProductAction", requireAdmin);
 }
 
 export const revertDeleteProductAction = async(id) => {
@@ -88,7 +89,7 @@ export const revertDeleteProductAction = async(id) => {
       }
     });
     return resSuccess(true);
-  });
+  }, requireAdmin);
 }
 
 export const duplicateProductAction = async(id) => {
@@ -97,5 +98,5 @@ export const duplicateProductAction = async(id) => {
     const newProduct = await duplicateproductService(id);
 
     return resSuccess(serializePrisma(newProduct));
-  });
+  }, requireAdmin);
 };

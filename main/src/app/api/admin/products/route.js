@@ -2,6 +2,7 @@ import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { ApiTryCatch } from "@/app/helpers/TryCatch";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { getFirstAdminProdListNotStatusBased, getFirstAdminProdListStatusBased, getMoreAdminProdListNotStatusBased, getMoreAdminProdListStatusBased } from "@/app/lib/services/adminProd";
+import { requireAdmin } from "@/app/helpers/auth";
 
 export async function GET(req) {
   return ApiTryCatch(async () => {
@@ -30,5 +31,5 @@ export async function GET(req) {
         return resSuccess(serializePrisma(result), 200, true);
       }
     }
-  }, "getAdminProducts");
+  }, "getAdminProducts", requireAdmin);
 }

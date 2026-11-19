@@ -5,18 +5,13 @@ import { adminOrderService } from "@/app/lib/services/Ably/adminOrdersService";
 
 import { ApiTryCatch} from "@/app/helpers/TryCatch";
 import { resError, resSuccess } from "@/app/helpers/resObj";
+import { RequestCookiesAdapter } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { requireAdmin } from "@/app/helpers/auth";
 
 
 
 export async function GET(req) {
   return ApiTryCatch( async () => {
-    // export const getAdminOrders = async ({status, search, cursor}) => {
-  
-    // const session = await getServerSession(authOptions); 
-    
-    // if(!session || !se
-    // ssion.user.email !== "") return resError("Unauthorized request");
-    
     const searchParams = req.nextUrl.searchParams;
     const cursor = searchParams.get('cursor') || undefined;
     const status = searchParams.get('status') ?? 'All';
@@ -31,6 +26,6 @@ export async function GET(req) {
 
     return resSuccess({list : serializePrisma(orders) , newCursor : serializePrisma(newCursor)}, 200, true);
     
-  },"getAdminOrders" )
+  },"getAdminOrders", requireAdmin )
 }
     

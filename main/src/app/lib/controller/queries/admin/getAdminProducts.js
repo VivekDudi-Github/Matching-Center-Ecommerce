@@ -4,6 +4,7 @@ import { getFirstAdminProdListNotStatusBased, getFirstAdminProdListStatusBased, 
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { prisma } from "@/app/lib/prisma";
 import "server-only";
+import { requireAdmin } from "@/app/helpers/auth";
 
 export const getMoreAdminProdList = async(cursor, search, category, status) => {
   if (!cursor) {
@@ -20,7 +21,7 @@ export const getMoreAdminProdList = async(cursor, search, category, status) => {
         await getMoreAdminProdListNotStatusBased(cursor, search, category)
       );
     }
-  });
+  }, requireAdmin);
 }
 export const getFirstAdminProdList = async( search, category, status) => {
   return await TryCatch( async () => {
@@ -30,7 +31,7 @@ export const getFirstAdminProdList = async( search, category, status) => {
     }else {
       return resSuccess(await getFirstAdminProdListNotStatusBased( search, category));
     }
-  });
+  }, requireAdmin);
 }
 
 
@@ -50,5 +51,5 @@ export const getAdminProdById = async(id) => {
       },
     });
     return resSuccess(serializePrisma(product));
-  });
+  }, requireAdmin);
 }

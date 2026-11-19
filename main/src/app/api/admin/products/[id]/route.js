@@ -2,6 +2,7 @@ import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { ApiTryCatch } from "@/app/helpers/TryCatch";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { prisma } from "@/app/lib/prisma";
+import { requireAdmin } from "@/app/helpers/auth";
 
 export async function GET(req, { params }) {
   return await ApiTryCatch(async () => {
@@ -20,5 +21,5 @@ export async function GET(req, { params }) {
       },
     });
     return resSuccess(serializePrisma(product), 200, true);
-  }, "getAdminProdById");
+  }, "getAdminProdById", requireAdmin);
 } 

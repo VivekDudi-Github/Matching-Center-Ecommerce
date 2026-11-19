@@ -22,6 +22,15 @@ export default function FabricProductCard({fabricDetails}) {
     setTimeout(() => setIsAdded(false), 2000);
     addItem(fabricData);
   };
+  const getContrastColor = (hex) => {
+    const c = hex.replace("#", "");
+    const r = parseInt(c.substr(0, 2), 16);
+    const g = parseInt(c.substr(2, 2), 16);
+    const b = parseInt(c.substr(4, 2), 16);
+    // perceived luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.6 ? "#1c1917" : "#ffffff"; // dark text on light bg
+  };
 
   return (
     <div className="flex  items-center justify-center bg-transparent  w-36 h-full md:h-auto md:w-76 transition-all duration-200 "> 
@@ -77,9 +86,9 @@ export default function FabricProductCard({fabricDetails}) {
           {fabricData?.color?.length && 
             <div className=" shrink hidden md:flex md:gap-1 gap-0.5 flex-wrap flex-row items-end">
               {fabricData.color.slice(0,3).map((c,i) => 
-                <div key={i} className=" rounded-sm border-spacing-1.5 border dark:border-zinc-700 border-zinc-400 ">
+                <div key={i} className=" rounded-xs  overflow-clip  ">
                   <div style={{
-                    color: "white",
+                    color: getContrastColor(c.hex),
                     backgroundColor: c.hex,
                   }} className={` md:text-sm text-[8px] shrink px-1 dark:text-stone-400 font-medium`} >
                     {c.name}
@@ -92,16 +101,16 @@ export default function FabricProductCard({fabricDetails}) {
           {fabricData?.color?.length && 
             <div className=" shrink md:hidden flex md:gap-1 gap-0.5 flex-wrap flex-row items-end">
               {fabricData.color.slice(0,2).map((c,i) => 
-                <div key={i} className=" rounded-sm border-spacing-1.5 border dark:border-zinc-700 border-zinc-400 ">
+                <div key={i} className=" rounded-xs overflow-clip ">
                   <div style={{
-                    color: "white",
+                    color: getContrastColor(c.hex),
                     backgroundColor: c.hex,
                   }} className={` md:text-sm text-[8px] shrink px-1 dark:text-stone-400 font-medium`} >
                     {c.name}
                   </div>
                 </div>
               )}
-              {fabricData.color.length > 2 && <div className="text-stone-500 md:text-xs text-[8px] font-medium">+{fabricData.color.length - 3}..</div>}
+              {fabricData.color.length > 2 && <div className="text-stone-500 md:text-xs text-[8px] font-medium">+{fabricData.color.length - 2}..</div>}
             </div>
           }
 

@@ -17,39 +17,6 @@ import { exfn } from "@/app/helpers/extractActions";
 import CheckSumSkeleton from "@/app/components/checkout/CheckSumSkeleton";
 import { updateCartStore } from "@/app/helpers/UpdateCart";
 
-const CART = [
-  {
-    id: 1,
-    name: "Premium Cotton White",
-    image:
-      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500",
-    price: 280,
-    quantity: 2.5,
-    color: "White",
-    width: '44"',
-  },
-  {
-    id: 2,
-    name: "Printed Rayon Floral",
-    image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500",
-    price: 340,
-    quantity: 4,
-    color: "Blue",
-    width: '44"',
-  },
-  {
-    id: 3,
-    name: "Linen Blend Premium",
-    image:
-      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=500",
-    price: 420,
-    quantity: 3,
-    color: "Beige",
-    width: '44"',
-  },
-];
-
 
 export default function CheckoutPage() { 
   const isHyderated = useHydratedStore();
@@ -155,7 +122,7 @@ export default function CheckoutPage() {
       fetch("/api/restock", {method: "POST"}).then(res => res.json()).then(data => console.log(data));
       updateCartStore();
     }, [])
-
+    console.log("session", session);
   if(!isHyderated) return null;
   return (
     <FormProvider {...methods}>

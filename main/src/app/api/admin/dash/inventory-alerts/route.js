@@ -3,6 +3,7 @@ import { ApiTryCatch, TryCatch } from "@/app/helpers/TryCatch";
 import { getInventryAlerts } from "@/app/lib/services/dashboardService";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
+import { requireAdmin } from "@/app/helpers/auth";
 
 
 
@@ -20,5 +21,5 @@ export async function GET(req) {
     const {alerts, newCursor} = await getInventryAlerts({ cursor});
      
     return resSuccess({alerts : serializePrisma(alerts) , cursor: serializePrisma(newCursor) }, 200,true);
-  }, "getInventroyAlerts", true)
+  }, "getInventroyAlerts", requireAdmin)
 }
