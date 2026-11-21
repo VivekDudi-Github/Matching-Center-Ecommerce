@@ -37,7 +37,7 @@ export const createorderService = async(data, email, name, SHIPPING) => {
           UPDATE "ProductVariant"
           SET 
             "availableMeters" = "availableMeters" - ${color.quantity},
-            "isLowStock" = ("availableMeters" - ${color.quantity}) <= "lowstock"
+            "isLowStock" = ("availableMeters" - ${color.quantity}) <= "lowStockAlert"
           WHERE "id" = ${color.colorId}
             AND "availableMeters" >= ${color.quantity}
         `

@@ -11,7 +11,6 @@ import { exfn } from "../helpers/extractActions";
 export default async function Home() {
   const {products, newCursor} = await exfn(() => getShopProducts({outOfStock: false, sort: "featured"}));
   const categories = await exfn(() => getCategories());
-  console.log(products);
 
   return (
     <div className="flex flex-col h-full w-full flex-1 items-center justify-start  font-sans dark:bg-black bg-white"> 

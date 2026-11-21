@@ -133,7 +133,7 @@ async function bgOps(eventData, eventId) {
        
         console.log("capturing the payment");
   
-        instance.payments.capture(entity?.id, payment.amount , "INR") ;  
+        instance.payments.capture(entity?.id, Number(payment.amount * 100) , "INR") ;  
 
         // after initating the payment capture  
         // locing the payment and update the db 
@@ -219,6 +219,22 @@ async function bgOps(eventData, eventId) {
           code: "INTERNAL_SERVER_ERROR",
           storeOrderId: eventData?.payload?.payment?.entity?.notes?.storeOrderId
       })  
+    }
+    let entity = eventData.payload.payment.entity ;
+    if(eventData.event === "payment.authorized"){
+        await prisma.order.update({
+          where: {
+            id: entity.notes.orderId,
+          },
+          data: {
+            isLocked: false,
+            payment: {
+              update: {
+                status: "Failed",
+              }
+            }
+          }
+        });
     }
 
     console.error("Webhook callback error:", error);

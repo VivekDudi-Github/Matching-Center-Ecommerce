@@ -18,42 +18,43 @@ const getRazorpayOrder = async (orderId) => {
 }
 
 
-const verifYRazorPay = async ({orderId, singature, paymentId}) => {
-  return await TryCatch(async () => {
-    if(!orderId) return resError("Order id not found");
-    if(!singature) return resError("Signature not found");
-    if(!paymentId) return resError("Payment id not found");
+// only applicable if we swtich to client signature check from webhook based to verify
+// const verifYRazorPay = async ({orderId, singature, paymentId}) => {
+//   return await TryCatch(async () => {
+//     if(!orderId) return resError("Order id not found");
+//     if(!singature) return resError("Signature not found");
+//     if(!paymentId) return resError("Payment id not found");
 
-    const order = await prisma.payment.findUnique({
-      where: {
-        gatewayOrderId: orderId,
-      }
-    });
+//     const order = await prisma.payment.findUnique({
+//       where: {
+//         gatewayOrderId: orderId,
+//       }
+//     });
 
-    if(!order) return resError("Order not found");
+//     if(!order) return resError("Order not found");
 
-    const isValid = verifyPaymentSignature(orderId, paymentId, singature, process.env.RAZORPAY_KEY_SECRET);
+//     const isValid = verifyPaymentSignature(orderId, paymentId, singature, process.env.RAZORPAY_KEY_SECRET);
 
-    if(!isValid) return resError("Signature not valid");
+//     if(!isValid) return resError("Signature not valid");
 
-    return resSuccess(true);
+//     return resSuccess(true);
 
 
-    function verifyPaymentSignature(orderId, paymentId, receivedSig, keySecret) {
-      const body = orderId + '|' + paymentId;
-      const expectedSig = crypto
-      .createHmac('sha256', keySecret)
-      .update(body)
-      .digest('hex');
-      // timing-safe comparison to prevent timing attacks
-      return crypto.timingSafeEqual(
-      Buffer.from(expectedSig, 'hex'),
-      Buffer.from(receivedSig, 'hex')
-      );
-    }
-  })
-}
+//     function verifyPaymentSignature(orderId, paymentId, receivedSig, keySecret) {
+//       const body = orderId + '|' + paymentId;
+//       const expectedSig = crypto
+//       .createHmac('sha256', keySecret)
+//       .update(body)
+//       .digest('hex');
+//       // timing-safe comparison to prevent timing attacks
+//       return crypto.timingSafeEqual(
+//       Buffer.from(expectedSig, 'hex'),
+//       Buffer.from(receivedSig, 'hex')
+//       );
+//     }
+//   })
+// }
 
-export { getRazorpayOrder, verifYRazorPay };
+export { getRazorpayOrder };
 
 

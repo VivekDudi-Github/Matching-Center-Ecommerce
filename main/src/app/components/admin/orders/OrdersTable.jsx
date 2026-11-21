@@ -69,7 +69,7 @@ export default function OrdersTable({ initialOrders = [], initialCursor, errorMs
   }, [errorMsg])
   
   
-  if (!orders.length) {
+  if (!orders?.length) {
     return (
       <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-16 text-center dark:border-zinc-700 dark:bg-zinc-900">
         <ShoppingBag

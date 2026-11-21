@@ -4,7 +4,6 @@ const ENCRYPTED_FIELDS = {
   customer: ["number", "name"],
   address: ["address", "area", "landmark", "city", "state", "pincode"],
   payment: ["number"],
-  settings: ["number", "gstNumber", "whatsapp", "address", "upiId"],
 };
 
 function getEncryptedFieldsForModel(modelName) {
@@ -103,7 +102,14 @@ export const prismaExtension = {
           return query(args);
         }
 
-        if (args.data) {
+        if (operation === "upsert") {
+          if (args.create) {
+            args.create = encryptData(args.create, modelName);
+          }
+          if (args.update) {
+            args.update = encryptData(args.update, modelName);
+          }
+        } else if (args.data) {
           args.data = encryptData(args.data, modelName);
         }
 
@@ -112,5 +118,5 @@ export const prismaExtension = {
         return decryptResult(result, modelName);
       },
     },
-  },
+  }, 
 };

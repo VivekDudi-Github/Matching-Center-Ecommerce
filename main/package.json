@@ -40,13 +40,13 @@
   },
   "devDependencies": {
     "@prisma/client": "^7.10.1",
+    "@prisma/prisma7": "^7.10.1",
     "@tailwindcss/postcss": "^4",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "^16.4.3",
     "i": "^0.3.7",
-    "npm": "^12.2.3",
-    "prisma": "^8.0.0-rc.34",
+    "prisma": "^7.10.1",
     "tailwindcss": "^4"
   }
 }

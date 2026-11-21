@@ -46,6 +46,7 @@ export default function ShopLayout() {
   const {
     data,
     isLoading,
+    isFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -167,7 +168,7 @@ export default function ShopLayout() {
                 <Card fabricDetails={item}/>
               </motion.div>
             ))}
-            {isFetchingNextPage &&
+            {(isFetchingNextPage || isFetching || isLoading) &&
               Array.from({length: 10}).map((_, i) =>
                 <CardSkeleton key={i} />
               )

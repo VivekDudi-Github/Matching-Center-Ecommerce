@@ -5,7 +5,7 @@ import { prisma } from "@/app/lib/prisma";
 
 export const razorPayOrderService = async(orderId, session) => {
     // find old order
-
+    console.log("finding order");
     const order = await prisma.order.findUnique({
       where: {
         id: orderId,
@@ -22,6 +22,7 @@ export const razorPayOrderService = async(orderId, session) => {
     if(order?.payment?.gatewayOrderId) return resSuccess(order.payment.gatewayOrderId);
 
     const totalInPaise = order.total * 100 + order.shipping * 100;
+    console.log("order paise amount",(order.total) + (order.shipping ) , totalInPaise);
 
     // create instance
     const razorpay = new Razorpay({
@@ -47,10 +48,11 @@ export const razorPayOrderService = async(orderId, session) => {
     if(razorpayOrder?.error && razorpayOrder.error?.code === "BAD_REQUEST_ERROR") return resError(razorpay.error.description);
 
     //create pament row and update it's gateway-orderId
+    
     const payment = await prisma.payment.create({
       data: {
           gatewayOrderId: razorpayOrder.id,
-          amount: order.total + order.shipping,
+          amount:  Number(order.total) + Number(order.shipping),
           status: "Pending",
           method: "UPI",
           order: {
@@ -67,7 +69,7 @@ export const razorPayOrderService = async(orderId, session) => {
       }
     )
 
-    return resSuccess(razorpayOrder.id);
+    return (razorpayOrder.id);
 
 }
 

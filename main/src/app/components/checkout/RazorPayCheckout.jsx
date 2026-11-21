@@ -7,6 +7,7 @@ import Script from 'next/script';
 import Razorpay from 'razorpay';
 import React, { useRef } from 'react'
 import { toast } from 'react-toastify';
+import { LoaderCircleIcon } from 'lucide-react';
 
 function RazorPayCheckout({order}) {
   const {data : session, status} = useSession();
@@ -18,14 +19,24 @@ function RazorPayCheckout({order}) {
       return res.data;
     },
     onSuccess: async (razorpayOrderId) => {
-      const time  = await getTimeClient();
+      console.log("razorpay-orderId" , razorpayOrderId);
 
+      const time  = await getTimeClient();
+      const localTime = Date.now();
+      const timeDifference = Math.abs(time - localTime);
+
+      console.log("amount to be authorized :", (order.total*100) + (order.shipping * 100))
+
+      if (timeDifference > 5000) {
+        toast.error("Your device time is not in sync with our server. Please correct your device time and try again.", {
+          autoClose: false,
+        });
+        return;
+      }
       if(!razorpayOrderId) {
         toast.error("Something went wrong while getting orderId for you, please try again");
         return;
       }
-      console.log("razorpay-orderId" , razorpayOrderId);
-      console.log("order-total", -(Date.parse(order.expireAt) - time )/1000 );
 
        const options = {
         "key": process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -106,7 +117,7 @@ function RazorPayCheckout({order}) {
     <>
     <Script src="https://checkout.razorpay.com/v1/checkout.js" />
     <button type='button' onClick={() => triggerRZP1() } className="w-full h-full" >
-      Pay
+      {isLoading ? <LoaderCircleIcon className='animate-spin' /> : "Pay"}
     </button>
     </>
   )

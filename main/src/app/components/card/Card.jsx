@@ -18,9 +18,9 @@ export default function FabricProductCard({fabricDetails}) {
 
 
   const handleAddToCart = () => {
+    addItem(fabricData);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
-    addItem(fabricData);
   };
   const getContrastColor = (hex) => {
     const c = hex.replace("#", "");

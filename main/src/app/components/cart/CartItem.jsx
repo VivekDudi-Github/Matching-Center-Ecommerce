@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
 import { Trash2, Minus, Plus } from "lucide-react";
 import useCartStore from "@/app/store/CartStore";
 import { motion, AnimatePresence } from "framer-motion";
+import SafeImage from "../SafeImage";
 
 
 export default function CartItem({ item }) {
@@ -91,13 +91,9 @@ export default function CartItem({ item }) {
       <div className="flex gap-3">
         {/* Image */}
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900">
-          {item?.images?.[0]?.url ? (
-            <Image
-              src={item.images[0].url}
-              alt={item?.title || "Product"}
-              fill
-              className="object-cover"
-            />
+          
+          {item?.images?.length ? (
+            <SafeImage src={item?.images?.[0]?.url} isVideo={item?.images?.[0]?.isVideo} publicId={item?.images?.[0]?.publicId} alt={item?.title} />
           ) : (
             <div className="flex h-full items-center justify-center text-[10px] text-zinc-400">
               No image

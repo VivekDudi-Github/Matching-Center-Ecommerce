@@ -5,6 +5,7 @@ import useCartStore, { getCartItem, getTotalQuantity } from "@/app/store/CartSto
 import { TriangleAlertIcon } from "lucide-react";
 import Image from "next/image"; 
 import { useMemo } from "react";
+import SafeImage from "../SafeImage";
 
 
 export default function OrderItem({ item : propItem , isCart = true }) {
@@ -30,6 +31,7 @@ export default function OrderItem({ item : propItem , isCart = true }) {
 
   const isExceeded = CartItem?.color?.some(c => Number(c.quantity) > Number(c.availableMeters));
 
+
   if(!isHyderated) return null;
   return (
     <div className="p-5">
@@ -37,13 +39,8 @@ export default function OrderItem({ item : propItem , isCart = true }) {
         {/* Product Image */}
 
         <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800">
-          <Image
-            src={isCart ? item?.images?.[0]?.url : item?.image?.url}
-            alt={item?.title}
-            fill
-            sizes="96px"
-            className="object-cover"
-          />
+          <SafeImage src={item?.images?.[0]?.url} isVideo={item?.images?.[0]?.isVideo} publicId={item?.images?.[0]?.publicId} alt={item?.title} />
+          
         </div>
 
         {/* Product Details */}

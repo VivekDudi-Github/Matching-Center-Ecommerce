@@ -27,7 +27,9 @@ export async function GET(req) {
             displayOrder: 0
           },
           select: {
-            url: true
+            isVideo:true,
+            url: true,
+            publicId: true,
           }
         },
         color: true,
