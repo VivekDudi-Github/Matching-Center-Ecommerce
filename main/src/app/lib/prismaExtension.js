@@ -73,13 +73,15 @@ function decryptResult(result, modelName) {
 
   const encryptedFields = getEncryptedFieldsForModel(modelName);
 
-  if (encryptedFields.length === 0) return result;
-
   if (Array.isArray(result)) {
     return result.map((item) => decryptResult(item, modelName));
   }
 
-  const decrypted = decryptObject(result, encryptedFields);
+  let decrypted = result;
+
+  if (encryptedFields.length > 0) {
+    decrypted = decryptObject(result, encryptedFields);
+  }
 
   for (const key in decrypted) {
     if (decrypted[key] !== null && typeof decrypted[key] === "object") {
@@ -99,9 +101,9 @@ export const prismaExtension = {
         const encryptedFields = getEncryptedFieldsForModel(modelName);
 
         if (encryptedFields.length === 0) {
-          return query(args);
+          const result = await query(args);
+          return decryptResult(result, modelName);
         }
-
         if (operation === "upsert") {
           if (args.create) {
             args.create = encryptData(args.create, modelName);

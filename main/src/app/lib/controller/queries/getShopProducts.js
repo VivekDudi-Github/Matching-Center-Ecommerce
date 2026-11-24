@@ -1,6 +1,6 @@
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { TryCatch } from "@/app/helpers/TryCatch";
-import { getShopProductsService } from "@/app/lib/services/shopService";
+import { getShopProductsService } from "@/app/lib/services/api/shopService";
 import { shopFilterSchema } from "@/app/lib/validation/shopFilter.schema";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import "server-only";

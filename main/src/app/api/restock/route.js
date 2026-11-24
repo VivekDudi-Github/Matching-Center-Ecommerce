@@ -63,6 +63,9 @@ async function handler(req, res) {
           }
         })
       }
+    }, {
+      maxWait: 5000,
+      timeout: 20000
     }
   )
 

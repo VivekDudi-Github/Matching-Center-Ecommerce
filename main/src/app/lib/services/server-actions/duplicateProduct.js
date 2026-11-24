@@ -1,9 +1,12 @@
 import "server-only";
 import { prisma } from '@/app/lib/prisma';
+import { TryCatch } from '@/app/helpers/TryCatch';
+import { resError, resSuccess } from '@/app/helpers/resObj';
 
 export const duplicateproductService = async(id) => {
-  if(!id) throw new Error("Product Id is missing");
-  
+  return await TryCatch(async () => {
+    if(!id) return resError("Product Id is missing");
+
 
     const product = await prisma.product.findUnique({
       where: {
@@ -16,7 +19,7 @@ export const duplicateproductService = async(id) => {
         images: true,
       }
     });
-    if(!product) throw new Error("Product not found");
+    if(!product) return resError("Product not found");
 
     const newProduct = await prisma.product.create({
       data: {
@@ -36,24 +39,24 @@ export const duplicateproductService = async(id) => {
             create: { name: product.category.name },
           }
         } : undefined,
-        
+
         tags: {
           connectOrCreate: (product.tags || []).map((tag) => ({
             where: { name: tag.name },
             create: { name: tag.name },
           })),
         },
-        
+
         color: {
           create : (product.color || []).map((color) => ({
               name: color.name,
               hex: color.hex,
               availableMeters: color.availableMeters,
-              lowStockAlert: color.lowStockAlert, 
+              lowStockAlert: color.lowStockAlert,
             }
           ))
         },
-        
+
         images: {
           create: (product.images || []).map((img) => ({
             publicId: img.publicId,
@@ -70,5 +73,6 @@ export const duplicateproductService = async(id) => {
         category: true,
       }
     });
-    return newProduct;
+    return resSuccess(newProduct);
+  })
 }

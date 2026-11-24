@@ -4,24 +4,19 @@ import Image from "next/image";
 import { ArrowUpLeft, ArrowUpRightFromSquareIcon, LoaderPinwheelIcon, LucideFileChartColumnIncreasing,LucideLoaderPinwheel, Palette, Ruler, Shirt } from "lucide-react";
 import Link from "next/link";
 import ColorPalette from "./ColorPalette";
+import SafeImage from "../SafeImage";
 
 export default function OrderItem({ item }) {
   const totalQuantity = item.color.reduce((acc, color) => 
     acc + color.quantity, 0);
-
+  
   return (
     <div className="p-4 sm:p-5">
       <div className="flex gap-4">
         {/* Product Image */}
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:h-24 sm:w-24">
           {item.image ? (
-            <Image
-              src={item.image.url}
-              alt={item.title}
-              fill
-              sizes="96px"
-              className="object-cover"
-            />
+            <SafeImage src={item?.image?.url} alt={item?.title}  isVideo={item?.image?.isVideo} publicId={item?.image?.publicId}/>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-xs text-zinc-400">
               No image

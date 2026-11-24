@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 export const api = axios.create({
   baseURL: '/api',
-  timeout: 10000,
+  timeout: 20000,
 });
 
 
@@ -26,7 +26,7 @@ api.interceptors.response.use(
     } else if (status >= 500) {
       toast.error('Server error. Please try again later.')
     } else if (error.code === 'ECONNABORTED') {
-      toast.error('Request timed out')
+      // toast.error('Request timed out')
     } else if (error.code === 'ERR_CANCELED' || error.name === 'AbortError') {
       return Promise.reject(error);
     } else if (!error.response) {

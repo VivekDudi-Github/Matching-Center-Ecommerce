@@ -1,12 +1,11 @@
-
 import "server-only";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
-import { TryCatch } from "@/app/helpers/TryCatch";
 import { prisma } from "@/app/lib/prisma";
+import { ApiError } from "@/app/helpers/resObj";
 
 
 export const getFirstAdminProdListNotStatusBased = async( search, category) => {
-  return await TryCatch( async () => {
+  try {
     const where = {
     ...(search
       ? {
@@ -50,7 +49,7 @@ export const getFirstAdminProdListNotStatusBased = async( search, category) => {
       },
       orderBy: {
         id : "desc"
-      }, 
+      },
       include: {
         color: true,
         tags: true,
@@ -67,20 +66,22 @@ export const getFirstAdminProdListNotStatusBased = async( search, category) => {
     }
     console.log("LIST:", products?.length);
     return {list : serializePrisma(products) , newCursor: hasMoreLength ? products[products.length - 1].id : null};
-  
-  })
+
+  } catch (error) {
+    console.error("Error in getFirstAdminProdListNotStatusBased:", error);
+    throw new ApiError("Failed to fetch products", 500);
+  }
 };
 
 export const getFirstAdminProdListStatusBased = async( search, category, status) => {
-  return await TryCatch( async () => {
-    
+  try {
     const statusWhere = {} ;
     if(status === "active") {
       statusWhere.isLowStock = false;
       statusWhere.availableMeters = {
         gt: 0,
       };
-    }; 
+    };
     if(status === "out-of-stock") statusWhere.availableMeters = 0;
     if(status === "low-stock") {
       statusWhere.isLowStock = true,
@@ -89,11 +90,11 @@ export const getFirstAdminProdListStatusBased = async( search, category, status)
       };
     };
 
-    
+
     const variants = await prisma.productVariant.findMany({
       where: {
         ...statusWhere,
-        
+
         product: {
           ...(search
             ? {
@@ -130,7 +131,7 @@ export const getFirstAdminProdListStatusBased = async( search, category, status)
             : {}),
         },
       },
-      
+
       orderBy: {
         id: "desc",
       },
@@ -147,7 +148,7 @@ export const getFirstAdminProdListStatusBased = async( search, category, status)
 
     });
 
-    
+
     const newCursor = variants.length > 10 ? variants[9].id : null;
     if(newCursor) variants.pop();
 
@@ -176,13 +177,16 @@ export const getFirstAdminProdListStatusBased = async( search, category, status)
       }, {})
     );
 
-    return {list : serializePrisma(products), newCursor}; 
+    return {list : serializePrisma(products), newCursor};
 
-  });
+  } catch (error) {
+    console.error("Error in getFirstAdminProdListStatusBased:", error);
+    throw new ApiError("Failed to fetch products by status", 500);
+  }
 };
 
 export const getMoreAdminProdListNotStatusBased = async(cursor, search, category) => {
-  return await TryCatch( async () => {
+  try {
     const where = {
       ...(search
         ? {
@@ -229,7 +233,7 @@ export const getMoreAdminProdListNotStatusBased = async(cursor, search, category
       },
       cursor: {
         id: cursor
-      }, 
+      },
       skip: 1,
       include: {
         color: true,
@@ -244,19 +248,21 @@ export const getMoreAdminProdListNotStatusBased = async(cursor, search, category
     if(newCursor) products.pop();
 
     return {list : serializePrisma(products), newCursor};
-  });
+  } catch (error) {
+    console.error("Error in getMoreAdminProdListNotStatusBased:", error);
+    throw new ApiError("Failed to fetch more products", 500);
+  }
 };
 
 export const getMoreAdminProdListStatusBased = async(cursor, search, category, status) => {
-  return await TryCatch( async () => {
-    
+  try {
     const statusWhere = {} ;
     if(status === "active") {
       statusWhere.isLowStock = false;
       statusWhere.availableMeters = {
         gt: 0,
       };
-    }; 
+    };
     if(status === "out-of-stock") statusWhere.availableMeters = 0;
     if(status === "low-stock") {
       statusWhere.isLowStock = true,
@@ -268,7 +274,7 @@ export const getMoreAdminProdListStatusBased = async(cursor, search, category, s
     const variants = await prisma.productVariant.findMany({
       where: {
         ...statusWhere,
-        
+
         product: {
           ...(search
             ? {
@@ -305,7 +311,7 @@ export const getMoreAdminProdListStatusBased = async(cursor, search, category, s
             : {}),
         },
       },
-      
+
       orderBy: {
         id: "desc",
       },
@@ -314,7 +320,7 @@ export const getMoreAdminProdListStatusBased = async(cursor, search, category, s
       },
       take: 11,
       skip: 1,
-      
+
       include: {
         product: {
           include: {
@@ -327,7 +333,7 @@ export const getMoreAdminProdListStatusBased = async(cursor, search, category, s
 
     });
 
-    
+
     const newCursor = variants.length > 10 ? variants[9].id : null;
     if(newCursor) variants.pop();
 
@@ -356,6 +362,9 @@ export const getMoreAdminProdListStatusBased = async(cursor, search, category, s
       }, {})
     );
 
-    return {list : serializePrisma(products), newCursor}; 
-  });
+    return {list : serializePrisma(products), newCursor};
+  } catch (error) {
+    console.error("Error in getMoreAdminProdListStatusBased:", error);
+    throw new ApiError("Failed to fetch more products by status", 500);
+  }
 };

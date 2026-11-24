@@ -1,23 +1,24 @@
 import "server-only";
 import {prisma} from "@/app/lib/prisma";
 import z from "zod";
+import { ApiError } from "@/app/helpers/resObj";
 
 const LIMIT = 11;
 
 export const adminOrderService = async ({cursor, search, status}) => {
-
+  try {
     const cursorFilter = cursor ? {
       cursor : {
         id : cursor
       }
     } : {} ;
-    
+
 
     const statusFilter = status !== "All" ? { status } : {};
     const v7Schema = z.uuidv7();
 
     let isId = v7Schema.safeParse(search);
-    isId = !!isId.success ;  
+    isId = !!isId.success ;
 
     // provides the filter based on either id or text based
     const searchFIlter = isId ? {
@@ -31,9 +32,9 @@ export const adminOrderService = async ({cursor, search, status}) => {
       }
     } : {} ;
 
-    // show all the orders if there is an query added  
-    const paymentStatusFilter = Object.keys(searchFIlter).length > 0  ? 
-        [] : 
+    // show all the orders if there is an query added
+    const paymentStatusFilter = Object.keys(searchFIlter).length > 0  ?
+        [] :
         [
           {status: "Paid"},
           {status: "Refunded"}
@@ -66,4 +67,8 @@ export const adminOrderService = async ({cursor, search, status}) => {
     }
 
     return {orders, newCursor};
+  } catch (error) {
+    console.error("Error in adminOrderService:", error);
+    throw new ApiError("Failed to fetch admin orders", 500);
+  }
 }

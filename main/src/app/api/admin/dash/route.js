@@ -1,9 +1,9 @@
 
 import { ApiTryCatch, TryCatch } from "@/app/helpers/TryCatch";
-import { checkLowStockCount, getCancelRequestAlerts, getInventryAlerts, getProdCountService, getRevenueCount } from "@/app/lib/services/dashboardService";
+import { checkLowStockCount, getCancelRequestAlerts, getInventryAlerts, getProdCountService, getRevenueCount } from "@/app/lib/services/api/dashboardService";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { serializePrisma } from "@/app/helpers/serializePrisma";
-import { adminOrderService } from "@/app/lib/services/Ably/adminOrdersService";
+import { adminOrderService } from "@/app/lib/services/api/Ably/adminOrdersService";
 import { requireAdmin } from "@/app/helpers/auth";
 
 

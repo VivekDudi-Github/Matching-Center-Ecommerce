@@ -22,7 +22,10 @@ export async function GET(req, { params }) {
           include: {
             image: {
               select: {
-                url: true
+                id: true,
+                url: true,
+                isVideo: true,
+                publicId: true,
               }
             }
           }

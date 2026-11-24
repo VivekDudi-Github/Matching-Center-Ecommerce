@@ -2,20 +2,20 @@
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { TryCatch } from "@/app/helpers/TryCatch";
 import { requireUser } from "@/app/helpers/auth";
-import { razorPayOrderService } from "@/app/lib/services/razorPayOrder";
+import { razorPayOrderService } from "@/app/lib/services/api/razorPayOrder";
 import { prisma } from "@/app/lib/prisma";
 import crypto from "crypto";
 
-const getRazorpayOrder = async (orderId) => {
-  return await TryCatch(async (user) => {
-    if(!orderId) return resError("Order id not found");
+// const getRazorpayOrdee = async (orderId) => {
+//   return await TryCatch(async (user) => {
+//     if(!orderId) return resError("Order id not found");
 
-    const razorpayId = await razorPayOrderService(orderId, { user });
+//     const razorpayId = await razorPayOrderService(orderId, { user });
 
-    console.log("razorpay-orderId", razorpayId);
-    return razorpayId;
-  }, requireUser)
-}
+//     console.log("razorpay-orderId", razorpayId);
+//     return razorpayId;
+//   }, requireUser)
+// }
 
 
 // only applicable if we swtich to client signature check from webhook based to verify
@@ -55,6 +55,4 @@ const getRazorpayOrder = async (orderId) => {
 //   })
 // }
 
-export { getRazorpayOrder };
-
-
+// export { getRazorpayOrdee };

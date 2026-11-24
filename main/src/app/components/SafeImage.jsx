@@ -8,6 +8,7 @@ export default function SafeImage({ src, alt, publicId, isVideo = false }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const imageUrl = !isVideo ? src : `https://i.ytimg.com/vi/${publicId}/hqdefault.jpg`;
+
   return (
     <div className="relative h-full w-full bg-zinc-950">
       {(!isLoaded || !imageUrl) && (

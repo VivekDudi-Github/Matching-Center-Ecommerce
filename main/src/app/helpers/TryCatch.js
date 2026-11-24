@@ -41,7 +41,7 @@ export const ApiTryCatch = async (fn, fnName,authCheck ) => {
     if(error?.message === "UNAUTHORIZED") {
       return resError("You are not authorized to perform this action", null, 401, true);
     }
-    return resError(error?.message || "Something went wrong, please try again", null, 500, true);
+    return resError(error?.message || "Something went wrong, please try again", null, error?.status || 500, true);
   }
 };
 

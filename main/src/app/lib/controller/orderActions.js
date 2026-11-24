@@ -6,7 +6,7 @@ import {prisma} from "@/app/lib/prisma";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import z from "zod";
 import { requireUser } from "@/app/helpers/auth";
-import { createorderService, orderCancelService } from "@/app/lib/services/createOrderService";
+import { createorderService, orderCancelService } from "@/app/lib/services/server-actions/createOrderService";
 
 const SHIPPING = 80;
 
@@ -23,9 +23,9 @@ export const createorder = async(data) => {
     const email = user.email;
     const name = user.name;
 
-    const orderId = await createorderService(parsedData.data, email, name, SHIPPING);
-    console.log(orderId, "orderId")
-    return resSuccess({orderId: orderId});
+    const result = await createorderService(parsedData.data, email, name, SHIPPING);
+    console.log(result, "orderId")
+    return result;
   }, requireUser)
 }
 
@@ -46,8 +46,8 @@ export const cancelOrder = async(orderId) => {
 
     if(!order) return resError("Order not found");
 
-    const updatedOrder = await orderCancelService(order, { user });
+    const result = await orderCancelService(order, { user });
 
-    return resSuccess("Order cancel initated.")
+    return result;
   }, requireUser)
 }

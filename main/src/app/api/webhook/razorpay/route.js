@@ -54,14 +54,15 @@ async function bgOps(eventData, eventId) {
   try {
     const event = eventData.event;
     const entity = eventData.payload.payment.entity;
-    console.log("event data", eventData, eventData.payload.payment.entity);
+    console.log("::event:", event)
+    console.log("::event data", eventData, eventData.payload.payment.entity);
 
     const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID , key_secret: process.env.RAZORPAY_KEY_SECRET });
 
 
     const order = await prisma.order.findUnique({
       where : {
-        id: entity.notes.orderId,
+        id: entity.notes.storeOrderId,
         payment: {
           gatewayOrderId: entity.order_id,
         }
@@ -133,7 +134,7 @@ async function bgOps(eventData, eventId) {
        
         console.log("capturing the payment");
   
-        instance.payments.capture(entity?.id, Number(payment.amount * 100) , "INR") ;  
+        await instance.payments.capture(entity?.id, Number(payment.amount * 100) , "INR") ;  
 
         // after initating the payment capture  
         // locing the payment and update the db 
@@ -197,7 +198,7 @@ async function bgOps(eventData, eventId) {
             }
           }
         });
-        await sendPaySuccessMail(order, order.customerId , entity.id);
+        // await sendPaySuccessMail(order, order.customerId , entity.id);
             
         await publishCustomerNotification({
           customerId: order.customerId,
@@ -224,7 +225,7 @@ async function bgOps(eventData, eventId) {
     if(eventData.event === "payment.authorized"){
         await prisma.order.update({
           where: {
-            id: entity.notes.orderId,
+            id: entity.notes.storeOrderId,
           },
           data: {
             isLocked: false,

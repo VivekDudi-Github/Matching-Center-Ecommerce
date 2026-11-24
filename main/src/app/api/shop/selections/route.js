@@ -1,7 +1,7 @@
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { ApiTryCatch } from "@/app/helpers/TryCatch";
 import { resError, resSuccess } from "@/app/helpers/resObj";
-import { getShopSelectionService } from "@/app/lib/services/shopService";
+import { getShopSelectionService } from "@/app/lib/services/api/shopService";
 
 export async function GET(req) {
   return ApiTryCatch(async () => {

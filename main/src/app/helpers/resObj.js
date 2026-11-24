@@ -33,3 +33,11 @@ export const resSuccess = (data, status, isNextResponse = false) => {
   }
   }
 };
+
+export class ApiError extends Error{
+  constructor(message, status){
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}

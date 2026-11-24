@@ -2,7 +2,7 @@ import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { resError, resSuccess } from "@/app/helpers/resObj";
 import { ApiTryCatch } from "@/app/helpers/TryCatch";
 import { requireUser } from "@/app/helpers/auth";
-import { fetchOrdersByCustomerIdService } from "@/app/lib/services/fetchOrderService";
+import { fetchOrdersByCustomerIdService } from "@/app/lib/services/api/fetchOrderService";
 
 export async function GET(req) {
   return ApiTryCatch(async (user) => {

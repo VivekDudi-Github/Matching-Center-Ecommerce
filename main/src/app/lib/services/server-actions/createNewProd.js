@@ -1,0 +1,76 @@
+import "server-only";
+import { prisma } from '@/app/lib/prisma';
+import { Prisma } from '@/generated/prisma/client';
+import { TryCatch } from '@/app/helpers/TryCatch';
+import { resError, resSuccess } from '@/app/helpers/resObj';
+
+export const createNewProductService = async(data) => {
+  return await TryCatch(async () => {
+    const { title, slug, price, originalPrice, pattern,featured, sku, isPublished, description, width, category, tags, colors,videoIds , images, seoTitle, washCare, seoDescription } = data;
+
+    const product = await prisma.product.create({
+      data: {
+        title,
+        slug,
+        price,
+        originalPrice,
+        featured,
+        isPublished,
+        description,
+        width ,
+        sku,
+        pattern,
+        images: {
+          create: videoIds.map(videoId => ({
+            publicId: videoId,
+            url: "",
+            displayOrder: videoIds.indexOf(videoId),
+            isVideo: true,
+          }))
+        },
+        category: {
+          connectOrCreate: {
+            where: {
+              name: category,
+            },
+            create: {
+              name: category,
+            },
+          }
+        },
+        tags: {
+          connectOrCreate: tags.map((tag) => {
+            return {
+              where: {
+                name: tag,
+              },
+              create: {
+                name: tag,
+              },
+            };
+          }),
+        },
+        color :{
+          create: colors.map((color) => {
+            return {
+              name: color.name,
+              hex: color.hex,
+              availableMeters: new Prisma.Decimal(color.availableMeters),
+              lowStockAlert: color.lowStockAlert,
+              isLowStock: color.availableMeters <= color.lowStockAlert,
+            };
+          })
+        } ,
+        seoTitle: seoTitle ?? title,
+        washCare,
+        seoDescription : seoDescription ?? description,
+      },
+      include: {
+        color: true,
+        tags: true,
+        category: true,
+      }
+    });
+    return resSuccess(product);
+  })
+}

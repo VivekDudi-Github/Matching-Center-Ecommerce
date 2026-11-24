@@ -15,7 +15,7 @@ export default function OrdersList({ initialOrders = [], initialCursor }) {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["orders"],
+    queryKey: ["all-orders"],
     queryFn: async ({ pageParam }) => {
       const query = new URLSearchParams();
       if (pageParam) {

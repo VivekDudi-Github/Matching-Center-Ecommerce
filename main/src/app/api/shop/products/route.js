@@ -1,7 +1,7 @@
 import { serializePrisma } from "@/app/helpers/serializePrisma";
 import { ApiTryCatch } from "@/app/helpers/TryCatch";
 import { resError, resSuccess } from "@/app/helpers/resObj";
-import { getShopProductsService } from "@/app/lib/services/shopService";
+import { getShopProductsService } from "@/app/lib/services/api/shopService";
 import { shopFilterSchema } from "@/app/lib/validation/shopFilter.schema";
 
 export async function GET(req) {

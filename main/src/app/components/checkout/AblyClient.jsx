@@ -7,6 +7,7 @@ import { BellIcon } from "lucide-react";
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from "@/app/lib/axios";
 
 const orderCodes = {
   OUT_OF_STOCK: {
@@ -75,12 +76,15 @@ export default function CustomerNotifications({ customerId, order }) {
   useEffect(() => {
     if (!customerId || !order) return;
     if(order?.payment?.status === "Paid") return;
-
+    console.log("ably useffect running");
+    
     const handleMessage = (message) => {
       if (message.name !== "notification") return;
-      toast.info(message.data.message);
-      // if(message.data.orderId !== orderId) return;
       console.log(message);
+
+      toast.info(message.data.message);
+      if(message.data.storeOrderId !== order.id) return;
+      
       setNotifications((previous) => [
         {
           id: message.id ?? `${Date.now()}-${Math.random()}`,
@@ -90,17 +94,17 @@ export default function CustomerNotifications({ customerId, order }) {
       ]);
       setShowMessages(true);
     };
+
+    
     let channel;
     const buildConnection = async () => {
       try {
         const client = new Ably.Realtime({
-          authCallback: async(params, cb) => {
+          authCallback: async(_, cb) => {
             try {
-              const res = await fetch("/api/ably/token");
-              if (!res.ok) {
-                throw new Error(`Failed to fetch Ably token: ${res.statusText}`);
-              }
-              const tokenData = await res.json();
+              const res = await api.get("/ably/token");
+              const tokenData = res.data;
+              console.log("ably token data recieved:", tokenData);
               cb(null, tokenData);
             } catch (error) {
               console.log("error from ably client", error)
@@ -166,7 +170,7 @@ export default function CustomerNotifications({ customerId, order }) {
               </span>
               <span className="text-[10px] bg-zinc-100 text-gray-800 dark:bg-slate-800 dark:text-slate-300 px-1.5 py-0.5 rounded-full font-medium">
                 {notifications.length} New
-              </span>
+            </span>
             </div>
 
             {/* List Body */}
@@ -206,6 +210,7 @@ export default function CustomerNotifications({ customerId, order }) {
 
                       {/* Inline Dismiss Cross Button */}
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation(); 
                           removeNotification(notification.id);
